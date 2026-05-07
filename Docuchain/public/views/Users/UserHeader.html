@@ -1,271 +1,351 @@
-<header class="docuchain-app-header" ng-controller="UserHeaderController" ng-init="contentHeaderLoad()">
-    <a class="docuchain-header-logo" ui-sref="dapp.userDashboard">
-        <img ng-src="{{logoPath}}" height="75">
-    </a>
-    <a class="docuchain-sidebar-toggle" href="javascript:void(0);" ng-click="sidebarActiveFun()"></a>
-    <div class="docuchain-count-list">
-        <ul>
-            <li>
-                <a href="javascript:void(0);">
-                    <div class="countList">
-                        <div class="shipnamelist" ng-show='{{sessionObject.roleId}}===3'>
-                            <h1>Vessel Name</h1>
-                            <h3 class="bluelight" ng-click="vesselsInformation()">{{headerDetails.shipName}}</h3>
-                        </div>
-                        <div class="shipnamelist" ng-show='headerDetails.vesselsName != undefined'>
-                            <h1>Vessel Name</h1>
-                            <h3 class="bluelight">{{headerDetails.vesselsName}}</h3>
-                        </div>
-                        <div class="shipnamelist" ng-show='{{sessionObject.roleId}}!=3 && headerDetails.vesselsName == undefined'>
-                            <h1>Vessel</h1>
-                            <h3 class="bluelight" ng-click="vesselsInformation()">{{headerDetails.vesselsCount}}</h3>
-                        </div>
-                        <div class="shipimage" ng-click="vesselsInformation()">
-                            <img src="image/topVesselscount.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" ng-click="statusChange('Active')">
-                    <div class="countList" ng-click="vesselsInformation()">
-                        <div class="shipnamelist">
-                            <h1>Active</h1>
-                            <h2 class="textgreen">{{headerDetails.activeCount}}</h2>
-                        </div>
-                        <div class="shipimage">
-                            <img src="image/active.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" ng-click="statusChange('Renewal')">
-                    <div class="countList" ng-click="vesselsInformation()">
-                        <div class="shipnamelist">
-                            <h1>Renewal</h1>
-                            <h2 class="textorange">{{headerDetails.renewelCount}}</h2>
-                        </div>
-                        <div class="shipimage">
-                            <img src="image/renewal.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" ng-click="statusChange('Expired')">
-                    <div class="countList" ng-click="vesselsInformation()">
-                        <div class="shipnamelist">
-                            <h1>Expired</h1>
-                            <h2 class="red">{{headerDetails.expiryedCount}}</h2>
-                        </div>
-                        <div class="shipimage">
-                            <img src="image/topExpired2.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);">
-                    <div class="countList" ng-click="vesselsInformation()">
-                        <div class="shipnamelist">
-                            <h1>Missing</h1>
-                            <h2 class="grayclr">{{headerDetails.missingCount}}</h2>
-                        </div>
-                        <div class="shipimage">
-                            <img src="image/missing6.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-        </ul>
-    </div>
+<!-- <header class="docuchain-app-header" ng-controller="UserHeaderController">
+  <a class="docuchain-sidebar-toggle" ng-click="sidebarActiveFun()"></a>
 
-    <!-- <div class="docuchain-count-list" ng-show='headerDetails.vesselsName == undefined'>
-        <ul>
-            <li> 
-                <a href="javascript:void(0);" >
-                    <div class="countList" >
-                       
-                        <div class="shipnamelist" ng-show='{{sessionObject.roleId}}!=3 && headerDetails.vesselsName == undefined'>
-                                <h1>Vessels Count</h1>
-                                <h3 class="bluelight" ng-click="vesselsInformation()">{{headerDetails.vesselsCount}}</h3>
-                            </div>
-                        <div class="shipimage" ng-click="vesselsInformation()">
-                            <img src="image/topVesselscount.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" >
-                    <div class="countList">
-                        <div class="shipnamelist">
-                            <h1>Active</h1>
-                            <h2 class="textgreen" ng-click="vesselsInformation()">{{headerDetails.activeCount}}</h2>
-                        </div>
-                        <div class="shipimage"ng-click="vesselsInformation()">
-                            <img src="image/active.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" >
-                    <div class="countList">
-                        <div class="shipnamelist">
-                            <h1>Renewal</h1>
-                            <h2 class="textorange" ng-click="vesselsInformation()">{{headerDetails.renewelCount}}</h2>
-                        </div>
-                        <div class="shipimage" ng-click="vesselsInformation()">
-                            <img src="image/renewal.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" >
-                    <div class="countList">
-                        <div class="shipnamelist">
-                            <h1>Expired</h1>
-                            <h2 class="red" ng-click="vesselsInformation()">{{headerDetails.expiryedCount}}</h2>
-                        </div>
-                        <div class="shipimage" ng-click="vesselsInformation()">
-                            <img src="image/topExpired.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" >
-                    <div class="countList">
-                        <div class="shipnamelist">
-                            <h1>Missing</h1>
-                            <h2 class="grayclr" ng-click="vesselsInformation()">{{headerDetails.missingCount}}</h2>
-                        </div>
-                        <div class="shipimage" ng-click="vesselsInformation()">
-                            <img src="image/missing4.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-        </ul>
-    </div> -->
-    <!-- Navbar Right Menu-->
-    <ul class="docuchain-app-nav">
-        <li class="dropdown">
-               
-            <a class="app-nav__item animated infinite swing" href="javascript:void(0)" ng-show="notificationCountList.length >= 0"
-                ng-click="notification()">
-                <img src="image/notification.png" alt="notification">
-                <span ng-show="notificationCountList.length > 0">{{notificationCountList.length }}</span>
+  <div class="toggleoption" id="toggleoption">
+    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+  </div>
+
+  <ul class="docuchain-app-nav">
+    <li
+      class="app-nav__item theme-toggle-btn"
+      ng-click="toggleTheme()"
+      title="Toggle Dark/Light Mode"
+    >
+      <i class="fa" ng-class="isDarkMode ? 'fa-sun-o' : 'fa-moon-o'"></i>
+    </li>
+
+    <li class="dropdown">
+      <a
+        class="app-nav__item animated infinite swing"
+        href="javascript:void(0)"
+        ng-show="notificationCountList.length >= 0"
+        ng-click="notification()"
+      >
+        <img src="image/notification.png" alt="notification" />
+        <span ng-show="notificationCountList.length > 0"
+          >{{notificationCountList.length }}</span
+        >
+      </a>
+
+      <a
+        class="app-nav__item animated infinite"
+        href="javascript:void(0)"
+        ng-if="notificationCountList == null"
+        ng-click="notification()"
+      >
+        <img src="image/notification.png" alt="notification" />
+        <span ng-show="notificationCountList.length > 0"
+          >{{notificationCountList.length }}</span
+        >
+      </a>
+
+      <a
+        class="app-nav__item animated infinite swing"
+        href="javascript:void(0)"
+        ng-click="faq()"
+      >
+        <img src="image/faqIcons.png" alt="faq" />
+      </a>
+
+      <ul class="app-notification dropdown-menu dropdown-menu-right">
+        <li class="app-notification__title">Notifications</li>
+        <div
+          class="app-notification__content"
+          ng-repeat="list in notificationCountList | limitTo:5"
+        >
+          <li ng-click="notification()">
+            <a
+              class="app-notification__item"
+              href="javascript:void(0);"
+              ng-if="list.color == 'Green'"
+            >
+              <span class="app-notification__icon">
+                <img
+                  ng-if="list.notificationType == 'Approval page'"
+                  src="image/notifyGreenIcon.png"
+                  ng-click="linkToApproveDocument(list)"
+                />
+                <img
+                  ng-if="list.notificationType == 'Task page'"
+                  src="image/document-green.png"
+                  ng-click="linkToTaskManagement(list.taskId)"
+                />
+                <img
+                  ng-if="list.notificationType == 'Document List Page'"
+                  src="image/document-green.png"
+                  ng-click="linkToExpiryDoc(list.shipId)"
+                />
+                <img
+                  ng-if="list.notificationType == 'User request page'"
+                  src="image/userview.png"
+                  ng-click="linkToAdminApproveDoc(list.shipId)"
+                />
+              </span>
+              <div>
+                <p class="app-notification__message">
+                  {{list.notificationName}}
+                </p>
+                <p class="app-notification__meta">{{list.notifiedOn}}</p>
+              </div>
             </a>
-          
-            <a class="app-nav__item animated infinite  " href="javascript:void(0)" ng-if="notificationCountList == null"
-                ng-click="notification()">
-                <img src="image/notification.png" alt="notification">
-                <span ng-show="notificationCountList.length > 0">{{notificationCountList.length }}</span>
+          </li>
+
+          <li ng-click="notification()">
+            <a
+              class="app-notification__item"
+              href="javascript:void(0);"
+              ng-if="list.color == 'Red'"
+            >
+              <span class="app-notification__icon">
+                <img
+                  ng-if="list.notificationType == 'Approval page'"
+                  src="image/notifyredIcon.png"
+                  ng-click="linkToApproveDocument(list)"
+                />
+                <img
+                  ng-if="list.notificationType == 'Task page'"
+                  src="image/document-red.png"
+                  ng-click="linkToTaskManagement(list.taskId)"
+                />
+                <img
+                  ng-if="list.notificationType == 'Document List Page'"
+                  src="image/document-red.png"
+                  ng-click="linkToExpiryDoc(list.shipId)"
+                />
+                <img
+                  ng-if="list.notificationType == 'User request page'"
+                  src="image/userview.png"
+                  ng-click="linkToAdminApproveDoc(list.shipId)"
+                />
+              </span>
+              <div>
+                <p class="app-notification__message">
+                  {{list.notificationName}}
+                </p>
+                <p class="app-notification__meta">{{list.notifiedOn}}</p>
+              </div>
             </a>
-            <a class="app-nav__item animated infinite swing" href="javascript:void(0)"  
-            ng-click="faq()">
-            <img src="image/faqIcons.png" alt="notification">                        
-        </a>
-            <ul class="app-notification dropdown-menu dropdown-menu-right">
-                <li class="app-notification__title">Notifications</li>
-                <div class="app-notification__content" ng-repeat="list in notificationCountList | limitTo:5">
-                    <li ng-click="notification()">
-                        <a class="app-notification__item" href="javascript:void(0);" ng-if="list.color == 'Green'">
-                            <span class="app-notification__icon">
-                                <img ng-if="list.notificationType == 'Approval page'" src="image/notifyGreenIcon.png"
-                                    ng-click="linkToApproveDocument(list)">
-                                <img ng-if="list.notificationType == 'Task page'" src="image/document-green.png"
-                                    ng-click="linkToTaskManagement(list.taskId)">
-                                <img ng-if="list.notificationType == 'Document List Page'" src="image/document-green.png"
-                                    ng-click="linkToExpiryDoc(list.shipId)">
-                                <img ng-if="list.notificationType == 'User request page'" src="image/userview.png"
-                                    ng-click="linkToAdminApproveDoc(list.shipId)">
-                            </span>
-                            <div>
-                                <p class="app-notification__message">{{list.notificationName}}</p>
-                                <p class="app-notification__meta">{{list.notifiedOn}} </p>
+          </li>
 
-                            </div>
-                        </a>
-                    </li>
-                    <li ng-click="notification()">
-                        <a class="app-notification__item" href="javascript:void(0);" ng-if="list.color == 'Red'">
-                            <span class="app-notification__icon">
-                                <img ng-if="list.notificationType == 'Approval page'" src="image/notifyredIcon.png"
-                                    ng-click="linkToApproveDocument(list)">
-                                <img ng-if="list.notificationType == 'Task page'" src="image/document-red.png" ng-click="linkToTaskManagement(list.taskId)">
-                                <img ng-if="list.notificationType == 'Document List Page'" src="image/document-red.png"
-                                    ng-click="linkToExpiryDoc(list.shipId)">
-                                <img ng-if="list.notificationType == 'User request page'" src="image/userview.png"
-                                    ng-click="linkToAdminApproveDoc(list.shipId)">
-                            </span>
-                            <div>
-                                <p class="app-notification__message">{{list.notificationName}}</p>
-                                <p class="app-notification__meta">{{list.notifiedOn}} </p>
-                            </div>
-                        </a>
-                    </li>
-                    <li ng-click="notification()">
-                        <a class="app-notification__item" href="javascript:void(0);" ng-if="list.color == 'Yellow'">
-                            <span class="app-notification__icon">
-                                <img ng-if="list.notificationType == 'Approval page'" src="image/notifyyellowIcon.png"
-                                    ng-click="linkToApproveDocument(list)">
-                                <img ng-if="list.notificationType == 'Task page'" src="image/document-yellow.png"
-                                    ng-click="linkToTaskManagement(list.taskId)">
-                                <img ng-if="list.notificationType == 'Document List Page'" src="image/document-yellow.png"
-                                    ng-click="linkToExpiryDoc(list.shipId)">
-                                <img ng-if="list.notificationType == 'User request page'" src="image/userview.png"
-                                    ng-click="linkToAdminApproveDoc(list.shipId)">
-                            </span>
-                            <div>
-                                <p class="app-notification__message">{{list.notificationName}}</p>
-                                <p class="app-notification__meta">{{list.notifiedOn}} </p>
-                            </div>
-                        </a>
-                    </li>
-
-                </div>
-                <li class="app-notification__footer">
-                    <a href="" ng-click="notification()">See all Notifications.</a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a class="app-nav__item" aria-label="Show notifications" data-toggle="modal" data-target="#logoutlog">
-                <img src="image/logout.png" alt="logout">
+          <li ng-click="notification()">
+            <a
+              class="app-notification__item"
+              href="javascript:void(0);"
+              ng-if="list.color == 'Yellow'"
+            >
+              <span class="app-notification__icon">
+                <img
+                  ng-if="list.notificationType == 'Approval page'"
+                  src="image/notifyyellowIcon.png"
+                  ng-click="linkToApproveDocument(list)"
+                />
+                <img
+                  ng-if="list.notificationType == 'Task page'"
+                  src="image/document-yellow.png"
+                  ng-click="linkToTaskManagement(list.taskId)"
+                />
+                <img
+                  ng-if="list.notificationType == 'Document List Page'"
+                  src="image/document-yellow.png"
+                  ng-click="linkToExpiryDoc(list.shipId)"
+                />
+                <img
+                  ng-if="list.notificationType == 'User request page'"
+                  src="image/userview.png"
+                  ng-click="linkToAdminApproveDoc(list.shipId)"
+                />
+              </span>
+              <div>
+                <p class="app-notification__message">
+                  {{list.notificationName}}
+                </p>
+                <p class="app-notification__meta">{{list.notifiedOn}}</p>
+              </div>
             </a>
-        </li>
-
-    </ul>
-
-    <div class="doculogo">
-        <a href="javascript:void(0);">
-            <img src="image/docuchainLogo.png">
-        </a>
-    </div>
-</header>
-<toaster-container toaster-options="{'time-out': 3000,'animation-class':'toaster-top-center'}" class="toaster-top-center"></toaster-container>
-
-<!-- Logout -->
-<div class="logout">
-    <div class="modal fade" id="logoutlog" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="logoutdiv">
-                        <img src="image/logoutIcon.png">
-                        <h1>Logout</h1>
-                    </div>
-                </div>
-                <div class="modal-footer1">
-                    <button type="button" class="btnlgt logoutyes" ng-click="logout()" id="logout">Yes</button>
-                    <button type="button" class="btnlgt logoutno" data-dismiss="modal">No</button>
-                </div>
-            </div>
+          </li>
         </div>
-    </div>
-</div>
+        <li class="app-notification__footer">
+          <a href="" ng-click="notification()">See all Notifications.</a>
+        </li>
+      </ul>
+    </li>
+
+    <li class="dropdown">
+      <div class="profile-card-wrapper dropdown-toggle" data-toggle="dropdown">
+        <div class="profile-avatar-circle">
+          <img
+            ng-if="sessionObject.profilePicture"
+            ng-src="{{sessionObject.profilePicture}}"
+            onerror="this.src = 'image/avatarimg.jpg'"
+            class="profile-img-fluid"
+            alt="User"
+          />
+          <img
+            ng-if="!sessionObject.profilePicture"
+            src="image/avatarimg.jpg"
+            class="profile-img-fluid"
+            alt="Default Avatar"
+          />
+        </div>
+        <div class="profile-text-container">
+          <div class="profile-user-name">
+            {{sessionObject.userName || sessionObject.firstName}}
+          </div>
+          <div class="profile-user-role">{{sessionObject.role}}</div>
+        </div>
+      </div>
+
+      <ul class="dropdown-menu dropdown-menu-right profile-dropdown-box">
+        <li>
+          <a href="javascript:void(0)" ng-click="userDetails()">
+            <i class="fa fa-user"></i> Profile
+          </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <a href="javascript:void(0)" ng-click="confirmLogout()">
+            <i class="fa fa-sign-out"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="doculogo">
+    <a href="javascript:void(0);">
+      <img
+        ng-src="{{ isDarkMode ? 'image/DocuChain-dark.png' : 'image/DocuChain-Light.png' }}"
+      />
+    </a>
+  </div>
+</header>
+
+<toaster-container
+  toaster-options="{'time-out': 3000,'animation-class':'toaster-top-center'}"
+  class="toaster-top-center"
+></toaster-container> -->
+
+<header class="docuchain-app-header" ng-controller="UserHeaderController">
+  <a class="docuchain-sidebar-toggle" ng-click="sidebarActiveFun()"></a>
+
+  <div class="toggleoption" id="toggleoption">
+    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+  </div>
+
+  <ul class="docuchain-app-nav">
+    <li
+      class="app-nav__item theme-toggle-btn"
+      ng-click="toggleTheme()"
+      title="Toggle Dark/Light Mode"
+    >
+      <i class="fa" ng-class="isDarkMode ? 'fa-sun-o' : 'fa-moon-o'"></i>
+    </li>
+
+    <li class="dropdown">
+      <a
+        class="app-nav__item animated infinite swing"
+        href="javascript:void(0)"
+        aria-label="Show notifications"
+        ng-show="notificationCountList.length >= 0"
+        ng-click="notification()"
+      >
+        <img src="image/notification.png" alt="notification" />
+        <span ng-show="notificationCountList.length > 0">
+          {{notificationCountList.length}}
+        </span>
+      </a>
+
+      <!-- <a
+        class="app-nav__item animated infinite swing"
+        href="javascript:void(0)"
+        ng-click="faq()"
+        title="FAQ"
+      >
+        <img src="image/faqIcons.png" alt="faq" />
+      </a> -->
+      <a
+        class="app-nav__item faq-toggle-btn"
+        href="javascript:void(0)"
+        ng-click="faq()"
+        title="Help & FAQ"
+      >
+        <i class="fa fa-question-circle"></i>
+      </a>
+
+      <ul class="app-notification dropdown-menu dropdown-menu-right">
+        <li class="app-notification__title">Notifications</li>
+        <div
+          class="app-notification__content"
+          ng-repeat="list in notificationCountList | limitTo:5"
+        >
+          <li ng-click="notification()">
+            <a class="app-notification__item" href="javascript:void(0);">
+              <div>
+                <p class="app-notification__message">
+                  {{list.notificationName}}
+                </p>
+                <p class="app-notification__meta">{{list.notifiedOn}}</p>
+              </div>
+            </a>
+          </li>
+        </div>
+        <li class="app-notification__footer">
+          <a href="" ng-click="notification()">See all Notifications.</a>
+        </li>
+      </ul>
+    </li>
+
+    <li class="dropdown">
+      <div class="profile-card-wrapper dropdown-toggle" data-toggle="dropdown">
+        <div class="profile-avatar-circle">
+          <img
+            ng-if="sessionObject.profilePicture"
+            ng-src="{{sessionObject.profilePicture}}"
+            onerror="this.src = 'image/avatarimg.jpg'"
+            class="profile-img-fluid"
+            alt="User"
+          />
+          <img
+            ng-if="!sessionObject.profilePicture"
+            src="image/avatarimg.jpg"
+            class="profile-img-fluid"
+            alt="Default Avatar"
+          />
+        </div>
+        <div class="profile-text-container">
+          <div class="profile-user-name">
+            {{sessionObject.userName || sessionObject.firstName}}
+          </div>
+          <div class="profile-user-role">{{sessionObject.role}}</div>
+        </div>
+      </div>
+
+      <ul class="dropdown-menu dropdown-menu-right profile-dropdown-box">
+        <li>
+          <a href="javascript:void(0)" ng-click="userDetails()">
+            <i class="fa fa-user"></i> Profile
+          </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <a href="javascript:void(0)" ng-click="confirmLogout()">
+            <i class="fa fa-sign-out"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="doculogo">
+    <a href="javascript:void(0);">
+      <img
+        ng-src="{{ isDarkMode ? 'image/DocuChain-dark.png' : 'image/DocuChain-Light.png' }}"
+      />
+    </a>
+  </div>
+</header>
+
+<toaster-container
+  toaster-options="{'time-out': 3000,'animation-class':'toaster-top-center'}"
+  class="toaster-top-center"
+></toaster-container>

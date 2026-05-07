@@ -1,4 +1,155 @@
 <div class="app-content">
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a ng-click="userDetails()">
+          <span class="icon icon-beaker"> </span> Report an Issue</a
+        >
+      </li>
+    </ul>
+  </div>
+
+  <div class="docuContent">
+    <div class="reportissues">
+      <div class="reportForm resetoldnew">
+        <form name="reportForms">
+          <!-- Name -->
+          <div class="form-group flex">
+            <div class="col-lg-3">
+              <label>Name:</label>
+            </div>
+            <div class="col-lg-9">
+              <input
+                type="text"
+                placeholder="Name"
+                ng-model="report.name"
+                maxlength="30"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Organisation Name -->
+          <div class="form-group flex">
+            <div class="col-lg-3">
+              <label>Organisation Name:</label>
+            </div>
+            <div class="col-lg-9">
+              <input
+                type="text"
+                placeholder="Organisation Name"
+                ng-model="report.organizationName"
+                maxlength="30"
+                readonly
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group flex">
+            <div class="col-lg-3">
+              <label>Email:</label>
+            </div>
+            <div class="col-lg-9">
+              <input
+                type="text"
+                placeholder="Email"
+                ng-model="report.email"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group flex">
+            <div class="col-lg-3">
+              <label>Phone Number:</label>
+            </div>
+            <div class="col-lg-9">
+              <input
+                type="text"
+                placeholder="Phone Number"
+                ng-model="report.phoneNumber"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Reason -->
+          <div class="form-group flex">
+            <div class="col-lg-3">
+              <label>Reason:</label>
+            </div>
+            <div class="col-lg-9">
+              <textarea
+                name="reason"
+                placeholder="Reason"
+                ng-model="report.reason"
+                maxlength="500"
+                required
+              ></textarea>
+            </div>
+          </div>
+        </form>
+
+        <div class="form-group">
+          <!-- <button type="button" ng-click="popupClear()" class="btngeo clearbtn">
+            CLEAR
+          </button>
+          <button
+            type="submit"
+            ng-click="reportIssue(report)"
+            ng-disabled="reportForms.$invalid"
+            class="btngeo reportsubmitbtn"
+          >
+            SUBMIT
+          </button> -->
+
+          <button
+            type="button"
+            class="btn-modern clear-btn"
+            ng-click="popupClear()"
+          >
+            <span class="btn-text">CLEAR</span>
+            <!-- <span class="icon-circle">
+              <i class="fa fa-times"></i>
+            </span> -->
+          </button>
+
+          <button
+            type="submit"
+            class="btn-modern submit-btn"
+            ng-click="reportIssue(report)"
+            ng-disabled="reportForms.$invalid"
+          >
+            <span class="btn-text">SUBMIT</span>
+            <!-- <span class="icon-circle">
+              <i class="fa fa-check"></i>
+            </span> -->
+          </button>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
+</div>
+<toaster-container
+  toaster-options="{'position-class': 'toast-custom-right', 'close-button': true, 'time-out': 5000}"
+></toaster-container>
+<!-- <div class="app-content">
     <div class="docubodyTitle">
         <ul id="breadcrumb">
             <li>
@@ -73,4 +224,4 @@
             <div class="cssload-dot"></div>
         </div>
     </div>
-</div>
+</div> -->

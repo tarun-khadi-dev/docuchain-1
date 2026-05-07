@@ -6,14 +6,15 @@ serviceApp.service('FunctionalityService', [
   '$state',
   '$location',
   function ($http, $window, $state, $location) {
-    //var urlBase = 'https://104.215.199.128:8080/dms-dapp-docuchain-api/docuchain/api';
+    // Define your API Base URL
     // var urlBase = 'https://docuchain.sg:8090/dms-dapp-docuchain-api/docuchain/api';
-    var urlBase = 'http://localhost:8070/docuchain/api';
-    // var urlBase = 'http://192.168.0.31:8070/docuchain/api';
+    var urlBase = 'http://192.168.0.127:8070/docuchain/api';
 
     if (localStorage.length == 0) {
       $location.path('/');
     }
+
+    // --- USER & AUTH ---
     this.loginSubmit = function (data) {
       return $http.post(urlBase + '/user/login', data);
     };
@@ -22,16 +23,13 @@ serviceApp.service('FunctionalityService', [
       return $http.post(urlBase + '/user/forgotpassword', data);
     };
 
+    this.resetPswd = function (data) {
+      return $http.post(urlBase + '/user/password/update', data);
+    };
+
+    // --- VESSEL (SHIP) MANAGEMENT ---
     this.getVessellist = function (userId) {
       return $http.get(urlBase + '/ship/list/' + userId);
-    };
-
-    this.getCountry = function () {
-      return $http.get(urlBase + '/common/country/list');
-    };
-
-    this.getPort = function (data) {
-      return $http.get(urlBase + '/common/country/port/list/' + data);
     };
 
     this.getShiptype = function (data) {
@@ -52,14 +50,14 @@ serviceApp.service('FunctionalityService', [
         },
       });
     };
-    // return $http.post(urlBase  '/ship/create', formData);
-
-    //-----------------Admin Ship Profile Started--------------------------------\\
-
     this.editShip = function (data, shipPic) {
       var formData = new FormData();
       formData.append('shipProfileInfo', JSON.stringify(data));
-      formData.append('updateshipPic', shipPic);
+      // formData.append('updateshipPic', shipPic);
+      if (shipPic) {
+        formData.append('updateshipPic', shipPic);
+      }
+
       return $http({
         method: 'POST',
         url: urlBase + '/ship/update',
@@ -70,7 +68,6 @@ serviceApp.service('FunctionalityService', [
         },
       });
     };
-
     this.active = function (data) {
       return $http.post(urlBase + '/ship/active/all', data);
     };
@@ -87,6 +84,75 @@ serviceApp.service('FunctionalityService', [
       return $http.post(urlBase + '/ship/delete/', data);
     };
 
+    this.getViewShipProfile = function (userId) {
+      return $http.get(urlBase + '/ship/viewShipProfile/' + userId);
+    };
+
+    this.getShipProfileList = function (userId) {
+      return $http.get(urlBase + '/ship/list/organization/' + userId);
+    };
+
+    this.getVesselProfileList = function (data) {
+      return $http.post(urlBase + '/user/ship/get', data);
+    };
+
+    this.getShipList = function (userId) {
+      return $http.get(urlBase + '/ship/list/organization/' + userId);
+    };
+
+    this.getVesselsNameList = function (userId) {
+      return $http.get(urlBase + '/ship/list/organization/' + userId);
+    };
+
+    // --- OTP APIs (Fixed for Plain Text Responses) ---
+
+    // 1. Send OTP
+    this.sendOtp = function (data) {
+      return $http({
+        method: 'POST',
+        url: urlBase + '/sendOtp',
+        data: data,
+        transformResponse: [
+          function (data) {
+            return data; // Return raw string, do not parse JSON
+          },
+        ],
+      });
+    };
+
+    // 2. Verify OTP
+    this.verifyOtpSubmit = function (data) {
+      return $http({
+        method: 'POST',
+        url: urlBase + '/verifyOtp',
+        data: data,
+        transformResponse: [
+          function (data) {
+            return data; // Return raw string
+          },
+        ],
+      });
+    };
+
+    // 3. Resend OTP
+    this.resendOtp = function (data) {
+      return $http({
+        method: 'POST',
+        url: urlBase + '/resendOtp',
+        data: data,
+        transformResponse: [
+          function (data) {
+            return data; // Return raw string
+          },
+        ],
+      });
+    };
+    // --- VESSEL PORTS ---
+    this.getVesselPorts = function (vesselId) {
+      return $http.get(urlBase + '/common/vessel/ports/' + vesselId);
+    };
+
+    // --- USER MANAGEMENT (Tech/Commercial/Master) ---
     this.getCommercial = function (data) {
       return $http.get(urlBase + '/user/commercialmanager/list/' + data);
     };
@@ -99,89 +165,17 @@ serviceApp.service('FunctionalityService', [
       return $http.get(urlBase + '/user/shipmaster/list/' + data);
     };
 
-    this.getViewShipProfile = function (userId) {
-      return $http.get(urlBase + '/ship/viewShipProfile/' + userId);
-    };
-
-    this.getDocumentNotificationCount = function (data) {
-      return $http.post(urlBase + '/document/notification/count', data);
-    };
-    this.getTaskStatus = function (data) {
-      return $http.get(urlBase + '/task/status/user/' + data);
-    };
-
     this.delShipMaster = function (data) {
       return $http.post(urlBase + '/ship/shipmaster/delete', data);
     };
+
     this.delTech = function (data) {
       return $http.post(urlBase + '/ship/techmanager/delete', data);
     };
+
     this.delCom = function (data) {
       return $http.post(urlBase + '/ship/commercialmanager/delete', data);
     };
-
-    this.snoozeUpdate = function (data) {
-      return $http.post(urlBase + '/document/notification/snooze/update', data);
-    };
-    this.getDashboardTopCount = function (userId) {
-      return $http.get(urlBase + '/ship/getDashboardTopCount/' + userId);
-    };
-
-    this.getDocumentNotification = function (data) {
-      return $http.post(urlBase + '/document/notification', data);
-    };
-
-    this.getQuestionAndAnswer = function () {
-      return $http.get(urlBase + '/common/question/list/all/');
-    };
-
-    this.setDocumentNotificationViewed = function (data) {
-      return $http.post(urlBase + '/document/notification/viewed', data);
-    };
-
-    this.getNotificationByCategory = function (data) {
-      console.log(
-        'URLBase::' + urlBase + '/document/notification/byCategory',
-        data
-      );
-      return $http.post(urlBase + '/document/notification/byCategory', data);
-    };
-
-    this.deleteAllNotification = function (data) {
-      console.log(
-        'URLBase::' + urlBase + '/document/notification/deleteAll',
-        data
-      );
-      return $http.post(urlBase + '/document/notification/deleteAll', data);
-    };
-
-    this.getPendingRequest = function (id) {
-      return $http.get(urlBase + '/user/getPendingRequest/' + id);
-    };
-
-    this.approvelUser = function (data) {
-      return $http.post(urlBase + '/user/approvel', data);
-    };
-    this.editProfileData = function (data, pic) {
-      var formData = new FormData();
-      formData.append('updateProfile', JSON.stringify(data));
-      formData.append('profilePicture', pic);
-      return $http({
-        method: 'POST',
-        url: urlBase + '/user/profile/update',
-        headers: { 'Content-Type': undefined },
-        data: formData,
-        transformRequest: function (data, headersGetter) {
-          return data;
-        },
-      });
-    };
-
-    this.resetPswd = function (data) {
-      return $http.post(urlBase + '/user/password/update', data);
-    };
-
-    //-----------------Admin user Profile Started--------------------------------\\
 
     this.addUser = function (data, userPic) {
       var formData = new FormData();
@@ -198,20 +192,6 @@ serviceApp.service('FunctionalityService', [
       });
     };
 
-    this.changeLogo = function (addLogoImage, adminId) {
-      var formData = new FormData();
-      formData.append('adminId', adminId);
-      formData.append('addLogoImage', addLogoImage);
-      return $http({
-        method: 'POST',
-        url: urlBase + '/organization/addLogo',
-        headers: { 'Content-Type': undefined },
-        data: formData,
-        transformRequest: function (data, headersGetter) {
-          return data;
-        },
-      });
-    };
     this.editUser = function (data, userPic) {
       var formData = new FormData();
       formData.append('userInfo', JSON.stringify(data));
@@ -227,32 +207,47 @@ serviceApp.service('FunctionalityService', [
       });
     };
 
+    this.editProfileData = function (data, pic) {
+      var formData = new FormData();
+      formData.append('updateProfile', JSON.stringify(data));
+      formData.append('profilePicture', pic);
+      return $http({
+        method: 'POST',
+        url: urlBase + '/user/profile/update',
+        headers: { 'Content-Type': undefined },
+        data: formData,
+        transformRequest: function (data, headersGetter) {
+          return data;
+        },
+      });
+    };
+
     this.getOrganizationUserList = function (userId) {
       return $http.get(urlBase + '/user/getorganizationuserlist/' + userId);
     };
 
-    this.getchangeStatusOfUser = function (status) {
-      return $http.post(urlBase + '/user/ship/statusUserProfileLists', status);
+    this.getUserProfileList = function (userId) {
+      return $http.get(urlBase + '/user/list/all/' + userId);
     };
 
-    this.getVesselsNameList = function (userId) {
-      console.log(
-        'ibnside the onload functiobn functionality services' +
-          urlBase +
-          '/common/vessels/type/list/' +
-          userId
-      );
-      return $http.get(urlBase + '/ship/list/organization/' + userId);
+    this.getuserList = function (userId, url) {
+      return $http.get(urlBase + url + userId);
     };
 
-    this.getRoleList = function (userId) {
-      console.log(
-        'ibnside the onload functiobn functionality services' +
-          urlBase +
-          '/common/roles/list/' +
-          userId
-      );
-      return $http.get(urlBase + '/common/roles/list/' + userId);
+    this.getPendingRequest = function (id) {
+      return $http.get(urlBase + '/user/getPendingRequest/' + id);
+    };
+
+    this.approvelUser = function (data) {
+      return $http.post(urlBase + '/user/approvel', data);
+    };
+
+    this.addRequestUser = function (data) {
+      return $http.post(urlBase + '/user/request', data);
+    };
+
+    this.deleteAdminUser = function (data) {
+      return $http.post(urlBase + '/user/delete', data);
     };
 
     this.activateAllUser = function (status) {
@@ -263,112 +258,65 @@ serviceApp.service('FunctionalityService', [
       return $http.post(urlBase + '/user/update/statusall', status);
     };
 
-    this.getListRolesName = function (userId) {
-      return $http.get(urlBase + '/common/roles/list/' + userId);
+    this.getchangeStatusOfUser = function (status) {
+      return $http.post(urlBase + '/user/ship/statusUserProfileLists', status);
     };
 
-    this.getListVesselType = function (userId) {
-      return $http.get(urlBase + '/common/vessels/type/list/' + userId);
+    // --- DOCUMENTS & NOTIFICATIONS ---
+    this.getDocumentNotificationCount = function (data) {
+      return $http.post(urlBase + '/document/notification/count', data);
     };
 
-    this.addRolesName = function (data) {
-      return $http.post(urlBase + '/common/vessels/type/add', data);
+    this.getDocumentNotification = function (data) {
+      return $http.post(urlBase + '/document/notification', data);
     };
 
-    this.editRole = function (data) {
-      return $http.post(urlBase + '/common/roles/update', data);
+    this.getNotificationByCategory = function (data) {
+      return $http.post(urlBase + '/document/notification/byCategory', data);
     };
 
-    this.updateVessels = function (data) {
-      return $http.post(urlBase + '/common/vessels/type/update', data);
-    };
-    this.deleteAdminUser = function (data) {
-      return $http.post(urlBase + '/user/delete', data);
-    };
-    //-----------------Admin user Profile end--------------------------------\\
-    //-----------------Super Admin country state Profile Started--------------------------------\\
-
-    this.getCountryList = function () {
-      return $http.get(urlBase + '/common/country/list');
+    this.setDocumentNotificationViewed = function (data) {
+      return $http.post(urlBase + '/document/notification/viewed', data);
     };
 
-    this.addCountry = function (countyData) {
-      return $http.post(urlBase + '/common/country/add', countyData);
+    this.snoozeUpdate = function (data) {
+      return $http.post(urlBase + '/document/notification/snooze/update', data);
     };
 
-    this.editCountry = function (countyData) {
-      return $http.put(urlBase + '/common/country/update', countyData);
+    this.deleteNotification = function (data) {
+      return $http.post(urlBase + '/document/notification/delete/', data);
     };
 
-    this.deleteCountry = function (countyData) {
-      return $http.post(urlBase + '/common/country/delete', countyData);
+    this.deleteAllNotification = function (data) {
+      return $http.post(urlBase + '/document/notification/deleteAll', data);
     };
 
-    this.getCountryStateList = function () {
-      return $http.get(urlBase + '/common/country/port/list/all');
-    };
-
-    this.addCountryState = function (countyStateData) {
-      return $http.post(urlBase + '/common/country/port/add', countyStateData);
-    };
-
-    this.editCountryState = function (countyStateData) {
-      return $http.post(
-        urlBase + '/common/country/port/update',
-        countyStateData
-      );
-    };
-    this.deleteCountryState = function (countyStateData) {
-      return $http.post(
-        urlBase + '/common/country/port/delete',
-        countyStateData
-      );
-    };
-
+    // --- PLACEHOLDERS & CERTIFICATES ---
     this.getPlaceHolderList = function () {
       return $http.get(urlBase + '/common/document/holder/list');
     };
+
     this.getPlaceHolderListByorganizatinId = function (data) {
       return $http.post(
         urlBase + '/common/document/holder/list/organization',
         data
       );
     };
-    this.getExpirycertificateList = function () {
-      return $http.get(
-        urlBase + '/common/expiry/document/certificateType/list'
-      );
-    };
-    this.addCertificateType = function (data) {
-      return $http.post(
-        urlBase + '/common/expiry/document/certificateType/add',
-        data
-      );
-    };
-    this.updateCertificateType = function (data) {
-      return $http.post(
-        urlBase + '/common/expiry/document/certificateType/update',
-        data
-      );
-    };
-    this.deleteCertificateType = function (data) {
-      return $http.post(
-        urlBase + '/common/expiry/document/certificateType/delete',
-        data
-      );
-    };
+
     this.addPlaceHolder = function (countyStateData) {
       return $http.post(
         urlBase + '/common/document/holder/add',
         countyStateData
       );
     };
+
     this.editPlaceHolder = function (countyStateData) {
       return $http.put(
         urlBase + '/common/document/holder/update',
         countyStateData
       );
     };
+
     this.deletePlaceHolder = function (data) {
       return $http.delete(
         urlBase +
@@ -379,47 +327,51 @@ serviceApp.service('FunctionalityService', [
       );
     };
 
-    this.getOrganizationTopCount = function () {
-      return $http.get(urlBase + '/organization/top/count');
-    };
-    this.getStatisticsDetail = function () {
-      return $http.get(urlBase + '/organization/statistics/detail');
-    };
-    //-----------------Super Admin country state Profile end--------------------------------\\
-    //-----------------User API call Service Starts--------------------------------\\
-
-    this.getShipProfileList = function (userId) {
-      return $http.get(urlBase + '/ship/list/organization/' + userId);
+    this.getExpirycertificateList = function () {
+      return $http.get(
+        urlBase + '/common/expiry/document/certificateType/list'
+      );
     };
 
-    this.getVesselProfileList = function (data) {
-      return $http.post(urlBase + '/user/ship/get', data);
+    this.addCertificateType = function (data) {
+      return $http.post(
+        urlBase + '/common/expiry/document/certificateType/add',
+        data
+      );
+    };
+
+    this.updateCertificateType = function (data) {
+      return $http.post(
+        urlBase + '/common/expiry/document/certificateType/update',
+        data
+      );
+    };
+
+    this.deleteCertificateType = function (data) {
+      return $http.post(
+        urlBase + '/common/expiry/document/certificateType/delete',
+        data
+      );
     };
 
     this.getAllExpiryDocumentList = function (shipId, archivedStatus) {
-      console.log(
-        "urlBase + '/expiry/document/holder/all/' + shipId + " /
-          ' + archivedStatus' +
-          urlBase +
-          '/expiry/document/holder/all/' +
-          shipId +
-          '/' +
-          archivedStatus
-      );
       return $http.get(
         urlBase + '/expiry/document/holder/all/' + shipId + '/' + archivedStatus
       );
     };
 
-    this.getShipList = function (userId) {
-      return $http.get(urlBase + '/ship/list/organization/' + userId);
+    this.getDoucmentApprovalListService = function (data) {
+      return $http.post(urlBase + '/expiry/document/getExpDocumentInfo', data);
     };
 
-    this.getDashboardTopCountBasedOnVessel = function (vesselId) {
-      return $http.get(
-        urlBase + '/ship/getDashboardTopCountBasedOnVessel/' + vesselId
-      );
+    this.chageExpiryDocumentStatus = function (data) {
+      return $http.post(urlBase + '/document/approval', data);
     };
+
+    this.getDocumentHolderHistory = function (data) {
+      return $http.post(urlBase + '/expiry/document/histroy', data);
+    };
+
     this.scanExpiryDocument = function (file) {
       var formdata = new FormData();
       formdata.append('scanFile', file);
@@ -434,36 +386,78 @@ serviceApp.service('FunctionalityService', [
       });
     };
 
+    // this.saveExpiryDocument = function (saveData, file) {
+    //   var formdata = new FormData();
+    //   formdata.append('ExpiryDocumentInfo', saveData);
+    //   formdata.append('scanFile', file);
+    //   return $http({
+    //     method: 'POST',
+    //     url: urlBase + '/expiry/document/add',
+    //     headers: { 'Content-Type': undefined },
+    //     data: formdata,
+    //     transformRequest: function (data, headersGetter) {
+    //       return data;
+    //     },
+    //   });
+    // };
+    // this.saveExpiryDocument = function (saveData, file) {
+    //   var formdata = new FormData();
+    //   // Use JSON.stringify if saveData is an object,
+    //   // but based on your controller you are already doing JSON.stringify($scope.saveData)
+    //   formdata.append('ExpiryDocumentInfo', saveData);
+    //   formdata.append('scanFile', file);
+
+    //   return $http.post(urlBase + '/expiry/document/add', formdata, {
+    //     transformRequest: angular.identity, // This is key
+    //     headers: { 'Content-Type': undefined }, // Let browser set boundary
+    //   });
+    // };
     this.saveExpiryDocument = function (saveData, file) {
       var formdata = new FormData();
       formdata.append('ExpiryDocumentInfo', saveData);
-      formdata.append('scanFile', file);
-      return $http({
-        method: 'POST',
-        url: urlBase + '/expiry/document/add',
+
+      // ONLY append the file if it actually exists (prevents sending string "null")
+      if (file) {
+        formdata.append('scanFile', file);
+      }
+
+      return $http.post(urlBase + '/expiry/document/add', formdata, {
+        transformRequest: angular.identity,
         headers: { 'Content-Type': undefined },
-        data: formdata,
-        transformRequest: function (data, headersGetter) {
-          return data;
-        },
+      });
+    };
+
+    this.saveDraftDocument = function (saveData, file) {
+      var formdata = new FormData();
+      formdata.append('ExpiryDocumentInfo', saveData);
+
+      // ONLY append the file if it actually exists
+      if (file) {
+        formdata.append('scanFile', file);
+      }
+
+      return $http.post(urlBase + '/expiry/document/save-draft', formdata, {
+        transformRequest: angular.identity,
+        headers: { 'Content-Type': undefined },
+      });
+    };
+
+    this.saveDraftDocument = function (saveData, file) {
+      var formdata = new FormData();
+      formdata.append('ExpiryDocumentInfo', saveData);
+      formdata.append('scanFile', file);
+
+      return $http.post(urlBase + '/expiry/document/save-draft', formdata, {
+        transformRequest: angular.identity,
+        headers: { 'Content-Type': undefined },
       });
     };
 
     this.updateExpiryDocument = function (data) {
       return $http.post(urlBase + '/expiry/document/update', data);
     };
-    this.getDoucmentApprovalListService = function (data) {
-      return $http.post(urlBase + '/expiry/document/getExpDocumentInfo', data);
-    };
 
-    this.chageExpiryDocumentStatus = function (data) {
-      return $http.post(urlBase + '/document/approval', data);
-    };
-
-    this.getDocumentHolderHistory = function (data) {
-      return $http.post(urlBase + '/expiry/document/histroy', data);
-    };
-
+    // --- GROUPS ---
     this.getGroupList = function (userId) {
       return $http.get(urlBase + '/group/all/' + userId);
     };
@@ -475,11 +469,9 @@ serviceApp.service('FunctionalityService', [
     this.getGroupListShip = function (data) {
       return $http.post(urlBase + '/group/list', data);
     };
-
-    this.deleteGroup = function (groupId) {
-      return $http.get(urlBase + '/group/delete/' + groupId);
+    this.addMultipleExpiryDocToGroup = function (data) {
+      return $http.post(urlBase + '/group/add-multiple', data);
     };
-
     this.getAllGroupExpiryDocumentList = function (groupId) {
       return $http.get(urlBase + '/group/expirydocument/' + groupId);
     };
@@ -513,47 +505,26 @@ serviceApp.service('FunctionalityService', [
     this.updateshareExpiryDoc = function (exp) {
       return $http.post(urlBase + '/group/update/exp', exp);
     };
-    // this.getDocumentNOtification = function (data) {
-    //     return $http.post(urlBase + '/document/notification', data);
-    // };
-    this.addGeoLocation = function (data) {
-      return $http.post(urlBase + '/user/addGeoLocation', data);
-    };
-    this.geoLocationlist = function (userId) {
-      return $http.get(urlBase + '/user/get/geoLocationlist/' + userId);
-    };
-    //-----------------User API call Service end--------------------------------\\
 
-    // Task manager service
+    // --- TASK MANAGEMENT ---
+    this.getTaskStatus = function (data) {
+      return $http.get(urlBase + '/task/status/user/' + data);
+    };
+
     this.getTaskAssignedByUser = function (userProfileId) {
       return $http.get(urlBase + '/task/assignedbyuser/' + userProfileId);
     };
+
     this.getTaskAssignedToUser = function (userProfileId) {
       return $http.get(urlBase + '/task/assignedtouser/' + userProfileId);
     };
-    //updateShipRelatedTask
+
     this.updateShipRelatedTask = function (data) {
       return $http.post(urlBase + '/task/update/shiprelatedtask', data);
     };
 
-    this.getUserProfileList = function (userId) {
-      console.log('url service::::', urlBase + '/user/list/all/' + userId);
-      return $http.get(urlBase + '/user/list/all/' + userId);
-    };
-
     this.createShipRelatedTask = function (data) {
       return $http.post(urlBase + '/task/create/shiprelated', data);
-    };
-    this.getuserList = function (userId, url) {
-      console.log('before get userLisat::' + urlBase + url + userId);
-      return $http.get(urlBase + url + userId);
-    };
-    this.addRequestUser = function (data) {
-      console.log(
-        'before services request user:::' + urlBase + '/user/request',
-        data
-      );
-      return $http.post(urlBase + '/user/request', data);
     };
 
     this.getTaskStatusFromAssignedUser = function (taskId) {
@@ -563,27 +534,87 @@ serviceApp.service('FunctionalityService', [
     this.deleteTask = function (taskId) {
       return $http.post(urlBase + '/task/delete', taskId);
     };
+
     this.taskStatusList = function () {
       return $http.get(urlBase + '/task/status/all');
     };
+
     this.updateStatusWithRemarks = function (taskInfo) {
-      console.log(urlBase + '/task/status/update');
       return $http.post(urlBase + '/task/status/update', taskInfo);
     };
-    //-----task management end---------------//
 
-    //-----------------Admin AauditLog  Started--------------------------------\\
-    this.getHistorybyadmin = function (data) {
-      return $http.post(urlBase + '/history/getHistorybyadmin', data);
-    };
-    this.gethistorybasedonselecttype = function (data) {
-      return $http.post(urlBase + '/history/gethistorybasedonselecttype', data);
+    // --- CONFIGURATION & ROLES ---
+    this.getRoleList = function (userId) {
+      return $http.get(urlBase + '/common/roles/list/' + userId);
     };
 
-    //-----------------Admin AauditLog End--------------------------------\\
+    this.getListRolesName = function (userId) {
+      return $http.get(urlBase + '/common/roles/list/' + userId);
+    };
 
-    //------------------------------------create organisation-----------------//
+    this.editRole = function (data) {
+      return $http.post(urlBase + '/common/roles/update', data);
+    };
 
+    this.getListVesselType = function (userId) {
+      return $http.get(urlBase + '/common/vessels/type/list/' + userId);
+    };
+
+    this.addRolesName = function (data) {
+      return $http.post(urlBase + '/common/vessels/type/add', data);
+    };
+
+    this.updateVessels = function (data) {
+      return $http.post(urlBase + '/common/vessels/type/update', data);
+    };
+
+    this.getCountry = function () {
+      return $http.get(urlBase + '/common/country/list');
+    };
+
+    this.getCountryList = function () {
+      return $http.get(urlBase + '/common/country/list');
+    };
+
+    this.addCountry = function (countyData) {
+      return $http.post(urlBase + '/common/country/add', countyData);
+    };
+
+    this.editCountry = function (countyData) {
+      return $http.put(urlBase + '/common/country/update', countyData);
+    };
+
+    this.deleteCountry = function (countyData) {
+      return $http.post(urlBase + '/common/country/delete', countyData);
+    };
+
+    this.getCountryStateList = function () {
+      return $http.get(urlBase + '/common/country/port/list/all');
+    };
+
+    this.getPort = function (data) {
+      return $http.get(urlBase + '/common/country/port/list/' + data);
+    };
+
+    this.addCountryState = function (countyStateData) {
+      return $http.post(urlBase + '/common/country/port/add', countyStateData);
+    };
+
+    this.editCountryState = function (countyStateData) {
+      return $http.post(
+        urlBase + '/common/country/port/update',
+        countyStateData
+      );
+    };
+
+    this.deleteCountryState = function (countyStateData) {
+      return $http.post(
+        urlBase + '/common/country/port/delete',
+        countyStateData
+      );
+    };
+
+    // --- ORGANIZATION & SUBSCRIPTION ---
     this.createOrganization = function (data) {
       return $http.post(urlBase + '/organization/create', data);
     };
@@ -594,12 +625,15 @@ serviceApp.service('FunctionalityService', [
         data
       );
     };
+
     this.getOrganizationList = function (data) {
       return $http.get(urlBase + '/organization/list/' + data);
     };
+
     this.changeStatusOrganization = function (data) {
       return $http.post(urlBase + '/organization/active', data);
     };
+
     this.changeOrgDualApprovel = function (data) {
       return $http.post(urlBase + '/organization/dual/approval', data);
     };
@@ -621,27 +655,52 @@ serviceApp.service('FunctionalityService', [
     this.getorganizationView = function (data) {
       return $http.get(urlBase + '/organization/view/' + data);
     };
+
     this.updatOrganization = function (data) {
       return $http.put(urlBase + '/organization/update', data);
     };
+
+    this.changeLogo = function (addLogoImage, adminId) {
+      var formData = new FormData();
+      formData.append('adminId', adminId);
+      formData.append('addLogoImage', addLogoImage);
+      return $http({
+        method: 'POST',
+        url: urlBase + '/organization/addLogo',
+        headers: { 'Content-Type': undefined },
+        data: formData,
+        transformRequest: function (data, headersGetter) {
+          return data;
+        },
+      });
+    };
+
+    this.getOrganizationTopCount = function () {
+      return $http.get(urlBase + '/organization/top/count');
+    };
+
+    this.getStatisticsDetail = function () {
+      return $http.get(urlBase + '/organization/statistics/detail');
+    };
+
     this.getSubscriptionList = function () {
       return $http.get(urlBase + '/subscription/list');
     };
+
     this.subscriptionAdminList = function (data) {
       return $http.get(urlBase + '/organization/list/admin/' + data);
     };
+
     this.addSubAdmin = function (data) {
       return $http.post(urlBase + '/organization/save/admin', data);
     };
-    // this.updateAdmin = function (data) {
-    //     return $http.post(urlBase + '/user/admin/update', data);
-    // };
+
     this.deleteAdmin = function (data) {
-      //return $http.post(urlBase + '/user/admin/update', data);
       return $http.delete(
         urlBase + '/user/admin/delete/' + data.superAdminId + '/' + data.adminId
       );
     };
+
     this.editSubscription = function (data) {
       return $http.post(urlBase + '/organization/subscription/update', data);
     };
@@ -654,29 +713,72 @@ serviceApp.service('FunctionalityService', [
       return $http.post(urlBase + '/user/admin/password/reset', data);
     };
 
-    //------------------------------------end organisation-----------------//
-    //-----------------Super Admin AauditLog  Started--------------------------------\\
+    // --- AUDIT LOGS & DASHBOARD ---
+    this.getHistorybyadmin = function (data) {
+      return $http.post(urlBase + '/history/getHistorybyadmin', data);
+    };
+
+    this.gethistorybasedonselecttype = function (data) {
+      return $http.post(urlBase + '/history/gethistorybasedonselecttype', data);
+    };
+
     this.getHistorybysuperAdmin = function (data) {
       return $http.post(urlBase + '/history/getHistorybySuperadmin', data);
     };
+
     this.gethistorybasedSuperAdminonselecttype = function (data) {
       return $http.post(urlBase + '/history/getbyselecttype', data);
     };
-    //-----------------Super Admin AauditLog End--------------------------------\\
+
+    this.getDashboardTopCount = function (userId) {
+      return $http.get(urlBase + '/ship/getDashboardTopCount/' + userId);
+    };
+
+    this.getDashboardTopCountBasedOnVessel = function (vesselId) {
+      return $http.get(
+        urlBase + '/ship/getDashboardTopCountBasedOnVessel/' + vesselId
+      );
+    };
+
+    // --- MISC ---
     this.reportanIssue = function (data) {
       return $http.post(urlBase + '/common/report/an/issue', data);
     };
-    //----------------Delete Notification Start-----------------------\\
-    this.deleteNotification = function (data) {
-      return $http.post(urlBase + '/document/notification/delete/', data);
+
+    this.getQuestionAndAnswer = function () {
+      return $http.get(urlBase + '/common/question/list/all/');
     };
-    this.deleteAllNotification = function (data) {
-      console.log(
-        'URLBase::' + urlBase + '/document/notification/deleteAll',
-        data
-      );
-      return $http.post(urlBase + '/document/notification/deleteAll', data);
+    // this.getQuestionAndAnswer = function (userId) {
+    //   // CORRECT: Points to User controller
+    //   return $http.get(urlBase + '/common/user/list/all/' + userId);
+    // };
+
+    this.addGeoLocation = function (data) {
+      return $http.post(urlBase + '/user/addGeoLocation', data);
     };
-    //---------------------End-----------------------------------------\\
+
+    this.geoLocationlist = function (userId) {
+      return $http.get(urlBase + '/user/get/geoLocationlist/' + userId);
+    };
+
+    // --- NEW EMAIL API (Added by you) ---
+    this.sendEmail = function (emailData) {
+      return $http.post(urlBase + '/email/send', emailData);
+    };
+
+    // --- VESSEL DOCUMENT AUTOFILL API ---
+    this.scanVesselDocument = function (file) {
+      var formData = new FormData();
+      formData.append('file', file);
+      return $http({
+        method: 'POST',
+        url: urlBase + '/document/scanVesselDocument',
+        headers: { 'Content-Type': undefined },
+        data: formData,
+        transformRequest: function (data, headersGetter) {
+          return data;
+        },
+      });
+    };
   },
 ]);

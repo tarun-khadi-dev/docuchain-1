@@ -31,4 +31,20 @@ saDashboard.controller('SaDashboardController',['$scope','$window', '$location',
         $scope.itemsPerPage = num;
         $scope.currentPage = 1; //reset to first page
       }
+
+      // Dashboard Stats
+    FunctionalityService.getOrganizationTopCount().then(function(response){
+        if(response.status == 200){
+
+            console.log("TopCount Response:", response.data);
+
+            $scope.totalOrganization = response.data.organizationInfo.organizationCount;
+            $scope.activeCount = response.data.organizationInfo.activeCount;
+            $scope.renewalCount = response.data.organizationInfo.renewalCount;
+            $scope.expiredCount = response.data.organizationInfo.expiryCount ;
+        }
+    }, function(error){
+        console.log("TopCount Error:", error);
+    })
+     
 }]);

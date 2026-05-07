@@ -1,517 +1,870 @@
-<div class="app-content" ng-app="dapp" ng-controller="SaCompanyProfileCreateController">
-    <div class="docubodyTitle">
-        <ul id="breadcrumb">
-            <li>
-                <a ui-sref="dapp.saCompanyProfile">
-                    <span class="icon icon-beaker"> </span> Manage Organization</a>
-            </li>
-            <li>
-                <a ui-sref="dapp.saCompanyProfilecreate" ng-click="previous1()">
-                    <span class="icon icon-beaker"> </span>  Company Profile</a>
-            </li>
-            <li>
-                <a ui-sref="dapp.saCompanyProfilecreate" ng-if="tab==2 || tab==3" ng-click="next2(organization)">
-                    <span class="icon icon-beaker"> </span> Subscription</a>
-            </li>
-            <li>
-                    <a ui-sref="dapp.saCompanyProfilecreate" ng-if="tab==3" ng-click="next3(subscriptionInfo)">
-                        <span class="icon icon-beaker"> </span> Admin Detail</a>
-                </li>
-        </ul>
-    </div>
-    <div class="docuContent">
-        <div class="docuTabs">
-            <div class="">
-                <div class="row">
-                    <div class="col-lg-12 col-sm-12 col-xs-12">
-                        <div class="multistep-form-section" class="tab">
-                            <ul>
-                                <li class="form-step-1 " ng-class="{activetab:tab==1}">
-                                    <a href="javascript:void(0);">Company Profile</a>
-                                    <div ng-if="tab==2 ||tab==3">
-                                        <button type="button" class="comptStatusbtn ">
-                                            <img src="image/circleTick.png">
-                                        </button>
-                                    </div>
-                                </li>
-                                <li class="form-step-2" ng-class="{activetab:tab==2}">
-                                    <a href="javascript:void(0);">Subscription</a>
-                                    <div ng-if="tab==3">
-                                        <button type="button" class="comptStatusbtn ">
-                                            <img src="image/circleTick.png">
-                                        </button>
-                                    </div>
-                                </li>
-
-                                <li class="form-step-2" ng-class="{activetab:tab==3}">
-                                    <a href="javascript:void(0);">User Admin</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="tab_content">
-                        <div id="createshare" class="docuchain-request" class="tabs_item" ng-show="tab==1">
-                            <form name="createOrganizationForm" ng-submit="createOrganization()">
-                                <div class="docuchainRequestpannel">
-                                    <h1>Company Profile</h1>
-                                    <!-- <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label>Company Name </label>
-                                                <input type="text" class="text-box" placeholder="Company Name" name="organizationName" ng-model="organizationName" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <button type="submit" class="btngeo submitbtn clr448aff" ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid">Save</button>
-                                            </div>
-                                        </div>
-                                    </div> -->
-                                    <div class="row">
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Company Name
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" class="text-box" custom-focus class="text-box" placeholder="Company Name" name="organizationName" ng-model="organization.organizationName"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Registration Number
-                                                        <span>*</span>
-                                                    </label>
-
-                                                    <input type="text" custom-focus class="text-box" placeholder="Registration Number" ng-pattern="/^[0-9]*$/" name="registrationNumber"
-                                                        ng-model="organization.registrationNumber" required>
-                                                    <span ng-show="createOrganizationForm.registrationNumber.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group textareafield">
-                                                    <label>Address
-                                                        <span>*</span>
-                                                    </label>
-                                                    <textarea custom-focus class="text-box" placeholder="Address" name="address" ng-model="organization.address" required></textarea>
-                                                    <!-- <input type="text" custom-focus class="text-box" placeholder="Address" name="address" ng-model="organization.address" required> -->
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Email Address
-                                                        <span>*</span>
-                                                    </label>
-
-                                                    <input type="text" custom-focus class="text-box" placeholder="Email Address" name="emailId" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
-                                                        ng-model="organization.emailId" required>
-                                                    <span style="color:Red" ng-show="createOrganizationForm.emailId.$dirty&&createOrganizationForm.emailId.$error.pattern && createOrganizationForm.emailId.$touched ">Please Enter Valid Email</span>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Landline
-                                                        <span>*</span>
-                                                    </label>
-
-                                                    <input type="text" custom-focus class="text-box" placeholder="Landline" ng-pattern="/^[0-9]*$/" name="phoneNumber" ng-model="organization.phoneNumber"
-                                                        required>
-                                                    <span ng-show="createOrganizationForm.phoneNumber.$error.pattern" style="color:red">Please enter numbers only</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Alternate Number</label>
-                                                    <input type="text" placeholder="Alternate Number" name="alternatePhoneNumber" ng-pattern="/^[0-9]*$/" ng-model="organization.alternatePhoneNumber">
-                                                    <span ng-show="createOrganizationForm.alternatePhoneNumber.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Bank Account Number
-                                                    </label>
-                                                    <input type="text" placeholder="Bank account Number" name="bankAccountNumber" ng-pattern="/^[0-9]*$/" ng-model="organization.bankAccountNumber">
-                                                    <span ng-show="createOrganizationForm.bankAccountNumber.$error.pattern" style="color:red">Please enter numbers only</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Contact Person Name
-                                                        <span>*</span>
-                                                    </label>
-
-                                                    <input type="text" custom-focus class="text-box" placeholder="Contact Person Name" name="contactPersonName" ng-model="organization.contactPersonName"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Contact Person Email Address
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" placeholder="Email Address" name="contactPersonEmail" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" ng-model="organization.contactPersonEmail"
-                                                        required>
-                                                    <span style="color:Red" ng-show="createOrganizationForm.contactPersonEmail.$dirty && createOrganizationForm.contactPersonEmail.$touched &&createOrganizationForm.contactPersonEmail.$error.pattern">Please Enter Valid Email</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Contact Person Landline </label>
-                                                    <input type="text" placeholder="Contact Person Landline" name="contactPersonPhoneNo" ng-pattern="/^[0-9]*$/" ng-model="organization.contactPersonPhoneNo">
-                                                    <span ng-show="createOrganizationForm.contactPersonPhoneNo.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Contact Person Alternate Number</label>
-                                                    <input type="text" placeholder="Alternate Phone Number" name="contactPersonAlternatePhoneNo" ng-pattern="/^[0-9]*$/" ng-model="organization.contactPersonAlternatePhoneNo">
-                                                    <span ng-show="createOrganizationForm.contactPersonAlternatePhoneNo.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="savebtngroup">
-                                    <input type="submit" class="btngeo submitbtn1 clr448aff" ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid"
-                                        value="Save & close" />
-                                </div>
-                                <div class="btngroupvessl">
-                                    <button type="button" class="btn submibtn" ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid"
-                                        ng-click="next2(organization)">NEXT</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div id="createshare1" class="docuchain-request" class="tabs_item" ng-show="tab==2">
-                            <form name="createOrganizationwithSubForm" ng-submit="createOrganizationwithSubcription()">
-                                <div class="docuchainRequestpannel">
-                                    <h1>Subscription</h1>
-                                    <div class="row">
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Number of Vessel
-                                                    <span>*</span>
-                                                </label>
-
-                                                <input type="text" placeholder="Number of Vessel" name="shipmentCount" ng-model="subscriptionInfo.shipmentCount" ng-pattern="/^[0-9]*$/"
-                                                    required>
-                                                <span ng-show="createOrganizationwithSubForm.shipmentCount.$error.pattern" style="color:red">Please enter numbers only</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Expected user per Vessel / User Vessel Role
-                                                    <span>*</span>
-                                                </label>
-
-                                                <input type="text" placeholder="Expected user per Vessel / User Vessel Role" name="userVesslesRatio" ng-model="subscriptionInfo.userVesslesRatio"
-                                                    ng-pattern="/^[0-9]*$/" required>
-                                                <span ng-show="createOrganizationwithSubForm.userVesslesRatio.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                            </div>
-                                        </div>
-                                        <!-- <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Subscription Days
-                                                        <span>*</span>
-                                                </label>
-                                                <input type="text" placeholder="Subscription Days" name="subscriptionDays" ng-model="subscriptionInfo.subscriptionDays" ng-pattern="/^[0-9]*$/" required>
-                                                <span ng-show="createOrganizationwithSubForm.subscriptionDays.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                            </div>
-                                        </div> -->
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>
-                                                    Start Date
-                                                    <span>*</span>
-                                                </label>
-                                                <div class="datepickerinput">
-                                                    <input class="form-control" custom-focus class="text-box"  placeholder="Start Date" moment-picker="ctrl.fromDate"
-                                                        locale="en" format="DD-MM-YYYY" ng-model="subscriptionInfo.fromDate"
-                                                        ng-model-options="{ updateOn: 'blur' }" required>
-                                                </div>
-                                                <!-- <div class="datepicker dataPicker-bottom-margin" datepicker-class="date-picker-custom" button-prev="<i class='fa fa-arrow-left'></i>"
-                                                    button-next="<i class='fa fa-arrow-right'></i>" date-format="yyyy-MM-dd">
-                                                    <input ng-model="libcreate.dateOfIssue" type="text" required="required" />
-                                                </div> -->
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>
-                                                    End Date
-                                                    <span>*</span>
-                                                </label>
-                                                <div class="datepickerinput">
-                                                    <input class="form-control" custom-focus class="text-box"  placeholder="End Date" moment-picker="ctrl.toDate"
-                                                        locale="en" format="DD-MM-YYYY" ng-model="subscriptionInfo.toDate" ng-model-options="{ updateOn: 'blur' }"
-                                                        required>
-                                                </div>
-                                                <!-- <div class="datepicker dataPicker-bottom-margin" button-prev="<i class='fa fa-arrow-left'></i>" button-next="<i class='fa fa-arrow-right'></i>"
-                                                    date-format="yyyy-MM-dd">
-                                                    <input ng-model="libcreate.dateOfExpiry" type="text" required="required" />
-                                                </div> -->
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Subscription Amount
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="text" placeholder="Subscription Amount" name="subscriptionAmount" ng-model="subscriptionInfo.subscriptionAmount"
-                                                    ng-pattern="/^[0-9]*$/" required>
-                                                <span ng-show="createOrganizationwithSubForm.subscriptionAmount.$error.pattern" style="color:red">Please enter numbers only</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="savebtngroup">
-                                        <input type="submit" class="btngeo submitbtn1 clr448aff" ng-disabled="createOrganizationwithSubForm.$pristine|| createOrganizationwithSubForm.$invalid"
-                                            value="Save & close" />
-                                    </div>
-
-                                </div>
-
-                                <div class="btngroupvessl">
-                                    <button type="button" class="btn previousbtn" ng-click="previous1()">PREVIOUS</button>
-                                    <button type="button" class="btn submibtn" ng-disabled="createOrganizationwithSubForm.$pristine|| createOrganizationwithSubForm.$invalid"
-                                        ng-click="next3(subscriptionInfo)">NEXT</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div id="createshare2" class="docuchain-request" class="tabs_item" ng-show="tab==3">
-                            <form name="addNewUserSelectForm" ng-submit="createOrganizationwithSubcription(userInfo)" novalidate>
-                                <div class="docuchainRequestpannel">
-                                    <h1>User Admin Details</h1>
-                                    <div class="row">
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>First Name
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="text" custom-focus class="text-box" placeholder="First Name" ng-model="userInfo.firstName" required>
-
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Last Name
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="text" custom-focus class="text-box" placeholder="Last Name" ng-model="userInfo.lastName" required>
-
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Email Address
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="text" custom-focus class="text-box" placeholder="Email Address" name="Email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
-                                                    ng-model="userInfo.mail" required>
-                                                <span style="color:Red" ng-show="createOrganizationForm.Email.$dirty && createOrganizationForm.Email.$touched &&createOrganizationForm.Email.$error.pattern">Please Enter Valid Email</span>
-
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Username
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="text" custom-focus class="text-box" placeholder="Username" ng-model="userInfo.userName" required>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Password
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="password" custom-focus class="text-box" name="password" placeholder="Password" ng-model="userInfo.password"
-                                                    required ng-pattern="/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/">
-
-                                                <span ng-show="!addNewUserSelectForm.password.$error.required && (addNewUserSelectForm.password.$error.minlength || addNewUserSelectForm.password.$error.maxlength) && addNewUserSelectForm.password.$dirty && addNewUserSelectForm.password.$touched"
-                                                    style="color:red">Passwords must be between 8 and 20 characters.</span>
-                                                <span ng-show="!addNewUserSelectForm.password.$error.required && !addNewUserSelectForm.password.$error.minlength && !addNewUserSelectForm.password.$error.maxlength && addNewUserSelectForm.password.$error.pattern && addNewUserSelectForm.password.$dirty && addNewUserSelectForm.password.$touched"
-                                                    style="color:red">Must contain one lower &amp; uppercase letter, and one non-alpha character
-                                                    (a number or a symbol.)</span>
-                                                <br />
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Confirm Password
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="password" custom-focus class="text-box" placeholder="Confirm Password" ng-model="userInfo.confirmPassword" ng-change="checkPassword(userInfo.password,userInfo.confirmPassword)"
-                                                    required>
-                                                <!-- <span ng-show="IsMatch" style="color:red">Please enter same password and confirm password</span> -->
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="btngroupvessl">
-                                    <button type="button" class="btn previousbtn" ng-click="next2()">PREVIOUS</button>
-                                    <button type="submit" class="btn submibtn" ng-disabled="addNewUserSelectForm.$pristine|| addNewUserSelectForm.$invalid">SUBMIT</button>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
+<div
+  class="app-content"
+  ng-app="dapp"
+  ng-controller="SaCompanyProfileCreateController"
+>
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a ui-sref="dapp.saCompanyProfile">
+          <span class="icon icon-beaker"> </span> Manage Organization</a
+        >
+      </li>
+      <li>
+        <a ui-sref="dapp.saCompanyProfilecreate" ng-click="previous1()">
+          <span class="icon icon-beaker"> </span> Company Profile</a
+        >
+      </li>
+      <li>
+        <a
+          ui-sref="dapp.saCompanyProfilecreate"
+          ng-if="tab==2 || tab==3"
+          ng-click="next2(organization)"
+        >
+          <span class="icon icon-beaker"> </span> Subscription</a
+        >
+      </li>
+      <li>
+        <a
+          ui-sref="dapp.saCompanyProfilecreate"
+          ng-if="tab==3"
+          ng-click="next3(subscriptionInfo)"
+        >
+          <span class="icon icon-beaker"> </span> Admin Detail</a
+        >
+      </li>
+    </ul>
+  </div>
+  <div class="docuContent">
+    <div class="docuTabs">
+      <div class="">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="modern-stepper">
+              <div
+                class="modern-step"
+                ng-class="{activetab:tab==1, completed:tab==2 || tab==3}"
+              >
+                <a href="javascript:void(0);"
+                  >Company Profile
+                  <img src="image/circleTick.png" ng-if="tab==2 || tab==3" />
+                </a>
+              </div>
+              <div
+                class="modern-step"
+                ng-class="{activetab:tab==2, completed:tab==3}"
+              >
+                <a href="javascript:void(0);"
+                  >Subscription
+                  <img src="image/circleTick.png" ng-if="tab==3" />
+                </a>
+              </div>
+              <div class="modern-step" ng-class="{activetab:tab==3}">
+                <a href="javascript:void(0);">User Admin</a>
+              </div>
             </div>
-        </div>
-    </div>
-    <!-- Add New User Popup -->
-    <div class="addNewUserSect">
-        <div class="modal fade" id="addNewUser" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Add New User</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="addNew-Userbody">
-                            <form>
-                                <h1>User Information</h1>
-                                <div class="form-group">
-                                    <label>First Name
-                                        <span>*</span>
-                                    </label>
-                                    <input type="text" placeholder="First Name">
-                                    <span class="error">This is value required</span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Last Name
-                                        <span>*</span>
-                                    </label>
-                                    <input type="text" placeholder="Last Name">
-                                    <span class="error">This is value required</span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email Address
-                                        <span>*</span>
-                                    </label>
-                                    <input type="text" placeholder="Email Address">
-                                    <span class="error">This is value required</span>
-                                </div>
-                                <h1>Login Information</h1>
-                                <div class="form-group">
-                                    <label>Username
-                                        <span>*</span>
-                                    </label>
-                                    <input type="text" placeholder="Username">
-                                    <span class="error">This is value required</span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Password
-                                        <span>*</span>
-                                    </label>
-                                    <input type="password" placeholder="Password">
-                                    <span class="error">This is value required</span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Confirm Password
-                                        <span>*</span>
-                                    </label>
-                                    <input type="text" placeholder="Confirm Password">
-                                    <span class="error">This is value required</span>
-                                </div>
-                                <h1>Profile Picture</h1>
-                                <div class="form-group">
-                                    <div class="vesselProfileUpload">
-                                        <div class="userProfilePicture">
-                                            <div class="useruploadImage">
-                                                <img src="image/profilePicture.jpg">
-                                            </div>
-                                            <div class="userUploadBrowse">
-                                                <div class="form-group1">
-                                                    <input type="file" name="img[]" class="file">
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" disabled>
-                                                        <span class="input-group-userbtn">
-                                                            <button class="browse btn btnuploaduser" type="button">
-                                                                Choose File</button>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h1>Assign Role & Vessels</h1>
-                                <div class="form-group">
-                                    <label>User Role
-                                        <span>*</span>
-                                    </label>
-                                    <div class="vesselType">
-                                        <select>
-                                            <option selected>Select User Role</option>
-                                            <option value='Popeda'>John Ford</option>
-                                            <option value='Popeda'>John Ford</option>
-                                            <option value='Popeda'>John Ford</option>
-                                            <option value='Popeda'>John Ford</option>
-                                            <option value='Popeda'>John Ford</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Vessel Name
-                                    </label>
-                                    <div class="userMultiSelect">
-                                        <select class="form-control" id="demoSelect" multiple="">
-                                            <optgroup label="Select Users">
-                                                <option>John Ford</option>
-                                                <option>Brishwar</option>
-                                                <option>Bupesh</option>
-                                                <option>Rajes</option>
-                                            </optgroup>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="modal-footer1">
-                                <button type="button" class="btngeo clearbtn">CLEAR</button>
-                                <button type="button" class="btngeo submitbtn clr448aff" data-dismiss="modal">SUBMIT</button>
-                            </div>
-                        </div>
+          </div>
 
+          <div class="tab_content">
+            <div
+              id="createshare"
+              class="docuchain-request tabs_item"
+              ng-show="tab==1"
+            >
+              <form
+                name="createOrganizationForm"
+                ng-submit="createOrganization()"
+              >
+                <div class="docuchainRequestpannel">
+                  <h1>Company Profile</h1>
+
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Company Name <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Company Name"
+                          name="organizationName"
+                          ng-model="organization.organizationName"
+                          required
+                        />
+                      </div>
                     </div>
 
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Registration Number <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Registration Number"
+                          name="registrationNumber"
+                          ng-model="organization.registrationNumber"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Address Line 1 <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Address Line 1"
+                          name="addressLine1"
+                          ng-model="organization.addressLine1"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Address Line 2</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Address Line 2"
+                          name="addressLine2"
+                          ng-model="organization.addressLine2"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Email Address <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Email Address"
+                          name="emailId"
+                          ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                          ng-model="organization.emailId"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.emailId.$dirty && createOrganizationForm.emailId.$error.pattern && createOrganizationForm.emailId.$touched"
+                          >Please Enter Valid Email</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Landline <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Landline"
+                          ng-pattern="/^[0-9]*$/"
+                          name="phoneNumber"
+                          ng-model="organization.phoneNumber"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.phoneNumber.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Alternate Number</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Alternate Number"
+                          name="alternatePhoneNumber"
+                          ng-pattern="/^[0-9]*$/"
+                          ng-model="organization.alternatePhoneNumber"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.alternatePhoneNumber.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Bank Account Number </label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Bank account Number"
+                          name="bankAccountNumber"
+                          ng-pattern="/^[0-9]*$/"
+                          ng-model="organization.bankAccountNumber"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.bankAccountNumber.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Contact Person Name <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Contact Person Name"
+                          name="contactPersonName"
+                          ng-model="organization.contactPersonName"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label
+                          >Contact Person Email Address <span>*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Email Address"
+                          name="contactPersonEmail"
+                          ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                          ng-model="organization.contactPersonEmail"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.contactPersonEmail.$dirty && createOrganizationForm.contactPersonEmail.$touched && createOrganizationForm.contactPersonEmail.$error.pattern"
+                          >Please Enter Valid Email</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Contact Person Landline </label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Contact Person Landline"
+                          name="contactPersonPhoneNo"
+                          ng-pattern="/^[0-9]*$/"
+                          ng-model="organization.contactPersonPhoneNo"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.contactPersonPhoneNo.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Contact Person Alternate Number</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Alternate Phone Number"
+                          name="contactPersonAlternatePhoneNo"
+                          ng-pattern="/^[0-9]*$/"
+                          ng-model="organization.contactPersonAlternatePhoneNo"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.contactPersonAlternatePhoneNo.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+                <!-- <div class="savebtngroup">
+                  <button
+                    type="submit"
+                    class="btn-modern save-btn"
+                    ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid"
+                  >
+                    <span class="btn-text">Save & Close</span>
+                    <span class="icon-circle"><i class="fa fa-save"></i></span>
+                  </button>
+                </div>
+                <div class="btngroupvessl">
+                  <button
+                    type="button"
+                    class="btn-modern next-btn"
+                    ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid"
+                    ng-click="next2(organization)"
+                  >
+                    <span class="btn-text">NEXT</span>
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-right"></i
+                    ></span>
+                  </button>
+                </div> -->
+                <div
+                  class="btngroupvessl bttnGroup"
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 15px;
+                    padding-top: 20px;
+                  "
+                >
+                  <button
+                    type="submit"
+                    class="btn-modern submit-btn"
+                    ng-disabled="createOrganizationForm.$invalid"
+                  >
+                    <span class="btn-text">SAVE & CLOSE</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-modern submit-btn"
+                    ng-disabled="createOrganizationForm.$invalid"
+                    ng-click="next2(organization)"
+                  >
+                    <span class="btn-text">NEXT</span>
+                  </button>
+                </div>
+              </form>
             </div>
+
+            <div
+              id="createshare1"
+              class="docuchain-request tabs_item"
+              ng-show="tab==2"
+            >
+              <form
+                name="createOrganizationwithSubForm"
+                ng-submit="createOrganizationwithSubcription()"
+              >
+                <div class="docuchainRequestpannel">
+                  <h1>Subscription</h1>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Number of Vessel <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Number of Vessel"
+                          name="shipmentCount"
+                          ng-model="subscriptionInfo.shipmentCount"
+                          ng-pattern="/^[0-9]*$/"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationwithSubForm.shipmentCount.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label
+                          >Expected user per Vessel / User Vessel Role
+                          <span>*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Expected user per Vessel / User Vessel Role"
+                          name="userVesslesRatio"
+                          ng-model="subscriptionInfo.userVesslesRatio"
+                          ng-pattern="/^[0-9]*$/"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationwithSubForm.userVesslesRatio.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Start Date <span>*</span></label>
+                        <div class="datepickerinput">
+                          <input
+                            class="form-control text-box"
+                            custom-focus
+                            placeholder="Start Date"
+                            moment-picker="ctrl.fromDate"
+                            locale="en"
+                            format="DD-MM-YYYY"
+                            ng-model="subscriptionInfo.fromDate"
+                            ng-model-options="{ updateOn: 'blur' }"
+                            required
+                          />
+                          <i class="fa fa-calendar date-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>End Date <span>*</span></label>
+                        <div class="datepickerinput">
+                          <input
+                            class="form-control text-box"
+                            custom-focus
+                            placeholder="End Date"
+                            moment-picker="ctrl.toDate"
+                            locale="en"
+                            format="DD-MM-YYYY"
+                            ng-model="subscriptionInfo.toDate"
+                            ng-model-options="{ updateOn: 'blur' }"
+                            required
+                          />
+                          <i class="fa fa-calendar date-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Subscription Amount <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Subscription Amount"
+                          name="subscriptionAmount"
+                          ng-model="subscriptionInfo.subscriptionAmount"
+                          ng-pattern="/^[0-9]*$/"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationwithSubForm.subscriptionAmount.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="savebtngroup">
+                    <button
+                      type="submit"
+                      class="btn-modern save-btn"
+                      ng-disabled="createOrganizationwithSubForm.$pristine|| createOrganizationwithSubForm.$invalid"
+                    >
+                      <span class="btn-text">Save & Close</span>
+                      <span class="icon-circle"
+                        ><i class="fa fa-save"></i
+                      ></span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- <div class="btngroupvessl">
+                  <button
+                    type="button"
+                    class="btn-modern prev-btn"
+                    ng-click="previous1()"
+                  >
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-left"></i
+                    ></span>
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-modern next-btn"
+                    ng-disabled="createOrganizationwithSubForm.$pristine|| createOrganizationwithSubForm.$invalid"
+                    ng-click="next3(subscriptionInfo)"
+                  >
+                    <span class="btn-text">NEXT</span>
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-right"></i
+                    ></span>
+                  </button>
+                </div> -->
+                <div
+                  class="btngroupvessl bttnGroup"
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 15px;
+                    padding-top: 20px;
+                  "
+                >
+                  <button
+                    type="button"
+                    class="btn-modern clear-btn"
+                    ng-click="previous1()"
+                  >
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-modern submit-btn"
+                    ng-disabled="createOrganizationwithSubForm.$invalid"
+                    ng-click="next3(subscriptionInfo)"
+                  >
+                    <span class="btn-text">NEXT</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div
+              id="createshare2"
+              class="docuchain-request tabs_item"
+              ng-show="tab==3"
+            >
+              <form
+                name="addNewUserSelectForm"
+                ng-submit="createOrganizationwithSubcription(userInfo)"
+                novalidate
+              >
+                <div class="docuchainRequestpannel">
+                  <h1>User Admin Details</h1>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>First Name <span>*</span></label>
+                        <input
+                          type="text"
+                          custom-focus
+                          class="text-box form-control"
+                          placeholder="First Name"
+                          ng-model="userInfo.firstName"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Last Name <span>*</span></label>
+                        <input
+                          type="text"
+                          custom-focus
+                          class="text-box form-control"
+                          placeholder="Last Name"
+                          ng-model="userInfo.lastName"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Email Address <span>*</span></label>
+                        <input
+                          type="text"
+                          custom-focus
+                          class="text-box form-control"
+                          placeholder="Email Address"
+                          name="Email"
+                          ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                          ng-model="userInfo.mail"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="addNewUserSelectForm.Email.$dirty && addNewUserSelectForm.Email.$touched && addNewUserSelectForm.Email.$error.pattern"
+                          >Please Enter Valid Email</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Username <span>*</span></label>
+                        <input
+                          type="text"
+                          custom-focus
+                          class="text-box form-control"
+                          placeholder="Username"
+                          ng-model="userInfo.userName"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Password <span>*</span></label>
+                        <input
+                          type="password"
+                          custom-focus
+                          class="text-box form-control"
+                          name="password"
+                          placeholder="Password"
+                          ng-model="userInfo.password"
+                          required
+                          ng-pattern="/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="!addNewUserSelectForm.password.$error.required && (addNewUserSelectForm.password.$error.minlength || addNewUserSelectForm.password.$error.maxlength) && addNewUserSelectForm.password.$dirty && addNewUserSelectForm.password.$touched"
+                          >Passwords must be between 8 and 20 characters.</span
+                        >
+                        <span
+                          class="error-msg"
+                          ng-show="!addNewUserSelectForm.password.$error.required && !addNewUserSelectForm.password.$error.minlength && !addNewUserSelectForm.password.$error.maxlength && addNewUserSelectForm.password.$error.pattern && addNewUserSelectForm.password.$dirty && addNewUserSelectForm.password.$touched"
+                          >Must contain 1 lower/uppercase & 1
+                          symbol/number.</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Confirm Password <span>*</span></label>
+                        <input
+                          type="password"
+                          custom-focus
+                          class="text-box form-control"
+                          placeholder="Confirm Password"
+                          ng-model="userInfo.confirmPassword"
+                          ng-change="checkPassword(userInfo.password,userInfo.confirmPassword)"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- <div class="btngroupvessl">
+                  <button
+                    type="button"
+                    class="btn-modern prev-btn"
+                    ng-click="next2()"
+                  >
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-left"></i
+                    ></span>
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn-modern next-btn"
+                    ng-disabled="addNewUserSelectForm.$pristine|| addNewUserSelectForm.$invalid"
+                  >
+                    <span class="btn-text">SUBMIT</span>
+                    <span class="icon-circle"><i class="fa fa-check"></i></span>
+                  </button>
+                </div> -->
+                <div
+                  class="btngroupvessl bttnGroup"
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 15px;
+                    padding-top: 20px;
+                  "
+                >
+                  <button
+                    type="button"
+                    class="btn-modern clear-btn"
+                    ng-click="next2()"
+                  >
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn-modern submit-btn"
+                    ng-disabled="addNewUserSelectForm.$invalid"
+                  >
+                    <span class="btn-text">SUBMIT</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
+  </div>
+
+  <div class="addNewUserSect">
+    <div class="modal fade" id="addNewUser" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- <div class="modal-header">
+            <h4 class="modal-title">Add New User</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div> -->
+          <div
+            class="modal-footer1 bttnGroup"
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 15px;
+              padding: 20px;
+              border-top: 1px solid rgba(0, 0, 0, 0.05);
+            "
+          >
+            <button
+              type="button"
+              class="btn-modern clear-btn"
+              data-dismiss="modal"
+            >
+              <span class="btn-text">CLEAR</span>
+            </button>
+            <button
+              type="button"
+              class="btn-modern submit-btn"
+              data-dismiss="modal"
+            >
+              <span class="btn-text">SUBMIT</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="addNew-Userbody">
+              <form>
+                <h1>User Information</h1>
+                <div class="form-group">
+                  <label>First Name <span>*</span></label>
+                  <input type="text" placeholder="First Name" />
+                </div>
+                <div class="form-group">
+                  <label>Last Name <span>*</span></label>
+                  <input type="text" placeholder="Last Name" />
+                </div>
+                <div class="form-group">
+                  <label>Email Address <span>*</span></label>
+                  <input type="text" placeholder="Email Address" />
+                </div>
+
+                <h1>Login Information</h1>
+                <div class="form-group">
+                  <label>Username <span>*</span></label>
+                  <input type="text" placeholder="Username" />
+                </div>
+                <div class="form-group">
+                  <label>Password <span>*</span></label>
+                  <input type="password" placeholder="Password" />
+                </div>
+                <div class="form-group">
+                  <label>Confirm Password <span>*</span></label>
+                  <input type="text" placeholder="Confirm Password" />
+                </div>
+
+                <h1>Profile Picture</h1>
+                <div class="form-group">
+                  <div class="vesselProfileUpload">
+                    <div class="userProfilePicture">
+                      <div class="useruploadImage">
+                        <img src="image/profilePicture.jpg" />
+                      </div>
+                      <div class="userUploadBrowse">
+                        <div class="form-group1">
+                          <input type="file" name="img[]" class="file" />
+                          <div class="input-group">
+                            <input type="text" class="form-control" disabled />
+                            <span class="input-group-userbtn">
+                              <button
+                                class="browse btn btnuploaduser"
+                                type="button"
+                              >
+                                Choose File
+                              </button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h1>Assign Role & Vessels</h1>
+                <div class="form-group">
+                  <label>User Role <span>*</span></label>
+                  <div class="vesselType">
+                    <select>
+                      <option selected>Select User Role</option>
+                      <option value="Popeda">John Ford</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Vessel Name </label>
+                  <div class="userMultiSelect">
+                    <select class="form-control" id="demoSelect" multiple="">
+                      <optgroup label="Select Users">
+                        <option>John Ford</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+              </form>
+              <!-- <div class="modal-footer1">
+                <button type="button" class="btngeo clearbtn">CLEAR</button>
+                <button
+                  type="button"
+                  class="btngeo submitbtn clr448aff"
+                  data-dismiss="modal"
+                >
+                  SUBMIT
+                </button>
+              </div> -->
+              <div
+                class="modal-footer1 bttnGroup"
+                style="
+                  display: flex;
+                  justify-content: flex-end;
+                  gap: 15px;
+                  padding: 20px;
+                  border-top: 1px solid rgba(0, 0, 0, 0.05);
+                "
+              >
+                <button
+                  type="button"
+                  class="btn-modern clear-btn"
+                  data-dismiss="modal"
+                >
+                  <span class="btn-text">CLEAR</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn-modern submit-btn"
+                  data-dismiss="modal"
+                >
+                  <span class="btn-text">SUBMIT</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
 </div>

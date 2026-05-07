@@ -1,14 +1,18 @@
 var saCompanyProfileCreate = angular.module('dapp.SaCompanyProfileCreateController', ['angularUtils.directives.dirPagination', 'toaster', 'moment-picker', '720kb.tooltips']);
 
 saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope', '$stateParams', '$window', '$location', '$state', '$rootScope', '$timeout', 'toaster', 'FunctionalityService', function ($scope, $stateParams, $window, $location, $state, $rootScope, $timeout, toaster, FunctionalityService) {
-    $scope.sessionObject = JSON.parse($window.localStorage.getItem('sessionObject'));
+    $scope.sessionObject = JSON.parse($window.localStorage.getItem('sessionObject')) || {};
 
-    //$scope.userProfileId = $window.sessionStorage.getItem('userId');
-    $scope.organizationInfo;
-    $scope.subscriptionInfo;
+    // //$scope.userProfileId = $window.sessionStorage.getItem('userId');
+    // $scope.organizationInfo;
+    // $scope.subscriptionInfo;
     $scope.tab = 1;
     $scope.tabName = 'tab1';
     $scope.editOrganization;
+    $scope.organization = {};
+    $scope.organizationInfo = {};
+    $scope.subscriptionInfo = {};
+    $scope.userInfo = {};
     $scope.loader = false;
 
     $scope.mindate = moment().add(0, 'day');
@@ -19,10 +23,20 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
         $scope.tab = 3;
         $scope.subscriptionInfo = subscription;
     }
-    $scope.next2 = function (organization) {
-        $scope.tab = 2;
-        $scope.organizationInfo = organization;
-    }
+    // $scope.next2 = function (organization) {
+    //     $scope.tab = 2;
+    //     $scope.organizationInfo = organization;
+    // }
+
+$scope.next2 = function(organization) {
+    // console.log("--- DEBUG: TAB 1 DATA RECEIVED ---");
+    // console.log("Address 1:", organization.addressLine1);
+    // console.log("Address 2:", organization.addressLine2);
+    $scope.tab = 2;
+    $scope.organizationInfo = organization;
+}
+
+
     $scope.organizationId = $stateParams.organizationId
     $scope.checkPassword = function (password, confirmPassword) {
         if (password != confirmPassword) {
@@ -42,7 +56,10 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
         var createOrganizationData = {
             "organizationName": $scope.organization.organizationName,
             "registrationNumber": $scope.organization.registrationNumber,
-            "address": $scope.organization.address,
+            // "address": $scope.organization.address,
+            // two lines of adress
+            "addressLine1": $scope.organization.addressLine1,
+            "addressLine2": $scope.organization.addressLine2,
             "phoneNumber": $scope.organization.phoneNumber,
             "emailId": $scope.organization.emailId,
             "alternatePhoneNumber": $scope.organization.alternatePhoneNumber,
@@ -85,7 +102,10 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
             var createOrganizationData = {
                 "organizationName": $scope.organizationInfo.organizationName,
                 "registrationNumber": $scope.organizationInfo.registrationNumber,
-                "address": $scope.organizationInfo.address,
+                // "address": $scope.organizationInfo.address,
+                // two lins of adress
+                "addressLine1": $scope.organizationInfo.addressLine1,
+                "addressLine2": $scope.organizationInfo.addressLine2,
                 "phoneNumber": $scope.organizationInfo.phoneNumber,
                 "emailId": $scope.organizationInfo.emailId,
                 "alternatePhoneNumber": $scope.organizationInfo.alternatePhoneNumber,
@@ -98,8 +118,10 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
                 "subscriptionInfo": $scope.subscriptionInfo,
                 "userInfo": $scope.userInfo
             };
-            FunctionalityService.createOrganizationwithSubcription(createOrganizationData)
-                .then(function mySuccess(response) {
+            FunctionalityService.createOrganizationwithSubcription(createOrganizationData).then(function mySuccess(response) {
+                if (!createOrganizationData.addressLine1) {
+                        console.error("CRITICAL ERROR: addressLine1 is missing from the payload!");
+                    }
                     $scope.loader = false;
 
                     if (response.status == 201 || response.status == 200) {
@@ -122,7 +144,10 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
             var createOrganizationData = {
                 "organizationName": $scope.organizationInfo.organizationName,
                 "registrationNumber": $scope.organizationInfo.registrationNumber,
-                "address": $scope.organizationInfo.address,
+                // "address": $scope.organizationInfo.address,
+                // two lines of adress
+                "addressLine1": $scope.organizationInfo.addressLine1,
+                "addressLine2": $scope.organizationInfo.addressLine2,
                 "phoneNumber": $scope.organizationInfo.phoneNumber,
                 "emailId": $scope.organizationInfo.emailId,
                 "alternatePhoneNumber": $scope.organizationInfo.alternatePhoneNumber,
@@ -186,7 +211,10 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
             "organizationId": $scope.organizationId,
             "organizationName": $scope.editOrganization.organizationName,
             "registrationNumber": $scope.editOrganization.registrationNumber,
-            "address": $scope.editOrganization.address,
+            // "address": $scope.editOrganization.address,
+            // two lines of adress
+            "addressLine1": $scope.editOrganization.addressLine1,
+            "addressLine2": $scope.editOrganization.addressLine2,
             "phoneNumber": $scope.editOrganization.phoneNumber,
             "emailId": $scope.editOrganization.emailId,
             "alternatePhoneNumber": $scope.editOrganization.alternatePhoneNumber,
@@ -198,6 +226,7 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
             "userId": $scope.sessionObject.userId
             //"subscriptionInfo":$scope.editOrganization.subscriptionInfo
         };
+
         FunctionalityService.updatOrganization(updatOrganizationData)
             .then(function mySuccess(response) {
                 $scope.loader = false;
@@ -226,7 +255,12 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
             "organizationId": $scope.organizationId,
             "organizationName": $scope.editOrganization.organizationName,
             "registrationNumber": $scope.editOrganization.registrationNumber,
-            "address": $scope.editOrganization.address,
+            // "address": $scope.editOrganization.address,
+            // two lines of adress
+            "addressLine1": $scope.editOrganization.addressLine1,
+            "addressLine2": $scope.editOrganization.addressLine2,  
+            // "addressLine1": $scope.organizationInfo.addressLine1,
+            // "addressLine2": $scope.organizationInfo.addressLine2, 
             "phoneNumber": $scope.editOrganization.phoneNumber,
             "emailId": $scope.editOrganization.emailId,
             "alternatePhoneNumber": $scope.editOrganization.alternatePhoneNumber,
@@ -262,5 +296,8 @@ saCompanyProfileCreate.controller('SaCompanyProfileCreateController', ['$scope',
     $scope.closeView = function () {
         $state.go('dapp.saCompanyProfile');
     }
+
+
+    
 
 }]);

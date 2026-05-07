@@ -1,240 +1,534 @@
-<div class="app-content" ng-app="dapp" ng-controller="AdminAddPlaceHolderController" ng-init="placeHolderList()">
-    <div class="docubodyTitle">
-        <ul id="breadcrumb">
-     
-            <li>
-                <a href="javascript:void(0);">
-                    <span class="icon icon-beaker"> </span>Placeholder</a>
-            </li>
-        </ul>
-        <div class="bttnGroup">
-            <button type="button" class="addNew" data-toggle="modal" data-target="#addplaceholder" data-backdrop="static">
-                <img src="image/addNewshipIcon.png">Add Placeholder</button>
-        </div>
+<div
+  class="app-content"
+  ng-app="dapp"
+  ng-controller="AdminAddPlaceHolderController"
+  ng-init="placeHolderList()"
+>
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a href="javascript:void(0);">
+          <span class="icon icon-beaker"> </span>Placeholder</a
+        >
+      </li>
+    </ul>
+    <div class="bttnGroup">
+      <button
+        type="button"
+        class="addNew"
+        data-toggle="modal"
+        data-target="#addplaceholder"
+        data-backdrop="static"
+      >
+        <img src="image/addNewshipIcon.png" />Add Placeholder
+      </button>
     </div>
-    <div class="docuContent">
-        <div class="manageOrganization vesslesDocumentsTable">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="datatableEntry">
-                        <label>Show
-                            <input type="text" ng-model="itemsPerPage">of
-                            <span>{{allPlaceHolderList.length}}</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="docuchainSearchbox">
-                        <div class="searchInput">
-                            <input type="text" placeholder="Search" ng-model="placeholdersearch">
-                            <button type="button" class="searchIcon">
-                                <i class="fa fa-search" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <div class="docuchainmanageOrganization">
-                        <div class="systemConfig table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>S.No</th>
-                                        <!-- <th>Organization Name</th> -->
-                                        <th ng-click="orderByField='documentHolderName'; reverseSort = !reverseSort">Placeholder Name<i class="fa fa-sort float-right" aria-hidden="true"></i></th>                                        
-                                        <th >Description</th>                                        
-                                        <th>Type</th>
-                                        <th>Last Modified</th>
-                                        <th class="text-center adminactionwidth">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr dir-paginate="placeholder in allPlaceHolderList|orderBy:'documentHolderName' |filter:placeholdersearch |itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort" current-page="currentPage">
-                                        
-                                        <td>{{itemsPerPage *(currentPage-1)+$index+1}}</td>
-                                        <!-- <td>{{placeholder.organizationName}}</td> -->
-                                        <td>{{placeholder.documentHolderName}}</td>                                        
-                                        <td>{{placeholder.documentHolderDescription}}</td>                                        
-                                        <td>{{placeholder.type}}</td>
-                                        <td>{{placeholder.updatedDate}}</td>
-                                        
-                                        <td class="text-center">
-                                            <button type="button" class="btned editBtn" data-toggle="modal" data-target="#updateplaceholder" data-backdrop="static" ng-click="getEditPlaceHolder(placeholder)">
-                                                <i class="fa fa-pencil" aria-hidden="true"></i>
-                                            </button>
-                                            <button type="button" class="btned deleteBtn" data-toggle="modal" data-target="#delete" data-backdrop="static" ng-click="getDeletePlaceHolder(placeholder)">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <dir-pagination-controls  direction-links="true" boundary-links="true">
-                        </dir-pagination-controls>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <!-- <div class="docuContent">
+    <div class="manageOrganization vesslesDocumentsTable">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="datatableEntry">
+            <label
+              >Show <input type="text" ng-model="itemsPerPage" />of
+              <span>{{allPlaceHolderList.length}}</span>
+            </label>
+          </div>
         </div>
-    </div>
-    <!-- Add new Popup -->
-    <div class="confplaceholder">
-        <div class="modal fade" id="addplaceholder" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Create Placeholder</h4>
-                        <button type="button" class="close" data-dismiss="modal" ng-click="closeAddplaceholder()">&times;</button>
-                    </div>
-                    <form name="createPlaceholdeForm" ng-submit="addPlaceHolder()" novalidate>
-                        <div class="modal-body">
-                            <div class="subscriptbody">
-                                <div class="form">
-                                    <!-- <div class="form-group">
-                                        <label>organization Name
-                                            <span>*</span>
-                                        </label>
-                                        <div class="vesselType">
-                                            <select ng-model="sub.selectedCategory" custom-focus class="text-box" ng-options="sub.organizationName for sub in allSubscriptionList"
-                                                name="selectedCategory" required="required" ng-change="organizationChanges(sub.selectedCategory)"
-                                                required>
-                                                <option value="">Select Organization Name</option>
+        <div class="col-lg-6">
+          <div class="docuchainSearchbox">
+            <div class="searchInput">
+              <input
+                type="text"
+                placeholder="Search"
+                ng-model="placeholdersearch"
+              />
+              <button type="button" class="searchIcon">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-sm-12 col-xs-12">
+          <div class="docuchainmanageOrganization">
+            <div class="systemConfig table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th
+                      ng-click="orderByField='documentHolderName'; reverseSort = !reverseSort"
+                    >
+                      Placeholder Name<span
+                        class="custom-sort-icon float-right"
+                        aria-hidden="true"
+                        >&uarr;&darr;</span
+                      >
+                    </th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Last Modified</th>
+                    <th class="text-center adminactionwidth">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    dir-paginate="placeholder in allPlaceHolderList|orderBy:'documentHolderName' |filter:placeholdersearch |itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort"
+                    current-page="currentPage"
+                  >
+                    <td>{{itemsPerPage *(currentPage-1)+$index+1}}</td>
+                    <td>{{placeholder.documentHolderName}}</td>
+                    <td>{{placeholder.documentHolderDescription}}</td>
+                    <td>{{placeholder.type}}</td>
+                    <td>{{placeholder.updatedDate}}</td>
 
-                                            </select>
-                                        </div>
-                                    </div> -->
-                                    <div class="form-group">
-                                        <label>Placeholder Name  <span style="color:red;">*</span></label>
-                                        <input type="text" placeholder="Placeholder Name" custom-focus class="text-box" name="placeholdername" ng-model="placeholdername"
-                                            required/>
-                                    </div>
-                                </div>
-                                <div class="form">
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <input type="text" placeholder="Description" custom-focus class="text-box" name="placeholderdescription" ng-model="placeholderdescription">
-                                    </div>
-                                </div>
-                                <!-- <div class="form">
-                                    <div class="form-group">
-                                        <label>File Name</label>
-                                        <input type="text" placeholder="File Name" custom-focus class="text-box" name="placeholderfilename" ng-model="placeholderfilename">
-                                    </div>
-                                </div> -->
-                                <div class="form-group">
-                                    <label>Vessel Name
-                                    </label>
-                                    <div class="vesselType vessletypewidth">
-                                        <ui-select multiple ng-model="vessel.selectedVessel" custom-focus class="text-box" theme="bootstrap" close-on-select="true"
-                                            title="Choose a person" remove-selected="false" >
-                                            <ui-select-match placeholder="Select Vessel">{{$item.shipName}}</ui-select-match>
-                                            <ui-select-choices repeat="user in users | filter: $select.search | orderBy:'shipName'">
-                                                <div ng-bind="user.shipName">
-                                                </div> 
-                                                <small> IMO: {{user.imo}}
-                                                </small>
-                                            </ui-select-choices>
-                                        </ui-select>          
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer1">
-                                <button type="button" class="btngeo clearbtn" ng-click="clearAddPlaceholder()">CLEAR</button>
-                                <button type="submit" class="btngeo submitbtn clr448aff" ng-disabled="createPlaceholdeForm.$pristine|| createPlaceholdeForm.$invalid">SUBMIT</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                    <td class="text-center">
+                      <button
+                        type="button"
+                        class="btned editBtn"
+                        data-toggle="modal"
+                        data-target="#updateplaceholder"
+                        data-backdrop="static"
+                        ng-click="getEditPlaceHolder(placeholder)"
+                      >
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btned deleteBtn"
+                        ng-click="confirmDeletePlaceHolder(placeholder)"
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+            <dir-pagination-controls
+              direction-links="true"
+              boundary-links="true"
+            >
+            </dir-pagination-controls>
+          </div>
         </div>
+      </div>
     </div>
+  </div> -->
+  <div class="docuContent">
+    <div class="manageOrganization vesslesDocumentsTable">
+      <div class="row" style="margin-bottom: 5px">
+        <div class="col-lg-6 col-md-6">
+          <div class="datatableEntry">
+            <label
+              >Show
+              <input
+                type="text"
+                ng-model="itemsPerPage"
+                style="width: 40px; height: 30px"
+              />
+              of
+              <span>{{allPlaceHolderList.length}}</span>
+            </label>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6">
+          <div class="docuchainSearchbox">
+            <div class="searchInput">
+              <input
+                type="text"
+                placeholder="Search..."
+                ng-model="placeholdersearch"
+                style="height: 30px"
+              />
+              <button type="button" class="searchIcon">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <!-- UPDATE new Popup -->
-    <div class="confplaceholder">
-        <div class="modal fade" id="updateplaceholder" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Update Placeholder</h4>
-                        <button type="button" class="close" data-dismiss="modal" ng-click="clsoedUpdateplaceHolder()">&times;</button>
-                    </div>
-                    <form name="updatePlaceholdeForm" ng-submit="editPlaceHolder()" novalidate>
-                        <div class="modal-body">
-                            <div class="subscriptbody">
-                                <div class="form">
-                                    <div class="form-group">
-                                        <label>Placeholder Name <span style="color:red;">*</span></label>
-                                        <input type="text" placeholder="Placeholder Name" custom-focus class="text-box" name="placeholdername" ng-model="updatePlaceHolder.documentHolderName"
-                                            required>
-                                    </div>
-                                    <!-- <div class="form-group">
-                                            <label>Organization Name <span style="color:red;">*</span></label>
-                                        <select ng-model="updatePlaceHolder.organizationName" ng-disabled="isReadOnly" class="text-box drop-focus" required>
-                                            <option value='' selected>Organization Name</option>
-                                            <option ng-repeat="sub in allSubscriptionList" value={{sub.organizationName}} ng-selected="updatePlaceHolder.organizationName == sub.organizationName">{{sub.organizationName}}
-                                            </option>
-                                                </select>
-                                    </div> -->
-                                </div>
-                                <div class="form">
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <input type="text" placeholder="Description" custom-focus class="text-box" name="placeholderdescription" ng-model="updatePlaceHolder.documentHolderDescription">
-                                    </div>
-                                </div>
-                                <!-- <div class="form">
-                                    <div class="form-group">
-                                        <label>File Name</label>
-                                        <input type="text" placeholder="File Name" custom-focus class="text-box" name="placeholderfilename" ng-model="updatePlaceHolder.documentFileNumber">
-                                    </div>
-                                </div> -->
-                            </div>
-                            <div class="modal-footer1">
-                                <button type="button" class="btngeo clearbtn" ng-click="resetUpdateplaceHolder()">Clear</button>
-                                <button type="submit" class="btngeo submitbtn clr448aff" ng-disabled="updatePlaceholdeForm.$pristine|| updatePlaceholdeForm.$invalid">Submit</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+      <div class="row">
+        <div class="col-lg-12 col-sm-12 col-xs-12">
+          <div class="docuchainmanageOrganization">
+            <div class="systemConfig table-responsive">
+              <table
+                class="table custom-modern-table"
+                style="table-layout: auto; width: 100%; margin-bottom: 0"
+              >
+                <thead>
+                  <tr>
+                    <th style="width: 70px">S.No</th>
+                    <th
+                      ng-click="orderByField='documentHolderName'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        Placeholder Name <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">Description</div>
+                    </th>
+                    <th style="width: 15%">
+                      <div class="th-content">Type</div>
+                    </th>
+                    <th style="width: 20%">
+                      <div class="th-content">Last Modified</div>
+                    </th>
+                    <th class="text-center" style="width: 120px">
+                      <div class="th-content justify-center">Action</div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    dir-paginate="placeholder in fData=(allPlaceHolderList|filter:placeholdersearch) |itemsPerPage:itemsPerPage | orderBy:'documentHolderName' | orderBy:orderByField:reverseSort"
+                    current-page="currentPage"
+                  >
+                    <td>{{itemsPerPage * (currentPage - 1) + $index + 1}}</td>
+                    <td class="font-weight-medium">
+                      {{placeholder.documentHolderName}}
+                    </td>
+                    <td>{{placeholder.documentHolderDescription}}</td>
+                    <td>{{placeholder.type}}</td>
+                    <td class="text-muted">{{placeholder.updatedDate}}</td>
+                    <td class="text-center" style="white-space: nowrap">
+                      <button
+                        type="button"
+                        class="modern-action-btn btn-edit"
+                        data-toggle="modal"
+                        data-target="#updateplaceholder"
+                        data-backdrop="static"
+                        ng-click="getEditPlaceHolder(placeholder)"
+                        title="Edit"
+                      >
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="modern-action-btn btn-delete"
+                        ng-click="confirmDeletePlaceHolder(placeholder)"
+                        title="Delete"
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr ng-show="fData.length == 0">
+                    <td colspan="6" class="text-center p-4">
+                      No Records Found
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-        </div>
-    </div>
-    <!-- Delete Popup -->
-    <div class="deleteMessage">
-        <div class="modal fade" id="delete" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Delete Placeholder </h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="delete-group-body">
-                            <p>
-                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Are you sure you want to delete this place holder?</p>
 
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btnd buttn-delete" ng-click="deletePlaceHolder()">Yes</button>
-                        <button type="button" class="btnd buttn-no" data-dismiss="modal">No</button>
-                    </div>
-                </div>
+            <div class="pagination-footer">
+              <div class="pagination-info text-muted">
+                Showing {{allPlaceHolderList.length > 0 ? (itemsPerPage *
+                (currentPage - 1) + 1) : 0}} to {{itemsPerPage * currentPage >
+                allPlaceHolderList.length ? allPlaceHolderList.length :
+                itemsPerPage * currentPage}} of {{allPlaceHolderList.length}}
+                entries
+              </div>
+              <div class="pagination-controls">
+                <dir-pagination-controls
+                  max-size="5"
+                  direction-links="true"
+                  boundary-links="true"
+                ></dir-pagination-controls>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
+  </div>
+  <div class="confplaceholder">
+    <div class="modal fade" id="addplaceholder" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Create Placeholder</h4>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              ng-click="closeAddplaceholder()"
+            >
+              &times;
+            </button>
+          </div>
+          <form
+            name="createPlaceholdeForm"
+            ng-submit="addPlaceHolder()"
+            novalidate
+          >
+            <div class="modal-body">
+              <div class="subscriptbody">
+                <div class="form">
+                  <div class="form-group">
+                    <label
+                      >Placeholder Name <span style="color: red">*</span></label
+                    >
+                    <input
+                      type="text"
+                      placeholder="Placeholder Name"
+                      custom-focus
+                      class="text-box"
+                      name="placeholdername"
+                      ng-model="placeholdername"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form">
+                  <div class="form-group">
+                    <label>Description</label>
+                    <input
+                      type="text"
+                      placeholder="Description"
+                      custom-focus
+                      class="text-box"
+                      name="placeholderdescription"
+                      ng-model="placeholderdescription"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="label-action-row">
+                    <label>Vessel Name </label>
+
+                    <div class="multi-select-actions">
+                      <button
+                        type="button"
+                        class="action-btn select-btn"
+                        ng-click="selectAllVessels()"
+                      >
+                        Select All
+                      </button>
+                      <button
+                        type="button"
+                        class="action-btn clear-btn"
+                        ng-click="clearAllVessels()"
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="vesselType vessletypewidth">
+                    <ui-select
+                      multiple
+                      ng-model="vessel.selectedVessel"
+                      custom-focus
+                      class="text-box"
+                      theme="bootstrap"
+                      close-on-select="true"
+                      title="Choose a person"
+                      remove-selected="false"
+                    >
+                      <ui-select-match placeholder="Select Vessel"
+                        >{{$item.shipName}}</ui-select-match
+                      >
+                      <ui-select-choices
+                        repeat="user in users | filter: $select.search | orderBy:'shipName'"
+                      >
+                        <div ng-bind="user.shipName"></div>
+                        <small> IMO: {{user.imo}} </small>
+                      </ui-select-choices>
+                    </ui-select>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer1">
+                <!-- <button
+                  type="button"
+                  class="btngeo clearbtn"
+                  ng-click="clearAddPlaceholder()"
+                >
+                  CLEAR
+                </button>
+                <button
+                  type="submit"
+                  class="btngeo submitbtn clr448aff"
+                  ng-disabled="createPlaceholdeForm.$pristine|| createPlaceholdeForm.$invalid"
+                >
+                  SUBMIT
+                </button> -->
+
+                <button
+                  type="button"
+                  class="btn-modern clear-btn"
+                  ng-click="clearAddPlaceholder()"
+                >
+                  <span class="btn-text">CLEAR</span>
+                  <!-- <span class="icon-circle"> <i class="fa fa-times"></i></span> -->
+                </button>
+
+                <button
+                  type="submit"
+                  class="btn-modern submit-btn"
+                  ng-disabled="createPlaceholdeForm.$pristine|| createPlaceholdeForm.$invalid"
+                >
+                  <span class="btn-text">SUBMIT</span>
+                  <!-- <span class="icon-circle">
+                    <i class="fa fa-check"></i>
+                  </span> -->
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
+  </div>
+
+  <div class="confplaceholder">
+    <div class="modal fade" id="updateplaceholder" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Update Placeholder</h4>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              ng-click="clsoedUpdateplaceHolder()"
+            >
+              &times;
+            </button>
+          </div>
+          <form
+            name="updatePlaceholdeForm"
+            ng-submit="editPlaceHolder()"
+            novalidate
+          >
+            <div class="modal-body">
+              <div class="subscriptbody">
+                <div class="form">
+                  <div class="form-group">
+                    <label
+                      >Placeholder Name <span style="color: red">*</span></label
+                    >
+                    <input
+                      type="text"
+                      placeholder="Placeholder Name"
+                      custom-focus
+                      class="text-box"
+                      name="placeholdername"
+                      ng-model="updatePlaceHolder.documentHolderName"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="form">
+                  <div class="form-group">
+                    <label>Description</label>
+                    <input
+                      type="text"
+                      placeholder="Description"
+                      custom-focus
+                      class="text-box"
+                      name="placeholderdescription"
+                      ng-model="updatePlaceHolder.documentHolderDescription"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer1">
+                <!-- <button
+                  type="button"
+                  class="btngeo clearbtn"
+                  ng-click="resetUpdateplaceHolder()"
+                >
+                  Clear
+                </button>
+                <button
+                  type="submit"
+                  class="btngeo submitbtn clr448aff"
+                  ng-disabled="updatePlaceholdeForm.$pristine|| updatePlaceholdeForm.$invalid"
+                >
+                  Submit
+                </button> -->
+
+                <button
+                  type="button"
+                  class="btn-modern clear-btn"
+                  ng-click="resetUpdateplaceHolder()"
+                >
+                  <span class="btn-text">CLEAR</span>
+                  <!-- <span class="icon-circle"> <i class="fa fa-times"></i></span> -->
+                </button>
+
+                <button
+                  type="submit"
+                  class="btn-modern submit-btn"
+                  ng-disabled="updatePlaceholdeForm.$pristine|| updatePlaceholdeForm.$invalid"
+                >
+                  <span class="btn-text">SUBMIT</span>
+                  <!-- <span class="icon-circle">
+                    <i class="fa fa-check"></i>
+                  </span> -->
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="deleteMessage">
+    <div class="modal fade" id="delete" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Delete Placeholder</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="delete-group-body">
+              <p>
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Are
+                you sure you want to delete this place holder?
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btnd buttn-delete"
+              ng-click="deletePlaceHolder()"
+            >
+              Yes
+            </button>
+            <button type="button" class="btnd buttn-no" data-dismiss="modal">
+              No
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
 </div>
+<toaster-container
+  toaster-options="{'position-class': 'toast-custom-right', 'close-button': true, 'time-out': 5000}"
+></toaster-container>

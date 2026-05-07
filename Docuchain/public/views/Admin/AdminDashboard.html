@@ -1,14 +1,118 @@
-<!-- Body Content -->
-<div
+<!-- <div
   class="app-content"
   ng-app="dapp"
   ng-controller="AdminDashboardController"
   ng-init="getAllVesselListAndCount()"
 >
   <div class="docuchainContent">
-    <div class="docuchain-admin-title">
-      <h1>Expiry Based Documents Statistics</h1>
+    <div class="dashboard-wrapper">
+      <div class="dashboard-banner">
+        <div class="banner-content">
+          <h2>Dashboard Overview</h2>
+        </div>
+      </div>
+
+      <div class="row stats-row">
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card"
+            ng-click="userDashboard()"
+            style="cursor: pointer"
+          >
+            <div class="stat-info">
+              <span>Users</span>
+              <h3>{{userCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/topCountUsers.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card"
+            ng-click="vesselsInformation()"
+            style="cursor: pointer"
+          >
+            <div class="stat-info">
+              <span>Vessels</span>
+              <h3 class="bluelight">{{vesselsCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/topVesselscount.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Active</span>
+              <h3 class="textgreen">{{activeCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/activehome.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Expiring</span>
+              <h3 class="yeelow">{{renewalCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/topExpiring.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Expired</span>
+              <h3 class="red">{{expiredCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/expiredSubscription.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Missing</span>
+              <h3 class="grayclr">{{missingCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/missing4.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Ports</span>
+              <h3>{{portsCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/ports_icon.png" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="docuchain-admin-title">
+      <h1 style="text-transform: uppercase">
+        Expiry Based Documents Statistics
+      </h1>
+    </div>
+
     <div class="docuchain-admin-table">
       <div class="row">
         <div class="col-lg-12 col-sm-12 col-xs-12">
@@ -35,84 +139,52 @@
                     <th
                       rowspan="3"
                       ng-click="orderByField='vesselsName'; reverseSort = !reverseSort"
+                      style="cursor: pointer"
                     >
                       Vessels Name
-                      <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                      <span class="custom-sort-icon float-right"
+                        >&uarr;&darr;</span
+                      >
                     </th>
                     <th
                       rowspan="2"
                       ng-click="orderByField='imo'; reverseSort = !reverseSort"
+                      style="cursor: pointer"
                     >
                       IMO Number
-                      <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                      <span class="custom-sort-icon float-right"
+                        >&uarr;&darr;</span
+                      >
                     </th>
                     <th
                       rowspan="2"
                       ng-click="orderByField='shipTypes'; reverseSort = !reverseSort"
+                      style="cursor: pointer"
                     >
-                      Type of Vessels<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
+                      Type of Vessels
+                      <span class="custom-sort-icon float-right"
+                        >&uarr;&darr;</span
+                      >
                     </th>
                     <th colspan="5" class="text-center">Documents</th>
                     <th
                       rowspan="2"
                       class="text-center"
                       ng-click="orderByField='totalCount'; reverseSort = !reverseSort"
+                      style="cursor: pointer"
                     >
-                      Total Documents<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
+                      Total Documents
+                      <span class="custom-sort-icon float-right"
+                        >&uarr;&darr;</span
+                      >
                     </th>
                   </tr>
                   <tr>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='activeCount'; reverseSort = !reverseSort"
-                    >
-                      Active<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
-                    </th>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='renewelCount'; reverseSort = !reverseSort"
-                    >
-                      Renewal<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
-                    </th>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='expiryedCount'; reverseSort = !reverseSort"
-                    >
-                      Expired<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
-                    </th>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='pendingCount'; reverseSort = !reverseSort"
-                    >
-                      Pending<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
-                    </th>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='missingCount'; reverseSort = !reverseSort"
-                    >
-                      Missing<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
-                    </th>
+                    <th class="text-center">Active</th>
+                    <th class="text-center">Renewal</th>
+                    <th class="text-center">Expired</th>
+                    <th class="text-center">Pending</th>
+                    <th class="text-center">Missing</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -124,10 +196,12 @@
                       <img
                         ng-if="shipProfile.shipProfilePicPath"
                         ng-src="{{shipProfile.shipProfilePicPath}}"
+                        alt="Vessel Image"
                       />
                       <img
                         ng-if="!shipProfile.shipProfilePicPath"
-                        ng-src="image/imageUpload.png"
+                        src="image/placeholder_image.png"
+                        alt="Placeholder Image"
                       />
                     </td>
                     <td>{{shipProfile.vesselsName}}</td>
@@ -145,38 +219,9 @@
                       No Records Found
                     </td>
                   </tr>
-                  <!-- <tr ng-show="!shipProfileList.length">
-                                        <td colspan="10">
-                                                No Ship Created
-                                        </td>
-                                    </tr> -->
                 </tbody>
               </table>
             </div>
-            <!-- <ul class="pagination pull-right">
-                            <li class="disabled">
-                                <a href="#">
-                                    Previous
-                                </a>
-                            </li>
-                            <li class="active">
-                                <a href="javascript:void(0);">1</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);">2</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);">3</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);">4</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);">
-                                    Next
-                                </a>
-                            </li>
-                        </ul> -->
             <div class="pull-right">
               <dir-pagination-controls
                 direction-links="true"
@@ -188,6 +233,7 @@
         </div>
       </div>
     </div>
+
     <div class="docuchain-admin-title">
       <h1>Vessel tracker</h1>
     </div>
@@ -195,9 +241,6 @@
       <div class="row">
         <div class="col-lg-12 col-sm-12 col-xs-12">
           <div class="docuchainMapVictor">
-            <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d27358568.189688053!2d81.91242051691525!3d-5.483777987299326!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1533741469415"
-                                width="100%" height="350" frameborder="0" style="border:0" allowfullscreen></iframe> -->
-            <!-- <ui-gmap-google-map center="map.center" zoom="map.zoom" options="options"></ui-gmap-google-map> -->
             <div ng-app="dogMap">
               <ui-gmap-google-map
                 center="map.center"
@@ -234,7 +277,42 @@
         </div>
       </div>
     </div>
+
+    <div class="docuchain-admin-title" ng-show="vesselPortsList.length > 0">
+      <h1>Vessel Ports List</h1>
+    </div>
+    <div class="docuchain-admin-table" ng-show="vesselPortsList.length > 0">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="docuchainTable">
+            <div class="docuadmin-table table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Port Name</th>
+                    <th>Country</th>
+                    <th>Arrival Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="port in vesselPortsList">
+                    <td>{{port.portName}}</td>
+                    <td>{{port.country}}</td>
+                    <td>{{port.arrivalDate}}</td>
+                    <td>
+                      <span class="label label-info">{{port.status}}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
   <div class="preloader" ng-show="loader">
     <div id="cssload-loader">
       <div class="cssload-dot"></div>
@@ -247,4 +325,692 @@
       <div class="cssload-dot"></div>
     </div>
   </div>
+</div>
+
+ -->
+
+<!-- <div
+  class="app-content"
+  ng-app="dapp"
+  ng-controller="AdminDashboardController"
+  ng-init="getAllVesselListAndCount()"
+>
+  <div class="docuchainContent">
+    <div class="dashboard-wrapper">
+      <div class="dashboard-banner">
+        <div class="banner-content">
+          <h2>Dashboard Overview</h2>
+        </div>
+      </div> -->
+<div
+  class="app-content"
+  ng-app="dapp"
+  ng-controller="AdminDashboardController"
+  ng-init="getAllVesselListAndCount()"
+>
+  <div class="docuchainContent">
+    <div class="dashboard-wrapper">
+      <div
+        class="dashboard-header-text"
+        style="margin-bottom: 25px; padding-left: 5px"
+      >
+        <h2 style="font-size: 24px; font-weight: 500; color: #2c2c2c">
+          Dashboard
+        </h2>
+      </div>
+
+      <!-- <div class="row stats-row">
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card"
+            ng-click="userDashboard()"
+            style="cursor: pointer"
+          >
+            <div class="stat-info">
+              <span>Users</span>
+              <h3>{{userCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/topCountUsers.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card"
+            ng-click="vesselsInformation()"
+            style="cursor: pointer"
+          >
+            <div class="stat-info">
+              <span>Vessels</span>
+              <h3 class="bluelight">{{vesselsCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/topVesselscount.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Active</span>
+              <h3 class="textgreen">{{activeCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/activehome.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Expiring</span>
+              <h3 class="yeelow">{{renewalCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/topExpiring.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Expired</span>
+              <h3 class="red">{{expiredCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/expiredSubscription.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Missing</span>
+              <h3 class="grayclr">{{missingCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/missing4.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card"
+            style="cursor: pointer"
+            ng-click="goToTaskTab('tabOne')"
+          >
+            <div class="stat-info">
+              <span>Assigned By You</span>
+              <h3 style="color: #8b0ce8">{{taskAssignedByYouCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/task.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card"
+            style="cursor: pointer"
+            ng-click="goToTaskTab('tabTwo')"
+          >
+            <div class="stat-info">
+              <span>Assigned To You</span>
+              <h3 style="color: #8b0ce8">{{taskAssignedToYouCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/time.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Ports</span>
+              <h3>{{portsCount}}</h3>
+            </div>
+            <div class="shipimage">
+              <img src="image/port.png" />
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!-- <div class="row stats-row">
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-blue"
+            ng-click="userDashboard()"
+            style="cursor: pointer"
+          >
+            <div class="stat-icon-box">
+              <img src="image/topCountUsers.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Users</span>
+              <h3 class="stat-value">{{userCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-green"
+            ng-click="vesselsInformation()"
+            style="cursor: pointer"
+          >
+            <div class="stat-icon-box">
+              <img src="image/topVesselscount.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Vessels</span>
+              <h3 class="stat-value">{{vesselsCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-blue">
+            <div class="stat-icon-box"><img src="image/activehome.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Active</span>
+              <h3 class="stat-value">{{activeCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-orange">
+            <div class="stat-icon-box"><img src="image/topExpiring.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Expiring</span>
+              <h3 class="stat-value">{{renewalCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-red">
+            <div class="stat-icon-box">
+              <img src="image/expiredSubscription.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Expired</span>
+              <h3 class="stat-value">{{expiredCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-gray">
+            <div class="stat-icon-box"><img src="image/missing4.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Missing</span>
+              <h3 class="stat-value">{{missingCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-purple"
+            ng-click="goToTaskTab('tabOne')"
+            style="cursor: pointer"
+          >
+            <div class="stat-icon-box"><img src="image/task.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Assigned By You</span>
+              <h3 class="stat-value">{{taskAssignedByYouCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-purple"
+            ng-click="goToTaskTab('tabTwo')"
+            style="cursor: pointer"
+          >
+            <div class="stat-icon-box"><img src="image/time.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Assigned To You</span>
+              <h3 class="stat-value">{{taskAssignedToYouCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-cyan">
+            <div class="stat-icon-box"><img src="image/port.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Ports</span>
+              <h3 class="stat-value">{{portsCount}}</h3>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <div class="row stats-row">
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-blue"
+            ng-click="userDashboard()"
+            style="cursor: pointer"
+          >
+            <div class="stat-icon-box">
+              <img src="image/topCountUsers.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Users</span>
+              <h3 class="stat-value">{{userCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-green"
+            ng-click="vesselsInformation()"
+            style="cursor: pointer"
+          >
+            <div class="stat-icon-box">
+              <img src="image/topVesselscount.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Vessels</span>
+              <h3 class="stat-value">{{vesselsCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-blue">
+            <div class="stat-icon-box"><img src="image/activehome.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Active</span>
+              <h3 class="stat-value">{{activeCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-orange">
+            <div class="stat-icon-box"><img src="image/topExpiring.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Expiring</span>
+              <h3 class="stat-value">{{renewalCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-red">
+            <div class="stat-icon-box">
+              <img src="image/expiredSubscription.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Expired</span>
+              <h3 class="stat-value">{{expiredCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-gray">
+            <div class="stat-icon-box"><img src="image/missing4.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Missing</span>
+              <h3 class="stat-value">{{missingCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-purple"
+            ng-click="goToTaskTab('tabOne')"
+            style="cursor: pointer"
+          >
+            <div class="stat-icon-box"><img src="image/task.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Assigned By You</span>
+              <h3 class="stat-value">{{taskAssignedByYouCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-purple"
+            ng-click="goToTaskTab('tabTwo')"
+            style="cursor: pointer"
+          >
+            <div class="stat-icon-box"><img src="image/time.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Assigned To You</span>
+              <h3 class="stat-value">{{taskAssignedToYouCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card-modern theme-cyan">
+            <div class="stat-icon-box"><img src="image/port.png" /></div>
+            <div class="stat-info">
+              <span class="stat-title">Ports</span>
+              <h3 class="stat-value">{{portsCount}}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="docuchain-admin-title">
+      <h1 style="text-transform: uppercase">
+        Expiry Based Documents Statistics
+      </h1>
+    </div>
+
+    <div class="docuchain-admin-table">
+      <div class="row">
+        <div class="col-lg-12 col-sm-12 col-xs-12">
+          <div class="docuchainTable">
+            <div class="searchadminbox">
+              <div class="docuchainSearchbox">
+                <div class="searchInput">
+                  <input
+                    type="text"
+                    ng-model="viewShipProfilesearch"
+                    placeholder="Search"
+                  />
+                  <button type="button" class="searchIcon">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="docuadmin-table taskMangeTable table-responsive">
+              <table class="table custom-modern-table">
+                <thead>
+                  <tr>
+                    <th
+                      rowspan="2"
+                      class="text-center align-middle"
+                      style="width: 70px"
+                    >
+                      Vessels
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
+                      ng-click="orderByField='vesselsName'; reverseSort = !reverseSort"
+                    >
+                      <div class="">
+                        Vessels <br />
+                        Name <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
+                      ng-click="orderByField='imo'; reverseSort = !reverseSort"
+                    >
+                      <div class="">
+                        IMO <br />Number <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
+                      ng-click="orderByField='shipTypes'; reverseSort = !reverseSort"
+                    >
+                      <div class="">
+                        Type of <br />Vessels
+                        <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
+                      ng-click="orderByField='portName'; reverseSort = !reverseSort"
+                    >
+                      <div class="">
+                        Port <br />
+                        Name <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+
+                    <th colspan="5" class="text-center subscription-header">
+                      Documents
+                    </th>
+
+                    <th
+                      rowspan="2"
+                      class="text-center align-middle"
+                      ng-click="orderByField='totalCount'; reverseSort = !reverseSort"
+                    >
+                      <div class="justify-center">
+                        Total <br />
+                        Documents <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th class="text-center">Active</th>
+                    <th class="text-center">Renewal</th>
+                    <th class="text-center">Expired</th>
+                    <th class="text-center">Pending</th>
+                    <th class="text-center">Missing</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr
+                    dir-paginate="shipProfile in fData=(shipProfileList|orderBy:'vesselsName' | filter:viewShipProfilesearch) | itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort"
+                    current-page="currentPage"
+                  >
+                    <td class="text-center align-middle">
+                      <div
+                        style="
+                          width: 50px;
+                          height: 40px;
+                          margin: 0 auto;
+                          /* border-radius: 50%; */
+                          overflow: hidden;
+                          background: #f8fafc;
+                          border: 1px solid #e2e8f0;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                      >
+                        <img
+                          ng-if="shipProfile.shipProfilePicPath"
+                          ng-src="{{shipProfile.shipProfilePicPath}}"
+                          alt="Vessel"
+                          style="width: 100%; height: 100%; object-fit: cover"
+                        />
+                        <img
+                          ng-if="!shipProfile.shipProfilePicPath"
+                          src="image/placeholder_image.png"
+                          alt="Placeholder"
+                          style="width: 100%; height: 100%; object-fit: cover"
+                        />
+                      </div>
+                    </td>
+
+                    <td class="text-left align-middle font-weight-medium">
+                      {{shipProfile.vesselsName}}
+                    </td>
+                    <td class="text-left align-middle text-muted">
+                      {{shipProfile.imo}}
+                    </td>
+                    <td class="text-left align-middle">
+                      {{shipProfile.shipTypes}}
+                    </td>
+                    <td class="text-left align-middle">
+                      {{shipProfile.portName || '-'}}
+                    </td>
+
+                    <td class="text-center align-middle">
+                      {{shipProfile.activeCount}}
+                    </td>
+                    <td class="text-center align-middle">
+                      {{shipProfile.renewelCount}}
+                    </td>
+                    <td class="text-center align-middle">
+                      {{shipProfile.expiryedCount}}
+                    </td>
+                    <td class="text-center align-middle">
+                      {{shipProfile.pendingCount}}
+                    </td>
+                    <td class="text-center align-middle">
+                      {{shipProfile.missingCount}}
+                    </td>
+                    <td class="text-center align-middle font-weight-medium">
+                      {{shipProfile.totalCount}}
+                    </td>
+                  </tr>
+                  <tr ng-show="fData.length == 0">
+                    <td
+                      style="padding: 20px; text-align: center"
+                      colspan="11"
+                      class="text-muted"
+                    >
+                      No Records Found
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- <div class="pull-right">
+              <dir-pagination-controls
+                direction-links="true"
+                boundary-links="true"
+              ></dir-pagination-controls>
+            </div> -->
+            <div class="pagination-footer">
+              <div class="pagination-info text-muted">
+                Showing {{allPlaceHolderList.length > 0 ? (itemsPerPage *
+                (currentPage - 1) + 1) : 0}} to {{itemsPerPage * currentPage >
+                allPlaceHolderList.length ? allPlaceHolderList.length :
+                itemsPerPage * currentPage}} of {{allPlaceHolderList.length}}
+                entries
+              </div>
+              <div class="pagination-controls">
+                <dir-pagination-controls
+                  max-size="5"
+                  direction-links="true"
+                  boundary-links="true"
+                ></dir-pagination-controls>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="docuchain-admin-title">
+      <h1>Vessel tracker</h1>
+    </div>
+    <div class="vesselMap">
+      <div class="row">
+        <div class="col-lg-12 col-sm-12 col-xs-12">
+          <div class="docuchainMapVictor">
+            <div ng-app="dogMap">
+              <ui-gmap-google-map
+                center="map.center"
+                zoom="map.zoom"
+                draggable="false"
+                options="options"
+                bounds="map.bounds"
+                control="googlemap"
+              >
+                <ui-gmap-window
+                  show="show"
+                  coords="windowCoords"
+                  closeClick="closeClick()"
+                >
+                  <div>
+                    Vessel Name : {{parkName}} <br />
+                    LO: {{longitude}} <br />
+                    LA: {{latitude}} <br />IMO: {{imo}} <br />Last Updated:
+                    {{updateDate}}
+                  </div>
+                </ui-gmap-window>
+                <ui-gmap-markers
+                  models="markers"
+                  coords="'self'"
+                  icon="'icon'"
+                  options="'options'"
+                  doRebuildAll="true"
+                  click="onClick"
+                >
+                </ui-gmap-markers>
+              </ui-gmap-google-map>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="docuchain-admin-title" ng-show="vesselPortsList.length > 0">
+      <h1>Vessel Ports List</h1>
+    </div>
+    <div class="docuchain-admin-table" ng-show="vesselPortsList.length > 0">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="docuchainTable">
+            <div class="docuadmin-table table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Port Name</th>
+                    <th>Country</th>
+                    <th>Arrival Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="port in vesselPortsList">
+                    <td>{{port.portName}}</td>
+                    <td>{{port.country}}</td>
+                    <td>{{port.arrivalDate}}</td>
+                    <td>
+                      <span class="label label-info">{{port.status}}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
+  <toaster-container
+    toaster-options="{'position-class': 'toast-custom-right', 'close-button': false, 'time-out': 2000, 'progress-bar': false}"
+  >
+  </toaster-container>
 </div>

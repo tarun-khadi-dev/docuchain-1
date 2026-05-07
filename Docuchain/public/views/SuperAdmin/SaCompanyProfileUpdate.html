@@ -1,258 +1,550 @@
-<div class="app-content" ng-app="dapp" ng-controller="SaCompanyProfileCreateController" ng-init="organizationView()">
-    <div class="docubodyTitle">
-        <ul id="breadcrumb">
-            <li>
-                <a ui-sref="dapp.saCompanyProfile">
-                    <span class="icon icon-beaker"> </span> Manage Organization</a>
-            </li>
-            <li>
-                <a ui-sref="dapp.saCompanyProfileupdate" ng-click="previous1()">
-                    <span class="icon icon-beaker"> </span> Company Profile</a>
-            </li>
-            <li>
-                    <a ui-sref="dapp.saCompanyProfileupdate" ng-if="tab==2 || tab==3" >
-                        <span class="icon icon-beaker"> </span>Subscription</a>
-                </li>
-        </ul>
-    </div>
-    <div class="docuContent">
-        <div class="docuTabs">
-            <div class="">
-                <div class="row">
-                    <div class="col-lg-12 col-sm-12 col-xs-12">
-                        <div class="multistep-form-section" class="tab">
-                            <ul class="tab">
-                                <li class="form-step-1" ng-class="{activetab:tab==1}">
-                                    <a href="javascript:void(0);">Company Profile</a>
-                                    <div ng-if="tab==2">
-                                        <button type="button" class="comptStatusbtn">
-                                            <img src="image/circleTick.png">
-                                        </button>
-                                    </div>
-                                </li>
-                                <li class="form-step-2" ng-class="{activetab:tab==2}">
-                                    <a href="javascript:void(0);">Subscription</a>
-                                </li>
-
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="tab_content">
-                        <div id="createshare" class="docuchain-request" class="tabs_item" ng-show="tab==1">
-                            <form name="createOrganizationForm" ng-submit="updatOrganization()">
-                                <div class="docuchainRequestpannel">
-                                    <h1>Company Profile</h1>
-
-                                    <div class="row">
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Company Name
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" class="text-box" custom-focus class="text-box" placeholder="Company Name" name="organizationName" ng-model="editOrganization.organizationName"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Registration Number
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" placeholder="Registration Number" ng-pattern="/^[0-9]*$/" name="registrationNumber"
-                                                        ng-model="editOrganization.registrationNumber" required>
-                                                    <span ng-show="createOrganizationForm.registrationNumber.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group textareafield">
-                                                    <label>Address
-                                                        <span>*</span>
-                                                    </label>
-                                                    <textarea custom-focus class="text-box" placeholder="Address" name="address" ng-model="editOrganization.address" required></textarea>
-
-                                                    <!-- <input type="text" custom-focus class="text-box" placeholder="Address" name="address" ng-model="editOrganization.address" required> -->
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Email Address
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" placeholder="Email Address" name="emailId" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
-                                                        ng-model="editOrganization.emailId" required>
-                                                    <span style="color:Red" ng-show="createOrganizationForm.emailId.$dirty&&createOrganizationForm.emailId.$error.pattern && createOrganizationForm.emailId.$touched">Please Enter Valid Email</span>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Landline
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" placeholder="Phone Number" ng-pattern="/^[0-9]*$/" name="phoneNumber" ng-model="editOrganization.phoneNumber"
-                                                        required>
-                                                    <span ng-show="createOrganizationForm.phoneNumber.$error.pattern" style="color:red">Please enter numbers only</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Alternate Number</label>
-                                                    <input type="text" placeholder="Alternate Number" name="alternatePhoneNumber" ng-pattern="/^[0-9]*$/" ng-model="editOrganization.alternatePhoneNumber">
-                                                    <span ng-show="createOrganizationForm.alternatePhoneNumber.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Bank Account Number
-                                                    </label>
-                                                    <input type="text" placeholder="Bank account Number" name="bankAccountNumber" ng-pattern="/^[0-9]*$/" ng-model="editOrganization.bankAccountNumber">
-                                                    <span ng-show="createOrganizationForm.bankAccountNumber.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Contact Person Name
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" placeholder="Contact Person" name="contactPersonName" ng-model="editOrganization.contactPersonName"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Contact Person Email Address
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" placeholder="Contact Person Email Address" name="contactPersonEmail" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
-                                                        ng-model="editOrganization.contactPersonEmail">
-                                                    <span style="color:Red" ng-show="createOrganizationForm.contactPersonEmail.$dirty&&createOrganizationForm.contactPersonEmail.$error.pattern && createOrganizationForm.contactPersonEmail.$touched">Please Enter Valid Email</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fullwrap">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Contact Person Landline </label>
-                                                    <input type="text" placeholder="Phone Number" name="contactPersonPhoneNo" ng-pattern="/^[0-9]*$/" ng-model="editOrganization.contactPersonPhoneNo"> </div>
-                                                <span ng-show="createOrganizationForm.contactPersonPhoneNo.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Contact Person Alternate Number</label>
-                                                    <input type="text" placeholder="Alternate Phone Number" name="contactPersonAlternatePhoneNo" ng-pattern="/^[0-9]*$/" ng-model="editOrganization.contactPersonAlternatePhoneNo">
-                                                    <span ng-show="createOrganizationForm.contactPersonAlternatePhoneNo.$error.pattern" style="color:red">Please enter numbers only</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="savebtngroup">
-                                    <input type="submit" class="btngeo submitbtn1 clr448aff" ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid"
-                                        value="Save & close" />
-                                </div>
-                                <div class="btngroupvessl">
-                                    <button type="button" class="btn submibtn" ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid" ng-click="next2(organization)">NEXT</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div id="createshare1" class="docuchain-request" class="tabs_item" ng-show="tab==2">
-                            <form name="createOrganizationwithSubForm" ng-submit="updateOrganizationwithSubcription()">
-                                <div class="docuchainRequestpannel">
-                                    <h1>Subscription</h1>
-                                    <div class="row">
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Number of Vessel
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="text" placeholder="Number of Vessel" name="shipmentCount" ng-model="editOrganization.subscriptionInfo.shipmentCount"
-                                                    ng-pattern="/^[0-9]*$/" required>
-                                                <span ng-show="createOrganizationwithSubForm.shipmentCount.$error.pattern" style="color:red">Please enter numbers only</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Expected user per Vessel / User Vessel Role
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="text" placeholder="Number of Users / License" name="userVesslesRatio" ng-model="editOrganization.subscriptionInfo.userVesslesRatio"
-                                                    ng-pattern="/^[0-9]*$/" required>
-                                                <span ng-show="createOrganizationwithSubForm.userVesslesRatio.$error.pattern" style="color:red">Please enter numbers only</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group datepickerplace">
-                                                <label>
-                                                    Start Date
-                                                    <span>*</span>
-                                                </label>
-                                                <div class="datepickerinput">
-                                                    <input custom-focus class="text-box"  placeholder="{{editOrganization.subscriptionInfo.fromDate}}" moment-picker="ctrl.fromDate"
-                                                        locale="en" format="DD-MM-YYYY" ng-model="editOrganization.subscriptionInfo.fromDate"
-                                                        ng-model-options="{ updateOn: 'blur' }">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group datepickerplace">
-                                                <label>
-                                                    End Date
-                                                    <span>*</span>
-                                                </label>
-                                                <div class="datepickerinput">
-                                                    <input custom-focus class="text-box"   placeholder="{{editOrganization.subscriptionInfo.toDate}}" moment-picker="ctrl.toDate"
-                                                        locale="en" format="DD-MM-YYYY" ng-model="editOrganization.subscriptionInfo.toDate"
-                                                        ng-model-options="{ updateOn: 'blur' }">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-sm-6 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Subscription Amount
-                                                    <span>*</span>
-                                                </label>
-                                                <input type="text" placeholder="Subscription Amount" name="subscriptionAmount" ng-model="editOrganization.subscriptionInfo.subscriptionAmount"
-                                                    ng-pattern="/^[0-9]*$/" required>
-                                                <span ng-show="createOrganizationwithSubForm.subscriptionAmount.$error.pattern" style="color:red">Please enter numbers only</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="btngroupvessl">
-                                    <button type="button" class="btn previousbtn" ng-click="previous1()">PREVIOUS</button>
-                                    <button type="button" class="btn submibtn" ng-click="closeView()">CLOSE</button>
-                                    <button type="submit" class="btn submibtn" ng-disabled="createOrganizationwithSubForm.$invalid">SUBMIT</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+<div
+  class="app-content"
+  ng-app="dapp"
+  ng-controller="SaCompanyProfileCreateController"
+  ng-init="organizationView()"
+>
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a ui-sref="dapp.saCompanyProfile">
+          <span class="icon icon-beaker"> </span> Manage Organization</a
+        >
+      </li>
+      <li>
+        <a ui-sref="dapp.saCompanyProfileupdate" ng-click="previous1()">
+          <span class="icon icon-beaker"> </span> Company Profile</a
+        >
+      </li>
+      <li>
+        <a ui-sref="dapp.saCompanyProfileupdate" ng-if="tab==2 || tab==3">
+          <span class="icon icon-beaker"> </span>Subscription</a
+        >
+      </li>
+    </ul>
+  </div>
+  <div class="docuContent">
+    <div class="docuTabs">
+      <div class="">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!-- <div class="modern-stepper">
+              <div
+                class="modern-step"
+                ng-class="{activetab:tab==1, completed:tab==2}"
+              >
+                <a href="javascript:void(0);"
+                  >Company Profile
+                  <img src="image/circleTick.png" ng-if="tab==2" />
+                </a>
+              </div>
+              <div class="modern-step" ng-class="{activetab:tab==2}">
+                <a href="javascript:void(0);">Subscription</a>
+              </div>
+            </div> -->
+            <div class="modern-stepper">
+              <div
+                class="modern-step"
+                ng-class="{activetab:tab==1, completed:tab==2}"
+              >
+                <a href="javascript:void(0);">
+                  Company Profile
+                  <img
+                    src="image/circleTick.png"
+                    ng-if="tab==2"
+                    style="width: 18px; margin-left: 8px"
+                  />
+                </a>
+              </div>
+              <div class="modern-step" ng-class="{activetab:tab==2}">
+                <a href="javascript:void(0);">Subscription</a>
+              </div>
             </div>
+          </div>
+
+          <div class="tab_content">
+            <div
+              id="createshare"
+              class="docuchain-request tabs_item"
+              ng-show="tab==1"
+            >
+              <form
+                name="createOrganizationForm"
+                ng-submit="updatOrganization()"
+              >
+                <div class="docuchainRequestpannel">
+                  <h1>Company Profile</h1>
+
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Company Name <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Company Name"
+                          name="organizationName"
+                          ng-model="editOrganization.organizationName"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Registration Number <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Registration Number"
+                          name="registrationNumber"
+                          ng-model="editOrganization.registrationNumber"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Address Line 1 <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Address Line 1"
+                          name="addressLine1"
+                          ng-model="editOrganization.addressLine1"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Address Line 2</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Address Line 2"
+                          name="addressLine2"
+                          ng-model="editOrganization.addressLine2"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Email Address <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Email Address"
+                          name="emailId"
+                          ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                          ng-model="editOrganization.emailId"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.emailId.$dirty&&createOrganizationForm.emailId.$error.pattern && createOrganizationForm.emailId.$touched"
+                          >Please Enter Valid Email</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Landline <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Phone Number"
+                          ng-pattern="/^[0-9]/"
+                          name="phoneNumber"
+                          ng-model="editOrganization.phoneNumber"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.phoneNumber.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Alternate Number</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Alternate Number"
+                          name="alternatePhoneNumber"
+                          ng-pattern="/^[0-9]/"
+                          ng-model="editOrganization.alternatePhoneNumber"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.alternatePhoneNumber.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Bank Account Number </label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Bank account Number"
+                          name="bankAccountNumber"
+                          ng-pattern="/^[0-9]/"
+                          ng-model="editOrganization.bankAccountNumber"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.bankAccountNumber.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Contact Person Name <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          custom-focus
+                          placeholder="Contact Person"
+                          name="contactPersonName"
+                          ng-model="editOrganization.contactPersonName"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label
+                          >Contact Person Email Address <span>*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Email Address"
+                          name="contactPersonEmail"
+                          ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                          ng-model="editOrganization.contactPersonEmail"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.contactPersonEmail.$dirty&&createOrganizationForm.contactPersonEmail.$error.pattern && createOrganizationForm.contactPersonEmail.$touched"
+                          >Please Enter Valid Email</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Contact Person Landline </label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Phone Number"
+                          name="contactPersonPhoneNo"
+                          ng-pattern="/^[0-9]/"
+                          ng-model="editOrganization.contactPersonPhoneNo"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.contactPersonPhoneNo.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Contact Person Alternate Number</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Alternate Phone Number"
+                          name="contactPersonAlternatePhoneNo"
+                          ng-pattern="/^[0-9]/"
+                          ng-model="editOrganization.contactPersonAlternatePhoneNo"
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationForm.contactPersonAlternatePhoneNo.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- <div class="savebtngroup">
+                  <button
+                    type="submit"
+                    class="btn-modern save-btn"
+                    ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid"
+                  >
+                    <span class="btn-text">Save & Close</span>
+                    <span class="icon-circle"><i class="fa fa-save"></i></span>
+                  </button>
+                </div>
+                <div class="btngroupvessl" style="justify-content: flex-end">
+                  <button
+                    type="button"
+                    class="btn-modern next-btn"
+                    ng-disabled="createOrganizationForm.$pristine|| createOrganizationForm.$invalid"
+                    ng-click="next2(organization)"
+                  >
+                    <span class="btn-text">NEXT</span>
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-right"></i
+                    ></span>
+                  </button>
+                </div> -->
+                <div
+                  class="btngroupvessl bttnGroup"
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 15px;
+                    padding-top: 20px;
+                  "
+                >
+                  <button
+                    type="submit"
+                    class="btn-modern submit-btn"
+                    ng-disabled="createOrganizationForm.$pristine || createOrganizationForm.$invalid"
+                  >
+                    <span class="btn-text">SAVE & CLOSE</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-modern submit-btn"
+                    ng-disabled="createOrganizationForm.$pristine || createOrganizationForm.$invalid"
+                    ng-click="next2(organization)"
+                  >
+                    <span class="btn-text">NEXT</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div
+              id="createshare1"
+              class="docuchain-request tabs_item"
+              ng-show="tab==2"
+            >
+              <form
+                name="createOrganizationwithSubForm"
+                ng-submit="updateOrganizationwithSubcription()"
+              >
+                <div class="docuchainRequestpannel">
+                  <h1>Subscription</h1>
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Number of Vessel <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Number of Vessel"
+                          name="shipmentCount"
+                          ng-model="editOrganization.subscriptionInfo.shipmentCount"
+                          ng-pattern="/^[0-9]*$/"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationwithSubForm.shipmentCount.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label
+                          >Expected user per Vessel / User Vessel Role
+                          <span>*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Number of Users / License"
+                          name="userVesslesRatio"
+                          ng-model="editOrganization.subscriptionInfo.userVesslesRatio"
+                          ng-pattern="/^[0-9]*$/"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationwithSubForm.userVesslesRatio.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group datepickerplace">
+                        <label>Start Date <span>*</span></label>
+                        <div class="datepickerinput">
+                          <input
+                            class="form-control text-box"
+                            custom-focus
+                            placeholder="{{editOrganization.subscriptionInfo.fromDate}}"
+                            moment-picker="ctrl.fromDate"
+                            locale="en"
+                            format="DD-MM-YYYY"
+                            ng-model="editOrganization.subscriptionInfo.fromDate"
+                            ng-model-options="{ updateOn: 'blur' }"
+                          />
+                          <i class="fa fa-calendar date-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group datepickerplace">
+                        <label>End Date <span>*</span></label>
+                        <div class="datepickerinput">
+                          <input
+                            class="form-control text-box"
+                            custom-focus
+                            placeholder="{{editOrganization.subscriptionInfo.toDate}}"
+                            moment-picker="ctrl.toDate"
+                            locale="en"
+                            format="DD-MM-YYYY"
+                            ng-model="editOrganization.subscriptionInfo.toDate"
+                            ng-model-options="{ updateOn: 'blur' }"
+                          />
+                          <i class="fa fa-calendar date-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                        <label>Subscription Amount <span>*</span></label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          placeholder="Subscription Amount"
+                          name="subscriptionAmount"
+                          ng-model="editOrganization.subscriptionInfo.subscriptionAmount"
+                          ng-pattern="/^[0-9]*$/"
+                          required
+                        />
+                        <span
+                          class="error-msg"
+                          ng-show="createOrganizationwithSubForm.subscriptionAmount.$error.pattern"
+                          >Please enter numbers only</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- <div class="btngroupvessl">
+                  <button
+                    type="button"
+                    class="btn-modern prev-btn"
+                    ng-click="previous1()"
+                  >
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-left"></i
+                    ></span>
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+
+                  <div style="display: flex; gap: 10px">
+                    <button
+                      type="button"
+                      class="btn-modern prev-btn"
+                      ng-click="closeView()"
+                    >
+                      <span class="icon-circle"
+                        ><i class="fa fa-times"></i
+                      ></span>
+                      <span class="btn-text">CLOSE</span>
+                    </button>
+
+                    <button
+                      type="submit"
+                      class="btn-modern next-btn"
+                      ng-disabled="createOrganizationwithSubForm.$invalid"
+                    >
+                      <span class="btn-text">SUBMIT</span>
+                      <span class="icon-circle"
+                        ><i class="fa fa-check"></i
+                      ></span>
+                    </button>
+                  </div>
+                </div> -->
+                <div
+                  class="btngroupvessl bttnGroup"
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 15px;
+                    padding-top: 20px;
+                  "
+                >
+                  <button
+                    type="button"
+                    class="btn-modern clear-btn"
+                    ng-click="previous1()"
+                  >
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-modern clear-btn"
+                    ng-click="closeView()"
+                  >
+                    <span class="btn-text">CLOSE</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    class="btn-modern submit-btn"
+                    ng-disabled="createOrganizationwithSubForm.$invalid"
+                  >
+                    <span class="btn-text">SUBMIT</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-        </div>
+  </div>
+
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
     </div>
+  </div>
 </div>

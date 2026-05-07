@@ -24,5 +24,15 @@
     "AngularJS-Toaster": "angularjs-toaster#^2.2.0",
     "ng-idle": "^1.3.2",
     "angular-idle-service": "^1.0.4"
-  }
+  },
+  "description": "",
+  "main": "",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
 }

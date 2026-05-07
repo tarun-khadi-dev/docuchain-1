@@ -1,22 +1,28 @@
 <div class="app-content" ng-init="countryList()">
-    <div class="docubodyTitle">
-        <ul id="breadcrumb">
-            <!-- <li>
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <!-- <li>
                 <a ui-sref="dapp.saCompanyProfile">
                     <span class="icon icon-beaker"> </span>System Configuraion</a>
             </li> -->
-            <li>
-                <a >
-                    <span class="icon icon-beaker"> </span>Country</a>
-            </li>
-        </ul>
-        <div class="bttnGroup">
-            <button type="button" class="addNew" data-toggle="modal" data-target="#countryadd" data-backdrop="static">
-                <img src="image/world.png"> Add Country</button>
-        </div>
-        <!-- <div class="selecboxoption">
+      <li>
+        <a> <span class="icon icon-beaker"> </span>Country</a>
+      </li>
+    </ul>
+    <div class="bttnGroup">
+      <button
+        type="button"
+        class="addNew"
+        data-toggle="modal"
+        data-target="#countryadd"
+        data-backdrop="static"
+      >
+        <img src="image/world.png" /> Add Country
+      </button>
+    </div>
+    <!-- <div class="selecboxoption">
                 <div class="create-group">
-                       
+
                         <div class="showdrop">
                             <span style "color: #083b66;">Show</span>
                             <input type="text" class="viewBy-Input" placeholder="Search" ng-model="itemsPerPage">of <span>{{allCountryList.length}}</span>
@@ -27,191 +33,386 @@
                         </div>
                     </div>
               </div> -->
-    </div>
-    <div class="docuContent">
-        <div class="manageOrganization vesslesDocumentsTable">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="datatableEntry">
-                        <label>Show
-                            <input type="text" ng-model="itemsPerPage">of
-                            <span>{{allCountryList.length}}</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="docuchainSearchbox">
-                        <div class="searchInput">
-                            <input type="text" placeholder="Search" ng-model="countrysearch">
-                            <button type="button" class="searchIcon">
-                                <i class="fa fa-search" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <div class="docuchainmanageOrganization">
-                        <div class="systemConfig table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th >S.No</th>
-                                        <th ng-click="orderByField='countryName'; reverseSort = !reverseSort">Country<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                        <th ng-click="orderByField='countryCode'; reverseSort = !reverseSort">Country Code<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                        <th class="text-center">Action</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    <tr dir-paginate="country in allCountryList |orderBy:'countryName'|filter:countrysearch |itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort" current-page="currentPage">
-
-                                        <td>{{itemsPerPage *(currentPage-1)+$index+1}}</td>
-                                        <td>{{country.countryName}}</td>
-                                        <td>{{country.countryCode}}</td>
-                                        <td class="text-center">
-                                            <button type="button" class="btned editBtn" data-target="#editCountry" data-toggle="modal" data-backdrop="static" ng-click="getUpdateCountry(country)">
-                                                <i class="fa fa-pencil" aria-hidden="true"></i>
-                                            </button>
-                                            <button type="button" class="btned deleteBtn" data-toggle="modal" data-target="#delete" data-backdrop="static" ng-click="getDeleteCountry(country)">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <dir-pagination-controls  direction-links="true" boundary-links="true">
-                        </dir-pagination-controls>
-                        <div class="vesselstablebottom" ng-if="allCountryList.length == 0">No Records Found.</div>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <div class="docuContent">
+    <div class="manageOrganization vesslesDocumentsTable">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="datatableEntry">
+            <label
+              >Show <input type="text" ng-model="itemsPerPage" />of
+              <span>{{allCountryList.length}}</span>
+            </label>
+          </div>
         </div>
-    </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
+        <div class="col-lg-6">
+          <div class="docuchainSearchbox">
+            <div class="searchInput">
+              <input
+                type="text"
+                placeholder="Search"
+                ng-model="countrysearch"
+              />
+              <button type="button" class="searchIcon">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-sm-12 col-xs-12">
+          <div class="docuchainmanageOrganization">
+            <div
+              class="systemConfig table-responsive"
+              style="overflow-x: hidden"
+            >
+              <table
+                class="table custom-modern-table"
+                style="table-layout: fixed; width: 100%; margin-bottom: 0"
+              >
+                <thead>
+                  <tr style="font-size: 11px; text-transform: uppercase">
+                    <th class="text-center" style="width: 8%">S.NO</th>
+                    <th
+                      style="width: 45%"
+                      ng-click="orderByField='countryName'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        COUNTRY <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                    <th
+                      style="width: 27%"
+                      ng-click="orderByField='countryCode'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        COUNTRY<br />CODE <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                    <th class="text-center" style="width: 20%">
+                      <div class="th-content justify-center">ACTIONS</div>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr
+                    dir-paginate="country in allCountryList | orderBy:'countryName' | filter:countrysearch | itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort"
+                    current-page="currentPage"
+                  >
+                    <td class="text-center">
+                      {{itemsPerPage * (currentPage-1) + $index + 1}}
+                    </td>
+                    <td
+                      class="font-weight-medium"
+                      style="word-break: break-word"
+                    >
+                      {{country.countryName}}
+                    </td>
+                    <td class="text-muted">{{country.countryCode}}</td>
+                    <td class="text-center" style="white-space: nowrap">
+                      <button
+                        type="button"
+                        class="modern-action-btn"
+                        data-target="#editCountry"
+                        data-toggle="modal"
+                        data-backdrop="static"
+                        ng-click="getUpdateCountry(country)"
+                        title="Edit"
+                      >
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="modern-action-btn"
+                        ng-click="confirmDeleteCountry(country)"
+                        title="Delete"
+                      >
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr
+                    ng-show="(allCountryList | filter:countrysearch).length == 0"
+                  >
+                    <td colspan="4" class="text-center p-4 text-muted">
+                      No records found
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination-footer">
+              <div class="pagination-info text-muted">
+                Showing {{allCountryList.length > 0 ? (itemsPerPage *
+                (currentPage - 1) + 1) : 0}} to {{itemsPerPage * currentPage >
+                allCountryList.length ? allCountryList.length : itemsPerPage *
+                currentPage}} of {{allCountryList.length}} entries
+              </div>
+              <div class="pagination-controls">
+                <dir-pagination-controls
+                  direction-links="true"
+                  boundary-links="true"
+                ></dir-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Add new Popup -->
 <div class="confplaceholder">
-    <div class="modal fade" id="countryadd" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Create Country</h4>
-                    <button type="button" class="close" data-dismiss="modal" data-target="#countryadd" ng-click="closeOrCancel()">&times;</button>
+  <div class="modal fade" id="countryadd" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Create Country</h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            data-target="#countryadd"
+            ng-click="closeOrCancel()"
+          >
+            &times;
+          </button>
+        </div>
+        <form name="createCountryForm" ng-submit="addCountry()" novalidate>
+          <div class="modal-body">
+            <div class="subscriptbody">
+              <div class="form">
+                <div class="form-group">
+                  <label>Country <span style="color: red">*</span></label>
+                  <input
+                    type="text"
+                    placeholder="Country name"
+                    name="countryName"
+                    ng-model="country.countryName"
+                    required
+                  />
                 </div>
-                <form name="createCountryForm"ng-submit="addCountry()" novalidate>
-                    <div class="modal-body">
-                        <div class="subscriptbody">
-                            <div class="form">
-                                <div class="form-group">
-                                    <label>Country <span style="color:red;">*</span></label>
-                                    <input type="text" placeholder="Country name"  name="countryName" ng-model="country.countryName" required>
-                                    
-                                </div>
 
-                                <div class="form-group">
-                                    <label>Country Code <span style="color:red;">*</span></label> 
-                                    <input type="text" ng-pattern ="/^[a-zA-Z\s]*$/" placeholder="Country Code"  name="countryCode" ng-model="country.countryCode"required>
-                                    <span ng-show="createCountryForm.countryCode.$error.pattern && createCountryForm.countryCode.$touched "
-                                            style="color:red">Only accept alphabet letters</span>
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer1">
-                        <button type="button" class="btngeo clearbtn" ng-click="closeOrCancel()">CLEAR</button>
-                        <button type="submit" class="btngeo submitbtn clr448aff" ng-disabled="createCountryForm.$pristine|| createCountryForm.$invalid">SUBMIT</button>
-                    </div>
-                </form>
+                <div class="form-group">
+                  <label>Country Code <span style="color: red">*</span></label>
+                  <input
+                    type="text"
+                    ng-pattern="/^[a-zA-Z\s]*$/"
+                    placeholder="Country Code"
+                    name="countryCode"
+                    ng-model="country.countryCode"
+                    required
+                  />
+                  <span
+                    ng-show="createCountryForm.countryCode.$error.pattern && createCountryForm.countryCode.$touched "
+                    style="color: red"
+                    >Only accept alphabet letters</span
+                  >
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
+          <!-- <div class="modal-footer1">
+            <button
+              type="button"
+              class="btn-modern clear-btn"
+              ng-click="closeOrCancel()"
+            >
+              <span class="btn-text">CLEAR</span>
+              <span class="icon-circle"> <i class="fa fa-times"></i></span>
+            </button>
+
+            <button
+              type="submit"
+              class="btn-modern submit-btn"
+              ng-disabled="createCountryForm.$pristine|| createCountryForm.$invalid"
+            >
+              <span class="btn-text">SUBMIT</span>
+              <span class="icon-circle">
+                <i class="fa fa-check"></i>
+              </span>
+            </button>
+          </div> -->
+          <div class="modal-footer1 bttnGroup">
+            <button
+              type="button"
+              class="btn-modern clear-btn"
+              ng-click="closeOrCancel()"
+            >
+              <span class="btn-text">CLEAR</span>
+            </button>
+
+            <button
+              type="submit"
+              class="btn-modern submit-btn"
+              ng-disabled="createCountryForm.$pristine || createCountryForm.$invalid"
+            >
+              <span class="btn-text">SUBMIT</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-        </div>
+  </div>
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
     </div>
+  </div>
 </div>
 
 <div class="confplaceholder">
-    <div class="modal fade" id="editCountry" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Update Country</h4>
-                    <button type="button" class="close" data-dismiss="modal" ng-click="closeEditCountry()">&times;</button>
-                </div>
-                <form name="editCountryForm" ng-submit="editCountry()" novalidate>
-                    <div class="modal-body">
-                        <div class="subscriptbody">
-                            <div class="form">
-                                <div class="form-group">
-                                    <label>Country <span style="color:red;">*</span></label>
-                                    <input type="text" custom-focus class="text-box" placeholder="Country name" name="countryName" ng-model="updateCountry.countryName" required>
-                                    
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Country Code <span style="color:red;">*</span></label>
-                                    <input type="text" custom-focus class="text-box" placeholder="Country Code" name="countryCode" ng-model="updateCountry.countryCode" required>
-                                </div>
-                               
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer1">
-                        <button type="button" class="btngeo clearbtn" ng-click="resetEditCountry()">CLEAR</button>
-                        <button type="submit" class="btngeo submitbtn clr448aff"  ng-disabled="editCountryForm.$pristine|| editCountryForm.$invalid">SUBMIT</button>
-                    </div>
-                </form>
-            </div>
+  <div class="modal fade" id="editCountry" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Update Country</h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            ng-click="closeEditCountry()"
+          >
+            &times;
+          </button>
         </div>
+        <form name="editCountryForm" ng-submit="editCountry()" novalidate>
+          <div class="modal-body">
+            <div class="subscriptbody">
+              <div class="form">
+                <div class="form-group">
+                  <label>Country <span style="color: red">*</span></label>
+                  <input
+                    type="text"
+                    custom-focus
+                    class="text-box"
+                    placeholder="Country name"
+                    name="countryName"
+                    ng-model="updateCountry.countryName"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label>Country Code <span style="color: red">*</span></label>
+                  <input
+                    type="text"
+                    custom-focus
+                    class="text-box"
+                    placeholder="Country Code"
+                    name="countryCode"
+                    ng-model="updateCountry.countryCode"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="modal-footer1">
+            <button
+              type="button"
+              class="btn-modern clear-btn"
+              ng-click="resetEditCountry()"
+            >
+              <span class="btn-text">CLEAR</span>
+              <span class="icon-circle">
+                <i class="fa fa-times"></i>
+              </span>
+            </button>
+
+            <button
+              type="submit"
+              class="btn-modern submit-btn"
+              ng-disabled="editCountryForm.$pristine|| editCountryForm.$invalid"
+            >
+              <span class="btn-text">SUBMIT</span>
+              <span class="icon-circle">
+                <i class="fa fa-check"></i>
+              </span>
+            </button>
+          </div> -->
+          <div class="modal-footer1 bttnGroup">
+            <button
+              type="button"
+              class="btn-modern clear-btn"
+              ng-click="resetEditCountry()"
+            >
+              <span class="btn-text">CLEAR</span>
+            </button>
+
+            <button
+              type="submit"
+              class="btn-modern submit-btn"
+              ng-disabled="editCountryForm.$pristine || editCountryForm.$invalid"
+            >
+              <span class="btn-text">SUBMIT</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Delete Popup -->
 <div class="deleteMessage">
-    <div class="modal fade" id="delete" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Delete Country</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="delete-group-body">
-                        <p>
-                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Are you sure you want to delete this country?</p>
-
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btnd buttn-delete" ng-click="deleteCountry()">Yes</button>
-                    <button type="button" class="btnd buttn-no" data-dismiss="modal">No</button>
-                </div>
-            </div>
+  <div class="modal fade" id="delete" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete Country</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
         </div>
+        <div class="modal-body">
+          <div class="delete-group-body">
+            <p>
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Are
+              you sure you want to delete this country?
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btnd buttn-delete"
+            ng-click="deleteCountry()"
+          >
+            Yes
+          </button>
+          <button type="button" class="btnd buttn-no" data-dismiss="modal">
+            No
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
+<toaster-container
+  toaster-options="{'position-class': 'toast-custom-right', 'close-button': false, 'time-out': 2000, 'progress-bar': false}"
+>
+</toaster-container>
