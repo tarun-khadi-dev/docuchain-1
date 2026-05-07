@@ -32,10 +32,10 @@ public class CommonMethodsUtility {
 	static final Logger LOG = LoggerFactory.getLogger(CommonMethodsUtility.class);
 	@Autowired
 	private DataModifiedHistoryRepository dataModifiedHistoryRepository;
-	
+
 	@Autowired
 	private DataDeletedHistoryRepository dataDeletedHistoryRepository;
-	
+
 	@Autowired
 	private UserProfileRepository userProfileRepository;
 	public boolean maintainHistory(Long objectId,String objectName,String selectType, String objectStatus, Long modifiedBy) {
@@ -44,7 +44,7 @@ public class CommonMethodsUtility {
 		if (validationStatus != true) {
 			return false;
 		}
-		
+
 		dataModifiedHistoryInfo.setObjectId(objectId);
 		dataModifiedHistoryInfo.setObjectStatus(objectStatus);
 		dataModifiedHistoryInfo.setModifiedBy(modifiedBy);
@@ -54,7 +54,7 @@ public class CommonMethodsUtility {
 		}else{
 			dataModifiedHistoryInfo.setModifiedByName("No Name");
 		}
-		
+
 		dataModifiedHistoryInfo.setObjectName(objectName);
 		dataModifiedHistoryInfo.setSelectType(selectType);
 		DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -67,10 +67,10 @@ public class CommonMethodsUtility {
 		}
 		return false;
 	}
-	
+
 	public DataDeletedHistoryInfo maintainDeletedHistory(DeletedHistoryDTO deletedHistoryDTO) {
 		DataDeletedHistoryInfo dataDeletedHistoryInfo=new DataDeletedHistoryInfo();
-		
+
 		dataDeletedHistoryInfo.setObjectId(deletedHistoryDTO.getObjectId());
 		dataDeletedHistoryInfo.setObjectOne(deletedHistoryDTO.getObjectOne());
 		dataDeletedHistoryInfo.setObjectTwo(deletedHistoryDTO.getObjectTwo());
@@ -81,13 +81,19 @@ public class CommonMethodsUtility {
 		return deletedHistoryInfo;
 	}
 
+	// public boolean fieldValidation(Long objectId, String objectStatus, Long modifiedBy) {
+	// 	if (StringUtils.isNotBlank(objectId.toString()) && StringUtils.isNotBlank(objectStatus)
+	// 			&& StringUtils.isNotBlank(modifiedBy.toString())) {
+	// 		return true;
+	// 	} else {
+	// 		return false;
+	// 	}
+	// }
 	public boolean fieldValidation(Long objectId, String objectStatus, Long modifiedBy) {
-		if (StringUtils.isNotBlank(objectId.toString()) && StringUtils.isNotBlank(objectStatus)
-				&& StringUtils.isNotBlank(modifiedBy.toString())) {
-			return true;
-		} else {
+		if (objectId == null || modifiedBy == null || StringUtils.isBlank(objectStatus)) {
 			return false;
 		}
+		return true;
 	}
 	public boolean isImage(MultipartFile file) {
 		try {
@@ -97,7 +103,7 @@ public class CommonMethodsUtility {
 	        {
 	            System.out.println("It's an image");
 	        	return true;
-	        }	        
+	        }
 			LOG.info("Invalid image type");
 			return false;
 		} catch (Exception e) {
@@ -145,7 +151,7 @@ public class CommonMethodsUtility {
 			faqDTO.setAnswer(faqInfo.getAnswer());
 			faqDTOs.add(faqDTO);
 		}
-		
+
 		return faqDTOs;
 	}
 }

@@ -68,7 +68,7 @@ public class NotificationUtility {
 
     @Autowired
     private RoleInfoRepository roleInfoRepository;
-    
+
     @Autowired
     private TaskStatusRepository taskStatusRepository;
 
@@ -194,55 +194,193 @@ public class NotificationUtility {
         return dateDifference.toString();
     }
 
-    public boolean notifyDocumentUpload(Long userId, ExpiryDocumentInfo expiryDocumentInfo) {
+//     public boolean notifyDocumentUpload(Long userId, ExpiryDocumentInfo expiryDocumentInfo) {
 
-        
-        UserProfileInfo userProfileInfo = userProfileRepository.findOne(userId);
-	        Set<UserProfileInfo> notifierInfos = new HashSet<UserProfileInfo>();
-	        List<UserNotificationInfo> userNotificationInfos = new ArrayList<UserNotificationInfo>();
-	        if (userProfileInfo != null && !userProfileInfo.getUserName().isEmpty()) {
-	            RoleInfo roleInfo = userProfileInfo.getRoleId();
-	            if (roleInfo.getRoleName().equals(Role.ShipMaster)) {
-	                ShipProfileInfo shipProfileInfo = expiryDocumentInfo.getShipProfileInfo();
-	                notifierInfos = shipProfileInfo.getTechMasters();
-	                if (shipProfileInfo.getCommercialMasters() != null)
-	                	notifierInfos = shipProfileInfo.getCommercialMasters();
-	            } else if (roleInfo.getRoleName().equals(Role.TechManager)) {
-	                ShipProfileInfo shipProfileInfo = expiryDocumentInfo.getShipProfileInfo();
-	                if (shipProfileInfo.getShipMaster() != null)
-	                	notifierInfos.add(shipProfileInfo.getShipMaster());
-	                if (shipProfileInfo.getCommercialMasters() != null)
-	                	notifierInfos = shipProfileInfo.getCommercialMasters();
-	            }
-	        }
-       List<UserNotificationInfo> userNotificat = new ArrayList<UserNotificationInfo>();
-       for (UserProfileInfo userForNotification : notifierInfos) {
-       	if (expiryDocumentInfo != null && expiryDocumentInfo.getId() != null) {
-               UserNotificationInfo userNotificationInfo = new UserNotificationInfo();
-               userNotificationInfo.setExpiryDocumentInfo(expiryDocumentInfo);
-               userNotificationInfo.setNotifiedTo(userForNotification);
-               userNotificationInfo.setNotificationTime(new Date());
-               userNotificationInfo.setDescription(String.format(env.getProperty("document.approve.success"), expiryDocumentInfo.getDocumentHolderInfo().getDocumentHolderName()));
-               userNotificationInfo.setNotificationType("Approval page");
-               userNotificationInfo.setReadStatus(0);
-               userNotificationInfo.setColor("Green");
-               userNotificationInfos.add(userNotificationInfo);              
-           }
-		}
-       
-       if(userNotificationInfos !=null && userNotificationInfos.size() > 0) {
-       	userNotificationInfos = userNotificationRepository.save(userNotificationInfos);
-           if (userNotificationInfos != null && userNotificationInfos.size() > 0 ) {
-               return true;
-           }
-       }
-       
 
-       return false;
+//         UserProfileInfo userProfileInfo = userProfileRepository.findOne(userId);
+// 	        Set<UserProfileInfo> notifierInfos = new HashSet<UserProfileInfo>();
+// 	        List<UserNotificationInfo> userNotificationInfos = new ArrayList<UserNotificationInfo>();
+// 	        if (userProfileInfo != null && !userProfileInfo.getUserName().isEmpty()) {
+// 	            RoleInfo roleInfo = userProfileInfo.getRoleId();
+// 	            if (roleInfo.getRoleName().equals(Role.ShipMaster)) {
+// 	                ShipProfileInfo shipProfileInfo = expiryDocumentInfo.getShipProfileInfo();
+// 	                notifierInfos = shipProfileInfo.getTechMasters();
+// 	                if (shipProfileInfo.getCommercialMasters() != null)
+// 	                	notifierInfos = shipProfileInfo.getCommercialMasters();
+// 	            } else if (roleInfo.getRoleName().equals(Role.TechManager)) {
+// 	                ShipProfileInfo shipProfileInfo = expiryDocumentInfo.getShipProfileInfo();
+// 	                if (shipProfileInfo.getShipMaster() != null)
+// 	                	notifierInfos.add(shipProfileInfo.getShipMaster());
+// 	                if (shipProfileInfo.getCommercialMasters() != null)
+// 	                	notifierInfos = shipProfileInfo.getCommercialMasters();
+// 	            }
+// 	        }
+//        List<UserNotificationInfo> userNotificat = new ArrayList<UserNotificationInfo>();
+//        for (UserProfileInfo userForNotification : notifierInfos) {
+//        	if (expiryDocumentInfo != null && expiryDocumentInfo.getId() != null) {
+//                UserNotificationInfo userNotificationInfo = new UserNotificationInfo();
+//                userNotificationInfo.setExpiryDocumentInfo(expiryDocumentInfo);
+//                userNotificationInfo.setNotifiedTo(userForNotification);
+//                userNotificationInfo.setNotificationTime(new Date());
+//                userNotificationInfo.setDescription(String.format(env.getProperty("document.approve.success"), expiryDocumentInfo.getDocumentHolderInfo().getDocumentHolderName()));
+//                userNotificationInfo.setNotificationType("Approval page");
+//                userNotificationInfo.setReadStatus(0);
+//                userNotificationInfo.setColor("Green");
+//                userNotificationInfos.add(userNotificationInfo);
+//            }
+// 		}
 
-   }
-    
+//        if(userNotificationInfos !=null && userNotificationInfos.size() > 0) {
+//        	userNotificationInfos = userNotificationRepository.save(userNotificationInfos);
+//            if (userNotificationInfos != null && userNotificationInfos.size() > 0 ) {
+//                return true;
+//            }
+//        }
 
+
+//        return false;
+
+//    }
+// public boolean notifyDocumentUpload(Long userId, ExpiryDocumentInfo expiryDocumentInfo) {
+
+//     UserProfileInfo userProfileInfo = userProfileRepository.findOne(userId);
+//     Set<UserProfileInfo> notifierInfos = new HashSet<UserProfileInfo>();
+//     List<UserNotificationInfo> userNotificationInfos = new ArrayList<UserNotificationInfo>();
+
+//     if (userProfileInfo != null && !userProfileInfo.getUserName().isEmpty()) {
+//         RoleInfo roleInfo = userProfileInfo.getRoleId();
+
+//         // ---------------------------------------------------------
+//         // FIX APPLIED: Logic for ShipMaster
+//         // ---------------------------------------------------------
+//         if (roleInfo.getRoleName().equals(Role.ShipMaster)) {
+//             ShipProfileInfo shipProfileInfo = expiryDocumentInfo.getShipProfileInfo();
+//             // Correctly add TechMasters without overwriting
+//             if (shipProfileInfo.getTechMasters() != null) {
+//                 notifierInfos.addAll(shipProfileInfo.getTechMasters());
+//             }
+//         }
+//         // ---------------------------------------------------------
+//         // FIX APPLIED: Logic for TechManager
+//         // ---------------------------------------------------------
+//         else if (roleInfo.getRoleName().equals(Role.TechManager)) {
+//             ShipProfileInfo shipProfileInfo = expiryDocumentInfo.getShipProfileInfo();
+//             // Correctly add ShipMaster without overwriting
+//             if (shipProfileInfo.getShipMaster() != null) {
+//                 notifierInfos.add(shipProfileInfo.getShipMaster());
+//             }
+//         }
+//     }
+
+//     // Iterate over the identified notifiers and create notification objects
+//     for (UserProfileInfo userForNotification : notifierInfos) {
+//         if (expiryDocumentInfo != null && expiryDocumentInfo.getId() != null) {
+//             UserNotificationInfo userNotificationInfo = new UserNotificationInfo();
+//             userNotificationInfo.setExpiryDocumentInfo(expiryDocumentInfo);
+//             userNotificationInfo.setNotifiedTo(userForNotification);
+//             userNotificationInfo.setNotificationTime(new Date());
+//             userNotificationInfo.setDescription(String.format(env.getProperty("document.approve.success"), expiryDocumentInfo.getDocumentHolderInfo().getDocumentHolderName()));
+//             userNotificationInfo.setNotificationType("Approval page");
+//             userNotificationInfo.setReadStatus(0);
+//             userNotificationInfo.setColor("Green");
+//             userNotificationInfos.add(userNotificationInfo);
+//         }
+//     }
+
+//     // Save notifications to the database
+//     if (userNotificationInfos != null && userNotificationInfos.size() > 0) {
+//         userNotificationInfos = userNotificationRepository.save(userNotificationInfos);
+//         if (userNotificationInfos != null && userNotificationInfos.size() > 0) {
+//             return true;
+//         }
+//     }
+
+//     return false;
+// }
+public boolean notifyDocumentUpload(Long userId, ExpiryDocumentInfo expiryDocumentInfo) {
+
+    UserProfileInfo userProfileInfo = userProfileRepository.findOne(userId);
+    // Use a Set to avoid duplicate notifications if a user has multiple roles
+    Set<UserProfileInfo> notifierInfos = new HashSet<UserProfileInfo>();
+    List<UserNotificationInfo> userNotificationInfos = new ArrayList<UserNotificationInfo>();
+
+    if (userProfileInfo != null && !userProfileInfo.getUserName().isEmpty()) {
+        RoleInfo roleInfo = userProfileInfo.getRoleId();
+        ShipProfileInfo shipProfileInfo = expiryDocumentInfo.getShipProfileInfo();
+
+        if (shipProfileInfo != null) {
+            // ---------------------------------------------------------
+            // SCENARIO 1: Uploader is ShipMaster
+            // Notify: Tech Managers + Commercial Managers
+            // ---------------------------------------------------------
+            if (roleInfo.getRoleName().equals(Role.ShipMaster)) {
+
+                // Add Tech Managers
+                if (shipProfileInfo.getTechMasters() != null) {
+                    notifierInfos.addAll(shipProfileInfo.getTechMasters());
+                }
+
+                // Add Commercial Managers
+                if (shipProfileInfo.getCommercialMasters() != null) {
+                    notifierInfos.addAll(shipProfileInfo.getCommercialMasters());
+                }
+            }
+            // ---------------------------------------------------------
+            // SCENARIO 2: Uploader is TechManager
+            // Notify: Ship Master + Commercial Managers
+            // ---------------------------------------------------------
+            else if (roleInfo.getRoleName().equals(Role.TechManager)) {
+
+                // Add Ship Master (Single User)
+                if (shipProfileInfo.getShipMaster() != null) {
+                    notifierInfos.add(shipProfileInfo.getShipMaster());
+                }
+
+                // Add Commercial Managers
+                if (shipProfileInfo.getCommercialMasters() != null) {
+                    notifierInfos.addAll(shipProfileInfo.getCommercialMasters());
+                }
+            }
+        }
+    }
+
+    // ---------------------------------------------------------
+    // Create Notification Objects
+    // ---------------------------------------------------------
+    for (UserProfileInfo userForNotification : notifierInfos) {
+        // Validate userForNotification is not null before processing
+        if (userForNotification != null && expiryDocumentInfo != null && expiryDocumentInfo.getId() != null) {
+            UserNotificationInfo userNotificationInfo = new UserNotificationInfo();
+            userNotificationInfo.setExpiryDocumentInfo(expiryDocumentInfo);
+            userNotificationInfo.setNotifiedTo(userForNotification);
+            userNotificationInfo.setNotificationTime(new Date());
+
+            // Safe string formatting
+            String docHolderName = (expiryDocumentInfo.getDocumentHolderInfo() != null)
+                                    ? expiryDocumentInfo.getDocumentHolderInfo().getDocumentHolderName()
+                                    : "Unknown";
+
+            userNotificationInfo.setDescription(String.format(env.getProperty("document.approve.success"), docHolderName));
+            userNotificationInfo.setNotificationType("Approval page");
+            userNotificationInfo.setReadStatus(0);
+            userNotificationInfo.setColor("Green");
+
+            userNotificationInfos.add(userNotificationInfo);
+        }
+    }
+
+    // ---------------------------------------------------------
+    // Save to DB
+    // ---------------------------------------------------------
+    if (userNotificationInfos.size() > 0) {
+        List<UserNotificationInfo> savedInfos = userNotificationRepository.save(userNotificationInfos);
+        if (savedInfos != null && savedInfos.size() > 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
     public boolean requestUserNotification(Long userId, Long requestId) {
         RequestUserInfo requestUserInfo = requestUserRepository.findOne(requestId);
         RoleInfo roleInfo = roleInfoRepository.findByRoleName(Role.Admin);
@@ -264,7 +402,7 @@ public class NotificationUtility {
             }
             return true;
         }
-        	 
+
            /* UserNotificationInfo userNotificationInfo = new UserNotificationInfo();
             userNotificationInfo.setNotifiedTo(userProfileInfo);
             userNotificationInfo.setRequestUserInfo(requestUserInfo);
@@ -313,7 +451,7 @@ public class NotificationUtility {
         }
         return false;
     }
-	
+
 	  public boolean notifyDocumentChanges(Long userId, ExpiryDocumentInfo expiryDocumentInfo) {
 
 	        UserProfileInfo userProfileInfo = userProfileRepository.findOne(userId);
@@ -343,10 +481,10 @@ public class NotificationUtility {
 		            	userNotificationInfo.setColor("Green");
 		            }
 		            userNotificationInfo.setNotificationType("Approval page");
-		            userNotificationInfos.add(userNotificationInfo);		            
+		            userNotificationInfos.add(userNotificationInfo);
 		        }
 	        }
-	        
+
 	        if(userNotificationInfos !=null && userNotificationInfos.size() > 0) {
 	        	userNotificationInfos = userNotificationRepository.save(userNotificationInfos);
 	            if (userNotificationInfos != null && userNotificationInfos.size() > 0 ) {
@@ -357,9 +495,9 @@ public class NotificationUtility {
 	        return false;
 
 	    }
-	  
+
 	  public boolean notificationTaskStatusChanges(TaskDetailsInfo taskDetailInfo,TaskDTO taskDTO) {
-		  
+
 		 UserNotificationInfo userNotificationInfo = new UserNotificationInfo();
 		 if (taskDTO.getCreatedBy() != null){
 			UserProfileInfo userProfileInfo = userProfileRepository.findById(taskDTO.getCreatedBy());
@@ -391,7 +529,7 @@ public class NotificationUtility {
 	  }
 
 	public boolean requestUserNotificationChanges(RequestUserDTO requestUserDTO, RequestUserInfo requestUserInfo) {
-		
+
 		UserNotificationInfo userNotificationInfo = new UserNotificationInfo();
 		if (requestUserDTO.getLoginId() != null){
 			UserProfileInfo userProfileInfo = userProfileRepository.findById(requestUserDTO.getLoginId());
@@ -410,14 +548,14 @@ public class NotificationUtility {
 			userNotificationInfo.setRequestUserInfo(requestUserInfo);
 			userNotificationInfo = userNotificationRepository.saveAndFlush(userNotificationInfo);
 			if (userNotificationInfo != null)
-				return true;			
-			
+				return true;
+
 		}
 		return false;
 	}
 
 	public boolean notificationToUpdateNewUserToTask(Set<AssignedUserTaskInfo> contactList, Long loginId) {
-		
+
 		for (AssignedUserTaskInfo assignedUserTaskInfo : contactList){
 			UserNotificationInfo userNotificationInfo = new UserNotificationInfo();
 			userNotificationInfo.setNotifiedTo(assignedUserTaskInfo.getUserProfileInfo());
@@ -427,7 +565,7 @@ public class NotificationUtility {
             userNotificationInfo.setNotificationTime(new Date());
             userNotificationInfo.setColor("Green");
             userNotificationInfo.setReadStatus(0);
-            userNotificationInfo = userNotificationRepository.save(userNotificationInfo);			
+            userNotificationInfo = userNotificationRepository.save(userNotificationInfo);
 		}
 		return true;
 	}
@@ -442,8 +580,8 @@ public class NotificationUtility {
             userNotificationInfo.setNotificationTime(new Date());
             userNotificationInfo.setColor("Red");
             userNotificationInfo.setReadStatus(0);
-            
-            userNotificationInfo = userNotificationRepository.save(userNotificationInfo);			
+
+            userNotificationInfo = userNotificationRepository.save(userNotificationInfo);
 		}
 		return true;
 	}
@@ -478,12 +616,12 @@ public class NotificationUtility {
 			return true;
 		}
 		return false;
-		
+
 	}
-	
+
 	 public boolean notifyDocumentEdit(Long userId, ExpiryDocumentInfo expiryDocumentInfo) {
 
-	        
+
 	        UserProfileInfo userProfileInfo = userProfileRepository.findOne(userId);
 		        Set<UserProfileInfo> notifierInfos = new HashSet<UserProfileInfo>();
 		        List<UserNotificationInfo> userNotificationInfos = new ArrayList<UserNotificationInfo>();
@@ -513,17 +651,17 @@ public class NotificationUtility {
 	               userNotificationInfo.setNotificationType("Approval page");
 	               userNotificationInfo.setReadStatus(0);
 	               userNotificationInfo.setColor("Green");
-	               userNotificationInfos.add(userNotificationInfo);              
+	               userNotificationInfos.add(userNotificationInfo);
 	           }
 			}
-	       
+
 	       if(userNotificationInfos !=null && userNotificationInfos.size() > 0) {
 	       	userNotificationInfos = userNotificationRepository.save(userNotificationInfos);
 	           if (userNotificationInfos != null && userNotificationInfos.size() > 0 ) {
 	               return true;
 	           }
 	       }
-	       
+
 
 	       return false;
 

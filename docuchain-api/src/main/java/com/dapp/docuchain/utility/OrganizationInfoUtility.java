@@ -30,30 +30,30 @@ import com.dapp.docuchain.repository.UserProfileRepository;
 
 @Service
 public class OrganizationInfoUtility {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(OrganizationInfoUtility.class);
-	
+
 	private final Long USER_ACTIVE_STATUS = Long.valueOf(1);
-	
+
 	static final String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
-	
+
 	@Autowired
 	private Environment env;
 
 	@Autowired
 	private SubscriptionInfoRepository subscriptionInfoRepository;
-	
+
 	@Autowired
 	private OrganizationInfoRepository organizationInfoRepository;
-	
+
 	@Autowired
 	private UserProfileRepository userProfileRepository;
-	
+
 	@Autowired
 	private RoleInfoRepository roleInfoRepository;
 	/*
 	 * In that function used for validate input params for creating organization
-	 * In that function we need to pass organizationName,organization address,contat,emailid 
+	 * In that function we need to pass organizationName,organization address,contat,emailid
 	 */
 	public String validateOrganizationParameter(OrganizationDTO organizationDTO) {
 		// TODO Auto-generated method stub
@@ -62,9 +62,13 @@ public class OrganizationInfoUtility {
 				&& StringUtils.isNotBlank(organizationDTO.getOrganizationName()))) {
 			return "Organization name missing";
 		}
-		if (!(organizationDTO.getAddress() != null
-				&& StringUtils.isNotBlank(organizationDTO.getAddress()))) {
-			return "Organization address missing";
+		// if (!(organizationDTO.getAddress() != null
+		// 		&& StringUtils.isNotBlank(organizationDTO.getAddress()))) {
+		// 	return "Organization address missing";
+		// }
+		if(!(organizationDTO.getAddressLine1()!=null &&
+     	StringUtils.isNotBlank(organizationDTO.getAddressLine1()))){
+    	return "Organization address line 1 missing";
 		}
 
 		if (!(organizationDTO.getContact() != null
@@ -81,18 +85,18 @@ public class OrganizationInfoUtility {
 				&& StringUtils.isNotBlank(organizationDTO.getSubscriptionId().toString()))) {
 			return "Subscription plan is missing";
 		}
-		
+
 		if (!(organizationDTO.getUserId() != null
 				&& StringUtils.isNotBlank(organizationDTO.getUserId().toString()))) {
 			return "login details is missing";
 		}
-		
+
 
 		return env.getProperty("success");
 
 	}
 	/*
-	 * In that function used to check that email format correct or not. 
+	 * In that function used to check that email format correct or not.
 	 */
 	public boolean validateEmail(String emailId) {
 		Pattern pattern = Pattern.compile(regex);
@@ -113,10 +117,13 @@ public class OrganizationInfoUtility {
 			OrganizationDTO organizationDTO = new OrganizationDTO();
 			organizationDTO.setOrganizationId(organizationInfo.getId());
 			organizationDTO.setOrganizationName(organizationInfo.getOrganizationName());
-			organizationDTO.setAddress(organizationInfo.getAddress());
+			// organizationDTO.setAddress(organizationInfo.getAddress());
+				organizationDTO.setAddressLine1(organizationInfo.getAddressLine1());
+			organizationDTO.setAddressLine2(organizationInfo.getAddressLine2());
+
 			organizationDTO.setEmailId(organizationInfo.getEmailId());
 			organizationDTO.setContact(organizationInfo.getContact());
-			
+
 			listOrganizationDTO.add(organizationDTO);
 		}
 		return listOrganizationDTO;
@@ -156,7 +163,7 @@ public class OrganizationInfoUtility {
 //			 }else{
 //				 expiryCount++;
 //			 }
-			 
+
 			 Date currentDate1 = new Date();
 				//LocalDate renewalDate = currentDate1.plusDays(30);
 			    Calendar c = Calendar.getInstance();
@@ -164,10 +171,10 @@ public class OrganizationInfoUtility {
 		        Date renewalDate= c.getTime();
 				List<OrganizationInfo> activeExpiryList = organizationInfoRepository.findByIsActive((long)1);
 				activeCount = activeExpiryList.size();
-				
+
 				List<SubscriptionInfo> expiredExpiryList = subscriptionInfoRepository.findByIsStatusAliveAndSubscriptionExpireDateBefore(1,currentDate1);
 				expiryCount = expiredExpiryList.size();
-				
+
 				List<SubscriptionInfo> renewalExpiryList =  subscriptionInfoRepository.findByIsStatusAliveAndSubscriptionExpireDateBetween( 1, currentDate1, renewalDate);
 				renewalCount = renewalExpiryList.size();
 
@@ -178,7 +185,7 @@ public class OrganizationInfoUtility {
 		 organizationDTO.setOrganizationCount(organizationInfos.size());
 		return organizationDTO;
 	}
-	
+
 	  public String findDiffrenceDate(Date expiryDate) {
 	        String diffrent ;
 	        Date currentDate = new Date();
@@ -227,12 +234,12 @@ public class OrganizationInfoUtility {
 			  organizationDTO.setAdminCount(Long.valueOf(adminProfileInfos.size()));
 			  organizationDTO.setSubscriptionDTO(subscriptionDTO);
 			  organizationDTOs.add(organizationDTO);
-			  
+
 		  }
 		return organizationDTOs;
 	}
 	public OrganizationDTO createOrganizationLogo(Long adminId, String logoPicPath) {
-		
+
 		UserProfileInfo userProfileInfo = userProfileRepository.findById(adminId);
 		OrganizationDTO organizationDTO = new OrganizationDTO();
 		if (userProfileInfo != null){
@@ -247,12 +254,12 @@ public class OrganizationInfoUtility {
 					for (OrganizationInfo organizationInfo2 : organizationInfo){
 						 companyLogo = env.getProperty("picture.path") + logoPicPath;
 					}
-					organizationDTO.setLogoPicture(companyLogo.replace(File.separator, "/"));					
+					organizationDTO.setLogoPicture(companyLogo.replace(File.separator, "/"));
 				}
 			return organizationDTO;
 		}
 		return null;
 	}
-	
+
 
 }

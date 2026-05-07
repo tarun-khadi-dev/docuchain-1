@@ -28,14 +28,14 @@ public class UserUtils {
 
 	static final String regex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserUtils.class);
-	
+
 	private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-	
+
 	@Autowired
 	ShipProfileRepository shipProfileRepo;
-	
+
 	@Autowired
 	CountryInfoRepository countryinforepo;
 
@@ -44,19 +44,19 @@ public class UserUtils {
 
 	@Autowired
 	ShipTypesRepository shiptypesrepo;
-	
+
 	@Autowired
 	private UserProfileRepository userProfileRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private UserLastSeenHistory userLastSeen;
-	
+
 	@Autowired
 	private ShipProfileRepository shipProfileRepository;
-	
+
 	@Autowired
 	private RoleInfoRepository roleInfoRepository;
 
@@ -68,10 +68,10 @@ public class UserUtils {
 
 	@Autowired
 	private GeoLocationRepository geoLocationRepository;
-	
+
 	@Autowired
 	Environment env;
-	
+
 	@Autowired
 	private RoleAliasInfoRepository roleAliasInfoRepository;
 
@@ -136,9 +136,9 @@ public class UserUtils {
 					for (OrganizationInfo organizationInfo2 : organizationInfo){
 						 companyLogo = env.getProperty("picture.path") + organizationInfo2.getCompanyLogo();
 					}
-					userDTO.setLogoPicture(companyLogo.replace(File.separator, "/"));					
+					userDTO.setLogoPicture(companyLogo.replace(File.separator, "/"));
 				}
-			}			
+			}
 			if (userProfileInfo.getRoleId().getRoleName().equals(Role.ShipMaster)) {
 				ShipProfileInfo shipProfileInfo = shipProfileRepository.findByShipMasterAndStatus(userProfileInfo,1);
 				if (shipProfileInfo != null) {
@@ -452,20 +452,20 @@ public class UserUtils {
 		if (organizationInfo == null) {
 			return env.getProperty("organization.id.not.exist");
 		}
-		
+
 		if(userDTO.getRoleId() == null)
 			return env.getProperty("role.id.null");
-		
+
 		RoleInfo roleInfo = roleInfoRepository.findOne(userDTO.getRoleId());
 		if(roleInfo == null)
 			return env.getProperty("role.not.found");
-		
+
 		if(!roleInfo.getRoleName().equals(Role.SuperAdmin) && !roleInfo.getRoleName().equals(Role.Admin)){
 			if(vaildAdminUserCount(userDTO)){
 				return env.getProperty("user.count.exists");
 			}
 		}
-		
+
 		return env.getProperty("success");
 
 	}
@@ -530,7 +530,7 @@ public class UserUtils {
 		return "Success";
 	}
 
-	public String checkUserIdExists(UserDTO userDTO) {	
+	public String checkUserIdExists(UserDTO userDTO) {
 		for (Long userId : userDTO.getUserIds()) {
 			UserProfileInfo userProfileInfo = userProfileRepository.findOne(userId);;
 			if (userProfileInfo == null) {
@@ -538,9 +538,9 @@ public class UserUtils {
 			}
 		}
 		return "Success";
-		
+
 	}
-	
+
 	public String checkShipProfileIsExists(UserDTO userDTO){
 		if(userDTO.getShipProfileIds() != null && userDTO.getShipProfileIds().length > 0){
 			for(Long shipId : userDTO.getShipProfileIds()){
@@ -548,17 +548,17 @@ public class UserUtils {
 					return env.getProperty("ship.not.found");
 			}
 		}
-		
+
 		return env.getProperty("success");
 	}
 
 	public boolean isValidLocation(GeoLocationDTO geoLocationDTO) {
-		if (geoLocationDTO.getLatitude() != null 
+		if (geoLocationDTO.getLatitude() != null
 				&& geoLocationDTO.getLongitute() != null){
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -592,7 +592,7 @@ public class UserUtils {
 			userDTO.setGeoLocationInfos(geoLocationDTO);
 			userDTOs.add(userDTO);
 		}
-		
+
 		return userDTOs;
 	}
 

@@ -114,24 +114,43 @@ public class UserService {
 	// 	return null;
 
 	// }
-  public UserDTO authenticate(final String username, final String password) {
-    // ✅ CORRECT: Only find by username. Password was already checked by LDAP.
-    User user = userRepository.findByUsername(username);
+//   public UserDTO authenticate(final String username, final String password) {
+//     // ✅ CORRECT: Only find by username. Password was already checked by LDAP.
+//     User user = userRepository.findByUsername(username);
 
-    if (user != null) {
-        UserLastSeenInfo userLastSeenInfo = new UserLastSeenInfo();
-        userLastSeenInfo.setUserName(user.getUsername());
-        LOGGER.info("UserName" + userLastSeenInfo.getUserName());
+//     if (user != null) {
+//         UserLastSeenInfo userLastSeenInfo = new UserLastSeenInfo();
+//         userLastSeenInfo.setUserName(user.getUsername());
+//         LOGGER.info("UserName" + userLastSeenInfo.getUserName());
 
-        Date date = new Date();
-        userLastSeenInfo.setUserLastSeenDateTime(date);
-        userLastSeenRepo.save(userLastSeenInfo);
-        LOGGER.info("Last Seen Date" + userLastSeenInfo.getUserLastSeenDateTime());
+//         Date date = new Date();
+//         userLastSeenInfo.setUserLastSeenDateTime(date);
+//         userLastSeenRepo.save(userLastSeenInfo);
+//         LOGGER.info("Last Seen Date" + userLastSeenInfo.getUserLastSeenDateTime());
 
-        return userUtils.converUsertoUserDTO(user);
+//         return userUtils.converUsertoUserDTO(user);
+//     }
+//     return null;
+// }
+public UserDTO authenticate(final String username, final String password) {
+
+    User user = userRepository.findByUsernameAndPassword(
+            username,
+            digestSHA(password)
+    );
+
+    if (user == null) {
+        return null;
     }
-    return null;
+
+    UserLastSeenInfo userLastSeenInfo = new UserLastSeenInfo();
+    userLastSeenInfo.setUserName(user.getUsername());
+    userLastSeenInfo.setUserLastSeenDateTime(new Date());
+    userLastSeenRepo.save(userLastSeenInfo);
+
+    return userUtils.converUsertoUserDTO(user);
 }
+
 
 	public UserDTO getUserInformationDetails(Long userId){
 		UserDTO userDTO = new UserDTO();
@@ -1200,11 +1219,11 @@ public class UserService {
 
 		profileInfo.setFirstName(userDTO.getFirstName());
 		profileInfo.setLastName(userDTO.getLastName());
-		/*User userInfo = userRepository.findByUsername(profileInfo.getUserName());
+		User userInfo = userRepository.findByUsername(profileInfo.getUserName());
 		if (userInfo != null) {
 			userInfo.setMail(userDTO.getMail().toLowerCase());
 			userRepository.save(userInfo);
-		}*/
+		}
 
 		if (userProfileRepository.saveAndFlush(profileInfo) != null) {
 			return env.getProperty("success");

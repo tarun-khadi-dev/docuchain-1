@@ -9,8 +9,10 @@ com\dapp\docuchain\model\DualApprovalInfo.class
 com\dapp\docuchain\model\TaskDetailsInfo$TaskDetailsInfoBuilder.class
 com\dapp\docuchain\model\AssignedUserTaskInfo$AssignedUserTaskInfoBuilder.class
 com\dapp\docuchain\dto\StatusResponseDTO.class
+com\dapp\docuchain\dto\OtpVerifyDTO.class
 com\dapp\docuchain\service\impl\EmailServiceImpl$4.class
 com\dapp\docuchain\repository\SubscriptionInfoRepository.class
+com\dapp\docuchain\model\ExpiryDocumentDraftInfo.class
 com\dapp\docuchain\repository\DualApprovalRepository.class
 com\dapp\docuchain\model\SaveInBlockhainInfo.class
 com\dapp\docuchain\controller\CommonConfigurationController.class
@@ -34,6 +36,7 @@ com\dapp\docuchain\service\impl\ShipProfileServiceImpl.class
 com\dapp\docuchain\model\RequestUserInfo.class
 com\dapp\docuchain\repository\RequestUserRepository.class
 com\dapp\docuchain\dto\ShipProfileDTO.class
+com\dapp\docuchain\dto\VesselDocumentDTO.class
 com\dapp\docuchain\service\CommonConfigurationService.class
 com\dapp\docuchain\service\NotificationService.class
 com\dapp\docuchain\dto\UserDTO$UserDTOBuilder.class
@@ -55,6 +58,8 @@ com\dapp\docuchain\dto\UserReportAnIssueDTO$UserReportAnIssueDTOBuilder.class
 com\dapp\docuchain\utility\DocumentUtility.class
 com\dapp\docuchain\service\FileService.class
 com\dapp\docuchain\model\SubscriptionInfo.class
+com\dapp\docuchain\service\OtpService.class
+com\dapp\docuchain\controller\OtpController.class
 com\dapp\docuchain\model\DocumentHolderInfo.class
 com\dapp\docuchain\model\SaveInBlockhainInfo$SaveInBlockhainInfoBuilder.class
 com\dapp\docuchain\service\impl\OrganizationInfoServiceImpl.class
@@ -84,10 +89,12 @@ com\dapp\docuchain\model\GeoLocationInfo$GeoLocationInfoBuilder.class
 com\dapp\docuchain\repository\UserProfileRepository.class
 com\dapp\docuchain\controller\ShipController.class
 com\dapp\docuchain\model\User.class
+com\dapp\docuchain\dto\EmailRequest.class
 com\dapp\docuchain\model\PortInfo$PortInfoBuilder.class
 com\dapp\docuchain\dto\TaskDTO.class
 com\dapp\docuchain\model\GroupTagDocumentInfo.class
 com\dapp\docuchain\dto\RequestUserDTO.class
+com\dapp\docuchain\model\OtpInfo.class
 com\dapp\docuchain\model\FaqInfo.class
 com\dapp\docuchain\dto\RequestUserDTO$RequestUserDTOBuilder.class
 com\dapp\docuchain\service\impl\HistoryServiceImpl.class
@@ -125,9 +132,11 @@ com\dapp\docuchain\model\ShipProfileInfo$ShipProfileInfoBuilder.class
 com\dapp\docuchain\repository\AssignedUserTaskRepository.class
 com\dapp\docuchain\dto\CountryDTO.class
 com\dapp\docuchain\repository\DataModifiedHistoryRepository.class
+com\dapp\docuchain\repository\ExpiryDocumentDraftRepository.class
 com\dapp\docuchain\repository\TaskRepository.class
 com\dapp\docuchain\service\SubscriptionService.class
 com\dapp\docuchain\dto\DocumentHolderDTO$DocumentHolderDTOBuilder.class
+com\dapp\docuchain\dto\OtpRequestDTO.class
 com\dapp\docuchain\repository\CountryInfoRepository.class
 com\dapp\docuchain\service\impl\EmailServiceImpl$2.class
 com\dapp\docuchain\service\impl\SubscriptionServiceImpl.class
@@ -184,6 +193,7 @@ com\dapp\docuchain\model\RoleAliasInfo$RoleAliasInfoBuilder.class
 com\dapp\docuchain\service\DocumentService.class
 com\dapp\docuchain\model\ShipProfileInfo.class
 com\dapp\docuchain\model\UserReportAnIssueInfo.class
+com\dapp\docuchain\repository\OtpRepository.class
 com\dapp\docuchain\controller\OrganizationInfoController.class
 com\dapp\docuchain\model\GroupSharedDocumentInfo.class
 com\dapp\docuchain\utility\OrganizationInfoUtility.class

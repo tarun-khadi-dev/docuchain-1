@@ -406,6 +406,7 @@ public class OrganizationInfoController {
 		}
 	}
 
+
 	@CrossOrigin
 	@GetMapping(value = "/top/count", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "ORGANIZATION TOP COUNT", notes = "This Mehtord is used to get Top count for superAdmin ")

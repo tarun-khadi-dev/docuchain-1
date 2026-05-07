@@ -1,0 +1,2 @@
+30323 [main] WARN  o.s.l.odm.core.impl.ObjectMetaData - The Entry class User should be declared final
+8225389 [pool-3-thread-1] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - Column 'notified_user_id' cannot be null

@@ -1,0 +1,1 @@
+35980 [main] WARN  o.s.l.odm.core.impl.ObjectMetaData - The Entry class User should be declared final

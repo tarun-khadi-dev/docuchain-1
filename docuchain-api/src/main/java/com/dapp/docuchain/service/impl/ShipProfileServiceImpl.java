@@ -97,7 +97,7 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 
 	@Autowired
 	private DocumentHolderRepository documentHolderRepository;
-	
+
 	@Override
 	public boolean addShipProfile(ShipProfileDTO shipProfileDTO) {
 
@@ -116,6 +116,10 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 		shipProfileInfo.setShipOwner(shipProfileDTO.getShipOwner());
 		shipProfileInfo.setCountryName(shipProfileDTO.getCountryName());
 		shipProfileInfo.setStateName(shipProfileDTO.getStateName());
+		shipProfileInfo.setDwt(shipProfileDTO.getDwt());
+		shipProfileInfo.setWeight(shipProfileDTO.getWeight());
+		shipProfileInfo.setLength(shipProfileDTO.getLength());
+		shipProfileInfo.setBreadth(shipProfileDTO.getBreadth());
 		shipProfileInfo.setShipType(shipProfileDTO.getShipTypes());
 		shipProfileInfo.setStatus(1);
 		ShipProfileInfo shipProfileinfo = shipprofilerepository.save(shipProfileInfo);
@@ -133,6 +137,38 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 			return true;
 		}
 	}
+	@Override
+public Long getPortCountByOrganization(Long organizationId) {
+
+    OrganizationInfo org = organizationInfoRepository.findOne(organizationId);
+
+    if (org == null) {
+        return 0L;
+    }
+
+    List<ShipProfileInfo> ships = shipprofilerepository.findByShipOrganizationInfo(org);
+
+    Set<String> countryNames = new HashSet<>();
+
+    for (ShipProfileInfo ship : ships) {
+        if (ship.getCountryName() != null) {
+            countryNames.add(ship.getCountryName().trim());
+        }
+    }
+
+    long portCount = 0;
+
+    for (String countryName : countryNames) {
+
+        CountryInfo country = countryinforepo.findByCountryName(countryName);
+
+        if (country != null && country.getPortInfos() != null) {
+            portCount += country.getPortInfos().size();
+        }
+    }
+
+    return portCount;
+}
 
 	@Override
 	public ShipProfileDTO stateLists(ShipProfileDTO shipProfileDTO) {
@@ -355,6 +391,10 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 			shipProfile.setShipOwner(shipProfileInfo2.getShipOwner());
 			shipProfile.setShipTypes(shipProfileInfo2.getShipType());
 			shipProfile.setStateName(shipProfileInfo2.getStateName());
+			shipProfile.setDwt(shipProfileInfo2.getDwt());
+			shipProfile.setWeight(shipProfileInfo2.getWeight());
+			shipProfile.setLength(shipProfileInfo2.getLength());
+			shipProfile.setBreadth(shipProfileInfo2.getBreadth());
 			shipProfile.setStatus(shipProfileInfo2.getStatus());
 
 			shipProfileDTO.setSingleShipInfo(shipProfile);
@@ -429,6 +469,11 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 		shipProfileInfo.setCountryName(countryName);
 		shipProfileInfo.setStateName(stateName);
 		shipProfileInfo.setShipType(shipTypeName);
+				// ship mesaurment
+		shipProfileInfo.setDwt(shipProfileDTO.getDwt());
+		shipProfileInfo.setBreadth(shipProfileDTO.getBreadth());
+		shipProfileInfo.setWeight(shipProfileDTO.getWeight());
+		shipProfileInfo.setLength(shipProfileDTO.getLength());
 		shipProfileInfo.setStatus(shipProfileDTO.getStatus());
 
 		ShipProfileInfo shipProfile = shipprofilerepository.save(shipProfileInfo);
@@ -955,6 +1000,11 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 		shipProfileInfo.setShipOwner(shipProfileDTO.getRegisteredOwner());
 		shipProfileInfo.setCountryName(shipProfileDTO.getCountryName());
 		shipProfileInfo.setStateName(shipProfileDTO.getStateName());
+				// ship mesaurment
+		shipProfileInfo.setDwt(shipProfileDTO.getDwt());
+		shipProfileInfo.setBreadth(shipProfileDTO.getBreadth());
+		shipProfileInfo.setWeight(shipProfileDTO.getWeight());
+		shipProfileInfo.setLength(shipProfileDTO.getLength());
 		shipProfileInfo.setShipType(shipProfileDTO.getShipTypes());
 		shipProfileInfo.setStatus(1);
 		OrganizationInfo organizationInfo = organizationInfoRepository.findOne(shipProfileDTO.getOrganizationId());
@@ -1046,8 +1096,8 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 //				shipProfileInfo.getCustomDocumentHolders().add(documentHolderInfo);
 //				shipProfileInfo = shipprofilerepository.saveAndFlush(shipProfileInfo);
 			}
-			
-			
+
+
 		}
 		 if(shipProfileInfo!=null){
              commonMethodsUtility.maintainHistory(shipProfileInfo.getId(),shipProfileInfo.getShipName(),"Vessel", env.getProperty("history.created"), shipProfileDTO.getLoginId());
@@ -1074,7 +1124,7 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 					shipProfile.getCommercialMasters().removeAll(shipProfile.getCommercialMasters());
 					shipProfile.getDataOperators().removeAll(shipProfile.getDataOperators());
 					shipprofilerepository.saveAndFlush(shipProfile);
-					
+
 					DeletedHistoryDTO deletedHistoryDTO=new DeletedHistoryDTO();
 		            deletedHistoryDTO.setObjectId(shipProfile.getId());
 		            deletedHistoryDTO.setObjectOne(shipProfile.getShipName());
@@ -1083,7 +1133,7 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 		            shipprofilerepository.delete(shipProfile);
 		            if(dataDeletedHistoryInfo!=null)
 		            commonMethodsUtility.maintainHistory(dataDeletedHistoryInfo.getId(),shipProfile.getShipName(),"Vessel", env.getProperty("history.deleted"), shipProfileDTO.getUserId());
-		           
+
 				} else {
 					return false;
 				}
@@ -1125,14 +1175,19 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 				shipProfileDTO.setInternationalNRT(shipProfileInfo.getInternationalNRT());
 				SimpleDateFormat formatter = new SimpleDateFormat(env.getProperty("YYYY-MM-dd"));
 				if(shipProfileInfo.getKeellaid()!=null && !shipProfileInfo.getKeellaid().equals("")) {
-					String strDate = formatter.format(shipProfileInfo.getKeellaid());	
+					String strDate = formatter.format(shipProfileInfo.getKeellaid());
 					shipProfileDTO.setKeelLaidString(strDate);
-				}				
+				}
 				shipProfileDTO.setImo(shipProfileInfo.getIMO());
 				shipProfileDTO.setShipName(shipProfileInfo.getShipName());
 				shipProfileDTO.setRegisteredOwner(shipProfileInfo.getShipOwner());
 				shipProfileDTO.setShipTypes(shipProfileInfo.getShipType());
 				shipProfileDTO.setStateName(shipProfileInfo.getStateName());
+								// ship mesaurment
+				shipProfileDTO.setDwt(shipProfileInfo.getDwt());
+				shipProfileDTO.setBreadth(shipProfileInfo.getBreadth());
+				shipProfileDTO.setWeight(shipProfileInfo.getWeight());
+				shipProfileDTO.setLength(shipProfileInfo.getLength());
 				shipProfileDTO.setStatus(shipProfileInfo.getStatus());
 				if(shipProfileInfo.getShipProfilePicPath() != null){
 					String shipProfilePicturePath = env.getProperty("picture.path")+shipProfileInfo.getShipProfilePicPath();
@@ -1154,7 +1209,7 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 					userDTO.setStatus(shipProfileInfo.getShipMaster().getStatus().longValue());
 					// userDTO.setRoleId(shipProfileInfo.getShipMaster().getRoleId().getId());
 					userDTO.setRole(shipProfileInfo.getShipMaster().getRoleId().getRoleName().name());
-					
+
 					shipProfileDTO.setShiMasterInfo(userDTO);
 				}
 
@@ -1223,11 +1278,11 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 						documentHolderDTO.setUpdatedDate(holderInfo.getUpdatedDate());
 						documentHolderDTO.setType(holderInfo.getType());
 						documentHolderDTOs.add(documentHolderDTO);
-						
+
 					}
 					shipProfileDTO.setCustomDocumentHolders(documentHolderDTOs);
 				}
-				
+
 				shipProfileDTO.setDataOperatorList(dataOperators);
 				shipProfileDTO.setTechManagerInfoList(techMasters);
 				shipProfileDTO.setCommercialManagerInfoList(commercialmanagers);
@@ -1238,252 +1293,525 @@ public class ShipProfileServiceImpl implements ShipProfileService {
 		return null;
 	}
 
-	@Override
-	public boolean updateShipProfile(ShipProfileDTO shipProfileDTO, String shipProfilePicPath) {
-		List<DocumentHolderDTO> addStandardDocumentHolderInfo = new ArrayList<>();
-		List<DocumentHolderDTO> addCustomDocumentHolderInfo = new ArrayList<>();
-		List<DocumentHolderDTO> existCustomDocumentHolderInfo = new ArrayList<>();
-		List<DocumentHolderDTO> existStandardDocumentHolderInfo = new ArrayList<>();
-		ShipProfileInfo shipProfileInfo = shipprofilerepository.findOne(shipProfileDTO.getId());
-		shipProfileInfo.setBhp(shipProfileDTO.getBhp());
-		shipProfileInfo.setBuilder(shipProfileDTO.getBuilder());
-		shipProfileInfo.setCallsign(shipProfileDTO.getCallSign());
-		shipProfileInfo.setDelivered(shipProfileDTO.getDelivered());
-		shipProfileInfo.setEngineType(shipProfileDTO.getEngineType());
-		shipProfileInfo.setInternationalGRT(shipProfileDTO.getInternationalGRT());
-		shipProfileInfo.setInternationalNRT(shipProfileDTO.getInternationalNRT());
-		shipProfileInfo.setKeellaid(shipProfileDTO.getKeelLaid());
-		shipProfileInfo.setIMO(shipProfileDTO.getImo());
-		shipProfileInfo.setShipName(shipProfileDTO.getShipName());
-		shipProfileInfo.setShipOwner(shipProfileDTO.getRegisteredOwner());
-		shipProfileInfo.setCountryName(shipProfileDTO.getCountryName());
-		shipProfileInfo.setStateName(shipProfileDTO.getStateName());
-		shipProfileInfo.setShipType(shipProfileDTO.getShipTypes());
-		shipProfileInfo.setStatus(1);
-		List<DocumentHolderInfo> standardDocumentHolderInfos = documentHolderRepository.findByVesselIdAndType(shipProfileDTO.getId(), env.getProperty("document.holder.type.standard"));
-		List<DocumentHolderInfo> customDocumentHolderInfos = documentHolderRepository.findByVesselIdAndType(shipProfileDTO.getId(), env.getProperty("document.holder.type.custom"));
-		OrganizationInfo organizationInfo = organizationInfoRepository.findOne(shipProfileDTO.getOrganizationId());
-		shipProfileInfo.setShipOrganizationInfo(organizationInfo);
-		Set<UserProfileInfo> techMasters = new HashSet<UserProfileInfo>();
-		Set<UserProfileInfo> dataOperators = new HashSet<UserProfileInfo>();
-		
-		if(shipProfileDTO.getStandardDocumentHolders().size() > 0) {
-			for(DocumentHolderDTO documentHolderDTO : shipProfileDTO.getStandardDocumentHolders()) {
-				boolean standardDocumentHolderInfoExist = false;
-				if(documentHolderDTO.getDocumentHolderId() != null) {
-					if(standardDocumentHolderInfos.size() > 0) {
-						for(DocumentHolderInfo documentHolderInfo : standardDocumentHolderInfos) {
-							if(documentHolderDTO.getDocumentHolderId().longValue() == documentHolderInfo.getId().longValue()) {
-								standardDocumentHolderInfoExist = true;
-							}
-						}
-						if(standardDocumentHolderInfoExist) {
-							addStandardDocumentHolderInfo.add(documentHolderDTO);
-							existStandardDocumentHolderInfo.add(documentHolderDTO);
-						}
-						if(!standardDocumentHolderInfoExist) {
-							addStandardDocumentHolderInfo.add(documentHolderDTO);
-						}
-						
-					}else {
-						addStandardDocumentHolderInfo.add(documentHolderDTO);
-					}
-				}else {
-					addStandardDocumentHolderInfo.add(documentHolderDTO);
-				}
-			}
-		}else {
-			documentHolderRepository.delete(standardDocumentHolderInfos);
-		}
-		
-		if(shipProfileDTO.getCustomDocumentHolders().size() > 0) {
-			for(DocumentHolderDTO documentHolderDTO : shipProfileDTO.getCustomDocumentHolders()) {
-				boolean customDocumentHolderInfoExist = false;
-				if(documentHolderDTO.getDocumentHolderId() != null) {
-					if(customDocumentHolderInfos.size() > 0) {
-						for(DocumentHolderInfo documentHolderInfo : customDocumentHolderInfos) {
-							if(documentHolderDTO.getDocumentHolderId().longValue() == documentHolderInfo.getId().longValue()) {
-								customDocumentHolderInfoExist = true;
-							}
-						}
-						if(customDocumentHolderInfoExist) {
-							addCustomDocumentHolderInfo.add(documentHolderDTO);
-							existCustomDocumentHolderInfo.add(documentHolderDTO);
-						}
-						if(!customDocumentHolderInfoExist) {
-							addCustomDocumentHolderInfo.add(documentHolderDTO);
-						}
-					}else {
-						addCustomDocumentHolderInfo.add(documentHolderDTO);
-					}
-				}else {
-					addCustomDocumentHolderInfo.add(documentHolderDTO);
-				}
-			}
-		}else {
-			documentHolderRepository.delete(customDocumentHolderInfos);
-		}
+// 	@Override
+// 	public boolean updateShipProfile(ShipProfileDTO shipProfileDTO, String shipProfilePicPath) {
+// 		List<DocumentHolderDTO> addStandardDocumentHolderInfo = new ArrayList<>();
+// 		List<DocumentHolderDTO> addCustomDocumentHolderInfo = new ArrayList<>();
+// 		List<DocumentHolderDTO> existCustomDocumentHolderInfo = new ArrayList<>();
+// 		List<DocumentHolderDTO> existStandardDocumentHolderInfo = new ArrayList<>();
+// 		ShipProfileInfo shipProfileInfo = shipprofilerepository.findOne(shipProfileDTO.getId());
+// 		shipProfileInfo.setBhp(shipProfileDTO.getBhp());
+// 		shipProfileInfo.setBuilder(shipProfileDTO.getBuilder());
+// 		shipProfileInfo.setCallsign(shipProfileDTO.getCallSign());
+// 		shipProfileInfo.setDelivered(shipProfileDTO.getDelivered());
+// 		shipProfileInfo.setEngineType(shipProfileDTO.getEngineType());
+// 		shipProfileInfo.setInternationalGRT(shipProfileDTO.getInternationalGRT());
+// 		shipProfileInfo.setInternationalNRT(shipProfileDTO.getInternationalNRT());
+// 		shipProfileInfo.setKeellaid(shipProfileDTO.getKeelLaid());
+// 		shipProfileInfo.setIMO(shipProfileDTO.getImo());
+// 		shipProfileInfo.setShipName(shipProfileDTO.getShipName());
+// 		shipProfileInfo.setShipOwner(shipProfileDTO.getRegisteredOwner());
+// 		shipProfileInfo.setCountryName(shipProfileDTO.getCountryName());
+// 		shipProfileInfo.setStateName(shipProfileDTO.getStateName());
+// 		shipProfileInfo.setShipType(shipProfileDTO.getShipTypes());
+// 		shipProfileInfo.setStatus(1);
+// 		List<DocumentHolderInfo> standardDocumentHolderInfos = documentHolderRepository.findByVesselIdAndType(shipProfileDTO.getId(), env.getProperty("document.holder.type.standard"));
+// 		List<DocumentHolderInfo> customDocumentHolderInfos = documentHolderRepository.findByVesselIdAndType(shipProfileDTO.getId(), env.getProperty("document.holder.type.custom"));
+// 		OrganizationInfo organizationInfo = organizationInfoRepository.findOne(shipProfileDTO.getOrganizationId());
+// 		shipProfileInfo.setShipOrganizationInfo(organizationInfo);
+// 		Set<UserProfileInfo> techMasters = new HashSet<UserProfileInfo>();
+// 		Set<UserProfileInfo> dataOperators = new HashSet<UserProfileInfo>();
 
-		if(existStandardDocumentHolderInfo.size() > 0) {
-			List<DocumentHolderInfo> removeDocumentHolderInfo = new ArrayList<>();
-			for(DocumentHolderInfo documentHolderInfo : standardDocumentHolderInfos) {
-				boolean isExist = false;
-				for(DocumentHolderDTO documentHolderDTO : existStandardDocumentHolderInfo) {
-					if(documentHolderInfo.getId().longValue() == documentHolderDTO.getDocumentHolderId().longValue()) {
-						isExist =true;
-					}
-				}
-				if(!isExist) {
-					removeDocumentHolderInfo.add(documentHolderInfo);
-				}
-			}
-			
-			if(!removeDocumentHolderInfo.isEmpty() && removeDocumentHolderInfo.size() > 0) {
-				documentHolderRepository.delete(removeDocumentHolderInfo);
-			}
-		}
-			
-		
-		if(existCustomDocumentHolderInfo.size() > 0) {
-			List<DocumentHolderInfo> removeCustomDocumentHolderInfo = new ArrayList<>();
-			for(DocumentHolderInfo documentHolderInfo : customDocumentHolderInfos) {
-				boolean isExist = false;
-				for(DocumentHolderDTO documentHolderDTO : existCustomDocumentHolderInfo) {
-					if(documentHolderInfo.getId().longValue() == documentHolderDTO.getDocumentHolderId().longValue()) {
-						isExist =true;
-					}
-				}
-				if(!isExist) {
-					removeCustomDocumentHolderInfo.add(documentHolderInfo);
-				}
-			}
-			
-			if(!removeCustomDocumentHolderInfo.isEmpty() && removeCustomDocumentHolderInfo.size() > 0) {
-				documentHolderRepository.delete(removeCustomDocumentHolderInfo);
-			}
-		}
-		if(addStandardDocumentHolderInfo.size() > 0) {
-			Set<DocumentHolderInfo> documentHolderInfos = new HashSet<>();
-			for(DocumentHolderDTO documentHolderDTO : addStandardDocumentHolderInfo) {
-				
-				if(documentHolderDTO.getDocumentHolderId() == null) {
-					DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
-					documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
-					documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
-					documentHolderInfo.setDocumentHolderType(env.getProperty("document.holder.type"));
-					documentHolderInfo.setType(env.getProperty("document.holder.type.standard"));
-					documentHolderInfo.setOrganizationId(shipProfileInfo.getShipOrganizationInfo().getId());
-					documentHolderInfo.setUpdatedDate(new Date());
-					documentHolderInfo.setVesselId(shipProfileInfo.getId());
-					documentHolderInfos.add(documentHolderInfo);
-				}else {
-					DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderDTO.getDocumentHolderId());
-					if (documentHolderInfo.getVesselId()== null || documentHolderInfo.getVesselId().longValue() != shipProfileInfo.getId().longValue()) {
-					DocumentHolderInfo documentHolderInfo2 = new DocumentHolderInfo();
-					documentHolderInfo2.setDocumentHolderName(documentHolderInfo.getDocumentHolderName());
-					documentHolderInfo2.setDocumentHolderDescription(documentHolderInfo.getDocumentHolderDescription());
-					documentHolderInfo2.setDocumentHolderType(documentHolderInfo.getDocumentHolderType());
-					documentHolderInfo2.setType(env.getProperty("document.holder.type.standard"));
-					documentHolderInfo2.setVesselId(shipProfileInfo.getId());
-					documentHolderInfo2.setUpdatedDate(new Date());
-					documentHolderInfos.add(documentHolderInfo2);
-				}else {
-					documentHolderInfos.add(documentHolderInfo);
-				}
-				}
-			}
-			
-			if(documentHolderInfos.size() > 0) {
-				documentHolderRepository.save(documentHolderInfos);
-			}
-		}
-		
-		if(addCustomDocumentHolderInfo.size() > 0) {
-			List<DocumentHolderInfo> documentHolderInfos = new ArrayList<>();
-			for(DocumentHolderDTO documentHolderDTO : addCustomDocumentHolderInfo) {
-				if(documentHolderDTO.getDocumentHolderId() == null) {
-					DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
-					documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
-					documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
-					documentHolderInfo.setDocumentHolderType(env.getProperty("document.holder.type"));
-					documentHolderInfo.setType(env.getProperty("document.holder.type.custom"));
-					documentHolderInfo.setOrganizationId(shipProfileInfo.getShipOrganizationInfo().getId());
-					documentHolderInfo.setUpdatedDate(new Date());
-					documentHolderInfo.setVesselId(shipProfileInfo.getId());
-					documentHolderInfos.add(documentHolderInfo);
-				}else {
-					DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderDTO.getDocumentHolderId());
-					documentHolderInfos.add(documentHolderInfo);
-				}
-			}
-			
-			if(documentHolderInfos.size() > 0) {
-				documentHolderRepository.save(documentHolderInfos);
-			}
-		}
-			
-		Set<UserProfileInfo> commercialmanagers = new HashSet<UserProfileInfo>();
-		if (shipProfileDTO.getTechManagerIds() != null && shipProfileDTO.getTechManagerIds().length > 0) {
-			for (int i = 0; i < shipProfileDTO.getTechManagerIds().length; i++) {
-				UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getTechManagerIds()[i]);
-				if (userInfo != null) {
-					techMasters.add(userInfo);
-				}
-			}
-			shipProfileInfo.setTechMasters(techMasters);
-		}
-		if (shipProfileDTO.getDataOperatorsIds() != null && shipProfileDTO.getDataOperatorsIds().length > 0) {
-			for (int i = 0; i < shipProfileDTO.getDataOperatorsIds().length; i++) {
-				UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getTechManagerIds()[i]);
-				if (userInfo != null) {
-					dataOperators.add(userInfo);
-				}
-			}
-			shipProfileInfo.setDataOperators(dataOperators);
-		}
+// 		if(shipProfileDTO.getStandardDocumentHolders().size() > 0) {
+// 			for(DocumentHolderDTO documentHolderDTO : shipProfileDTO.getStandardDocumentHolders()) {
+// 				boolean standardDocumentHolderInfoExist = false;
+// 				if(documentHolderDTO.getDocumentHolderId() != null) {
+// 					if(standardDocumentHolderInfos.size() > 0) {
+// 						for(DocumentHolderInfo documentHolderInfo : standardDocumentHolderInfos) {
+// 							if(documentHolderDTO.getDocumentHolderId().longValue() == documentHolderInfo.getId().longValue()) {
+// 								standardDocumentHolderInfoExist = true;
+// 							}
+// 						}
+// 						if(standardDocumentHolderInfoExist) {
+// 							addStandardDocumentHolderInfo.add(documentHolderDTO);
+// 							existStandardDocumentHolderInfo.add(documentHolderDTO);
+// 						}
+// 						if(!standardDocumentHolderInfoExist) {
+// 							addStandardDocumentHolderInfo.add(documentHolderDTO);
+// 						}
 
-		if (shipProfileDTO.getCommercialMasterIds() != null && shipProfileDTO.getCommercialMasterIds().length > 0) {
-			for (int i = 0; i < shipProfileDTO.getCommercialMasterIds().length; i++) {
-				UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getCommercialMasterIds()[i]);
-				if (userInfo != null) {
-					commercialmanagers.add(userInfo);
-				}
-			}
-			shipProfileInfo.setCommercialMasters(commercialmanagers);
-		}
+// 					}else {
+// 						addStandardDocumentHolderInfo.add(documentHolderDTO);
+// 					}
+// 				}else {
+// 					addStandardDocumentHolderInfo.add(documentHolderDTO);
+// 				}
+// 			}
+// 		}else {
+// 			documentHolderRepository.delete(standardDocumentHolderInfos);
+// 		}
 
-		if (shipProfileDTO.getShipMasterId() != null) {
-			UserProfileInfo userProfileInfo = userProfileRepository.findOne(shipProfileDTO.getShipMasterId());
-			if (userProfileInfo != null)
-				shipProfileInfo.setShipMaster(userProfileInfo);
-		}
+// 		if(shipProfileDTO.getCustomDocumentHolders().size() > 0) {
+// 			for(DocumentHolderDTO documentHolderDTO : shipProfileDTO.getCustomDocumentHolders()) {
+// 				boolean customDocumentHolderInfoExist = false;
+// 				if(documentHolderDTO.getDocumentHolderId() != null) {
+// 					if(customDocumentHolderInfos.size() > 0) {
+// 						for(DocumentHolderInfo documentHolderInfo : customDocumentHolderInfos) {
+// 							if(documentHolderDTO.getDocumentHolderId().longValue() == documentHolderInfo.getId().longValue()) {
+// 								customDocumentHolderInfoExist = true;
+// 							}
+// 						}
+// 						if(customDocumentHolderInfoExist) {
+// 							addCustomDocumentHolderInfo.add(documentHolderDTO);
+// 							existCustomDocumentHolderInfo.add(documentHolderDTO);
+// 						}
+// 						if(!customDocumentHolderInfoExist) {
+// 							addCustomDocumentHolderInfo.add(documentHolderDTO);
+// 						}
+// 					}else {
+// 						addCustomDocumentHolderInfo.add(documentHolderDTO);
+// 					}
+// 				}else {
+// 					addCustomDocumentHolderInfo.add(documentHolderDTO);
+// 				}
+// 			}
+// 		}else {
+// 			documentHolderRepository.delete(customDocumentHolderInfos);
+// 		}
 
-		if (shipProfilePicPath != null)
-			shipProfileInfo.setShipProfilePicPath(shipProfilePicPath);
+// 		if(existStandardDocumentHolderInfo.size() > 0) {
+// 			List<DocumentHolderInfo> removeDocumentHolderInfo = new ArrayList<>();
+// 			for(DocumentHolderInfo documentHolderInfo : standardDocumentHolderInfos) {
+// 				boolean isExist = false;
+// 				for(DocumentHolderDTO documentHolderDTO : existStandardDocumentHolderInfo) {
+// 					if(documentHolderInfo.getId().longValue() == documentHolderDTO.getDocumentHolderId().longValue()) {
+// 						isExist =true;
+// 					}
+// 				}
+// 				if(!isExist) {
+// 					removeDocumentHolderInfo.add(documentHolderInfo);
+// 				}
+// 			}
 
-		shipProfileInfo = shipprofilerepository.saveAndFlush(shipProfileInfo);
-//		if (shipProfileDTO.getDocIds() != null ) {
-//			for(Long documentHolderId : shipProfileDTO.getDocIds()) {
-//				DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderId);
-//				if (documentHolderInfo != null) {
-//					documentHolderInfo.setVesselId((long)0);
-//					documentHolderInfo.setParantId((long)0);
-//					documentHolderRepository.saveAndFlush(documentHolderInfo);
-//				}
-//			}
-//		}
-		 if(shipProfileInfo!=null){
+// 			if(!removeDocumentHolderInfo.isEmpty() && removeDocumentHolderInfo.size() > 0) {
+// 				documentHolderRepository.delete(removeDocumentHolderInfo);
+// 			}
+// 		}
+
+
+// 		if(existCustomDocumentHolderInfo.size() > 0) {
+// 			List<DocumentHolderInfo> removeCustomDocumentHolderInfo = new ArrayList<>();
+// 			for(DocumentHolderInfo documentHolderInfo : customDocumentHolderInfos) {
+// 				boolean isExist = false;
+// 				for(DocumentHolderDTO documentHolderDTO : existCustomDocumentHolderInfo) {
+// 					if(documentHolderInfo.getId().longValue() == documentHolderDTO.getDocumentHolderId().longValue()) {
+// 						isExist =true;
+// 					}
+// 				}
+// 				if(!isExist) {
+// 					removeCustomDocumentHolderInfo.add(documentHolderInfo);
+// 				}
+// 			}
+
+// 			if(!removeCustomDocumentHolderInfo.isEmpty() && removeCustomDocumentHolderInfo.size() > 0) {
+// 				documentHolderRepository.delete(removeCustomDocumentHolderInfo);
+// 			}
+// 		}
+// 		if(addStandardDocumentHolderInfo.size() > 0) {
+// 			Set<DocumentHolderInfo> documentHolderInfos = new HashSet<>();
+// 			for(DocumentHolderDTO documentHolderDTO : addStandardDocumentHolderInfo) {
+
+// 				if(documentHolderDTO.getDocumentHolderId() == null) {
+// 					DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
+// 					documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+// 					documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+// 					documentHolderInfo.setDocumentHolderType(env.getProperty("document.holder.type"));
+// 					documentHolderInfo.setType(env.getProperty("document.holder.type.standard"));
+// 					documentHolderInfo.setOrganizationId(shipProfileInfo.getShipOrganizationInfo().getId());
+// 					documentHolderInfo.setUpdatedDate(new Date());
+// 					documentHolderInfo.setVesselId(shipProfileInfo.getId());
+// 					documentHolderInfos.add(documentHolderInfo);
+// 				}else {
+// 					DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderDTO.getDocumentHolderId());
+// 					if (documentHolderInfo.getVesselId()== null || documentHolderInfo.getVesselId().longValue() != shipProfileInfo.getId().longValue()) {
+// 					DocumentHolderInfo documentHolderInfo2 = new DocumentHolderInfo();
+// 					documentHolderInfo2.setDocumentHolderName(documentHolderInfo.getDocumentHolderName());
+// 					documentHolderInfo2.setDocumentHolderDescription(documentHolderInfo.getDocumentHolderDescription());
+// 					documentHolderInfo2.setDocumentHolderType(documentHolderInfo.getDocumentHolderType());
+// 					documentHolderInfo2.setType(env.getProperty("document.holder.type.standard"));
+// 					documentHolderInfo2.setVesselId(shipProfileInfo.getId());
+// 					documentHolderInfo2.setUpdatedDate(new Date());
+// 					documentHolderInfos.add(documentHolderInfo2);
+// 				}else {
+// 					documentHolderInfos.add(documentHolderInfo);
+// 				}
+// 				}
+// 			}
+
+// 			if(documentHolderInfos.size() > 0) {
+// 				documentHolderRepository.save(documentHolderInfos);
+// 			}
+// 		}
+
+// 		if(addCustomDocumentHolderInfo.size() > 0) {
+// 			List<DocumentHolderInfo> documentHolderInfos = new ArrayList<>();
+// 			for(DocumentHolderDTO documentHolderDTO : addCustomDocumentHolderInfo) {
+// 				if(documentHolderDTO.getDocumentHolderId() == null) {
+// 					DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
+// 					documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+// 					documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+// 					documentHolderInfo.setDocumentHolderType(env.getProperty("document.holder.type"));
+// 					documentHolderInfo.setType(env.getProperty("document.holder.type.custom"));
+// 					documentHolderInfo.setOrganizationId(shipProfileInfo.getShipOrganizationInfo().getId());
+// 					documentHolderInfo.setUpdatedDate(new Date());
+// 					documentHolderInfo.setVesselId(shipProfileInfo.getId());
+// 					documentHolderInfos.add(documentHolderInfo);
+// 				}else {
+// 					DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderDTO.getDocumentHolderId());
+// 					documentHolderInfos.add(documentHolderInfo);
+// 				}
+// 			}
+
+// 			if(documentHolderInfos.size() > 0) {
+// 				documentHolderRepository.save(documentHolderInfos);
+// 			}
+// 		}
+
+// 		Set<UserProfileInfo> commercialmanagers = new HashSet<UserProfileInfo>();
+// 		if (shipProfileDTO.getTechManagerIds() != null && shipProfileDTO.getTechManagerIds().length > 0) {
+// 			for (int i = 0; i < shipProfileDTO.getTechManagerIds().length; i++) {
+// 				UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getTechManagerIds()[i]);
+// 				if (userInfo != null) {
+// 					techMasters.add(userInfo);
+// 				}
+// 			}
+// 			shipProfileInfo.setTechMasters(techMasters);
+// 		}
+// 		if (shipProfileDTO.getDataOperatorsIds() != null && shipProfileDTO.getDataOperatorsIds().length > 0) {
+// 			for (int i = 0; i < shipProfileDTO.getDataOperatorsIds().length; i++) {
+// 				UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getTechManagerIds()[i]);
+// 				if (userInfo != null) {
+// 					dataOperators.add(userInfo);
+// 				}
+// 			}
+// 			shipProfileInfo.setDataOperators(dataOperators);
+// 		}
+
+// 		if (shipProfileDTO.getCommercialMasterIds() != null && shipProfileDTO.getCommercialMasterIds().length > 0) {
+// 			for (int i = 0; i < shipProfileDTO.getCommercialMasterIds().length; i++) {
+// 				UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getCommercialMasterIds()[i]);
+// 				if (userInfo != null) {
+// 					commercialmanagers.add(userInfo);
+// 				}
+// 			}
+// 			shipProfileInfo.setCommercialMasters(commercialmanagers);
+// 		}
+
+// 		if (shipProfileDTO.getShipMasterId() != null) {
+// 			UserProfileInfo userProfileInfo = userProfileRepository.findOne(shipProfileDTO.getShipMasterId());
+// 			if (userProfileInfo != null)
+// 				shipProfileInfo.setShipMaster(userProfileInfo);
+// 		}
+
+// 		if (shipProfilePicPath != null)
+// 			shipProfileInfo.setShipProfilePicPath(shipProfilePicPath);
+
+// 		shipProfileInfo = shipprofilerepository.saveAndFlush(shipProfileInfo);
+// //		if (shipProfileDTO.getDocIds() != null ) {
+// //			for(Long documentHolderId : shipProfileDTO.getDocIds()) {
+// //				DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderId);
+// //				if (documentHolderInfo != null) {
+// //					documentHolderInfo.setVesselId((long)0);
+// //					documentHolderInfo.setParantId((long)0);
+// //					documentHolderRepository.saveAndFlush(documentHolderInfo);
+// //				}
+// //			}
+// //		}
+// 		 if(shipProfileInfo!=null){
+//              commonMethodsUtility.maintainHistory(shipProfileInfo.getId(),shipProfileInfo.getShipName(),"Vessel", env.getProperty("history.updated"), shipProfileDTO.getLoginId());
+//              }
+// 		ShipProfileInfo record = shipprofilerepository.findByIMO(shipProfileDTO.getImo());
+// 		if (record == null) {
+// 			return false;
+
+// 		} else {
+// 			return true;
+// 		}
+// 	}
+
+@Override
+  public boolean updateShipProfile(ShipProfileDTO shipProfileDTO, String shipProfilePicPath) {
+    List<DocumentHolderDTO> addStandardDocumentHolderInfo = new ArrayList<>();
+    List<DocumentHolderDTO> addCustomDocumentHolderInfo = new ArrayList<>();
+    List<DocumentHolderDTO> existCustomDocumentHolderInfo = new ArrayList<>();
+    List<DocumentHolderDTO> existStandardDocumentHolderInfo = new ArrayList<>();
+    ShipProfileInfo shipProfileInfo = shipprofilerepository.findOne(shipProfileDTO.getId());
+    shipProfileInfo.setBhp(shipProfileDTO.getBhp());
+    shipProfileInfo.setBuilder(shipProfileDTO.getBuilder());
+    shipProfileInfo.setCallsign(shipProfileDTO.getCallSign());
+    shipProfileInfo.setDelivered(shipProfileDTO.getDelivered());
+    shipProfileInfo.setEngineType(shipProfileDTO.getEngineType());
+    shipProfileInfo.setInternationalGRT(shipProfileDTO.getInternationalGRT());
+    shipProfileInfo.setInternationalNRT(shipProfileDTO.getInternationalNRT());
+    shipProfileInfo.setKeellaid(shipProfileDTO.getKeelLaid());
+    shipProfileInfo.setIMO(shipProfileDTO.getImo());
+    shipProfileInfo.setShipName(shipProfileDTO.getShipName());
+    shipProfileInfo.setShipOwner(shipProfileDTO.getRegisteredOwner());
+    shipProfileInfo.setCountryName(shipProfileDTO.getCountryName());
+    shipProfileInfo.setStateName(shipProfileDTO.getStateName());
+		// ship measurement
+		shipProfileInfo.setDwt(shipProfileDTO.getDwt());
+		shipProfileInfo.setBreadth(shipProfileDTO.getBreadth());
+		shipProfileInfo.setWeight(shipProfileDTO.getWeight());
+		shipProfileInfo.setLength(shipProfileDTO.getLength());
+    shipProfileInfo.setShipType(shipProfileDTO.getShipTypes());
+    shipProfileInfo.setStatus(1);
+    List<DocumentHolderInfo> standardDocumentHolderInfos = documentHolderRepository.findByVesselIdAndType(shipProfileDTO.getId(), env.getProperty("document.holder.type.standard"));
+    List<DocumentHolderInfo> customDocumentHolderInfos = documentHolderRepository.findByVesselIdAndType(shipProfileDTO.getId(), env.getProperty("document.holder.type.custom"));
+    OrganizationInfo organizationInfo = organizationInfoRepository.findOne(shipProfileDTO.getOrganizationId());
+    shipProfileInfo.setShipOrganizationInfo(organizationInfo);
+    Set<UserProfileInfo> techMasters = new HashSet<UserProfileInfo>();
+    Set<UserProfileInfo> dataOperators = new HashSet<UserProfileInfo>();
+
+    // if(shipProfileDTO.getStandardDocumentHolders().size() > 0) {
+		if(shipProfileDTO.getStandardDocumentHolders() != null && shipProfileDTO.getStandardDocumentHolders().size() > 0) {
+      for(DocumentHolderDTO documentHolderDTO : shipProfileDTO.getStandardDocumentHolders()) {
+        boolean standardDocumentHolderInfoExist = false;
+        if(documentHolderDTO.getDocumentHolderId() != null) {
+          if(standardDocumentHolderInfos.size() > 0) {
+            for(DocumentHolderInfo documentHolderInfo : standardDocumentHolderInfos) {
+              if(documentHolderDTO.getDocumentHolderId().longValue() == documentHolderInfo.getId().longValue()) {
+                standardDocumentHolderInfoExist = true;
+              }
+            }
+            if(standardDocumentHolderInfoExist) {
+              addStandardDocumentHolderInfo.add(documentHolderDTO);
+              existStandardDocumentHolderInfo.add(documentHolderDTO);
+            }
+            if(!standardDocumentHolderInfoExist) {
+              addStandardDocumentHolderInfo.add(documentHolderDTO);
+            }
+
+          }else {
+            addStandardDocumentHolderInfo.add(documentHolderDTO);
+          }
+        }else {
+          addStandardDocumentHolderInfo.add(documentHolderDTO);
+        }
+      }
+    }else {
+      documentHolderRepository.delete(standardDocumentHolderInfos);
+    }
+
+    // if(shipProfileDTO.getCustomDocumentHolders().size() > 0) {
+		if(shipProfileDTO.getCustomDocumentHolders() != null && shipProfileDTO.getCustomDocumentHolders().size() > 0) {
+      for(DocumentHolderDTO documentHolderDTO : shipProfileDTO.getCustomDocumentHolders()) {
+        boolean customDocumentHolderInfoExist = false;
+        if(documentHolderDTO.getDocumentHolderId() != null) {
+          if(customDocumentHolderInfos.size() > 0) {
+            for(DocumentHolderInfo documentHolderInfo : customDocumentHolderInfos) {
+              if(documentHolderDTO.getDocumentHolderId().longValue() == documentHolderInfo.getId().longValue()) {
+                customDocumentHolderInfoExist = true;
+              }
+            }
+            if(customDocumentHolderInfoExist) {
+              addCustomDocumentHolderInfo.add(documentHolderDTO);
+              existCustomDocumentHolderInfo.add(documentHolderDTO);
+            }
+            if(!customDocumentHolderInfoExist) {
+              addCustomDocumentHolderInfo.add(documentHolderDTO);
+            }
+          }else {
+            addCustomDocumentHolderInfo.add(documentHolderDTO);
+          }
+        }else {
+          addCustomDocumentHolderInfo.add(documentHolderDTO);
+        }
+      }
+    }else {
+      documentHolderRepository.delete(customDocumentHolderInfos);
+    }
+
+    // 🔥 NEW CORRECTED DELETE LOGIC 🔥
+    if (standardDocumentHolderInfos != null && standardDocumentHolderInfos.size() > 0) {
+        List<DocumentHolderInfo> removeDocumentHolderInfo = new ArrayList<>();
+
+        for (DocumentHolderInfo child : standardDocumentHolderInfos) {
+            boolean stillSelected = false;
+
+            for (DocumentHolderDTO dto : shipProfileDTO.getStandardDocumentHolders()) {
+                if (child.getParantId() != null &&
+                    child.getParantId().longValue() == dto.getDocumentHolderId().longValue()) {
+                    stillSelected = true;
+                    break;
+                }
+            }
+
+            if (!stillSelected) {
+                removeDocumentHolderInfo.add(child);
+            }
+        }
+
+        if (!removeDocumentHolderInfo.isEmpty()) {
+            documentHolderRepository.delete(removeDocumentHolderInfo);
+        }
+    }
+
+
+    if(existCustomDocumentHolderInfo.size() > 0) {
+      List<DocumentHolderInfo> removeCustomDocumentHolderInfo = new ArrayList<>();
+      for(DocumentHolderInfo documentHolderInfo : customDocumentHolderInfos) {
+        boolean isExist = false;
+        for(DocumentHolderDTO documentHolderDTO : existCustomDocumentHolderInfo) {
+          if(documentHolderInfo.getId().longValue() == documentHolderDTO.getDocumentHolderId().longValue()) {
+            isExist =true;
+          }
+        }
+        if(!isExist) {
+          removeCustomDocumentHolderInfo.add(documentHolderInfo);
+        }
+      }
+
+      if(!removeCustomDocumentHolderInfo.isEmpty() && removeCustomDocumentHolderInfo.size() > 0) {
+        documentHolderRepository.delete(removeCustomDocumentHolderInfo);
+      }
+    }
+
+    // 🔥 NEW CORRECTED ADD LOGIC 🔥
+    if(addStandardDocumentHolderInfo.size() > 0) {
+      Set<DocumentHolderInfo> documentHolderInfos = new HashSet<>();
+      for(DocumentHolderDTO documentHolderDTO : addStandardDocumentHolderInfo) {
+
+        if(documentHolderDTO.getDocumentHolderId() == null) {
+          DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
+          documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+          documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+          documentHolderInfo.setDocumentHolderType(env.getProperty("document.holder.type"));
+          documentHolderInfo.setType(env.getProperty("document.holder.type.standard"));
+          documentHolderInfo.setOrganizationId(shipProfileInfo.getShipOrganizationInfo().getId());
+          documentHolderInfo.setUpdatedDate(new Date());
+          documentHolderInfo.setVesselId(shipProfileInfo.getId());
+          documentHolderInfos.add(documentHolderInfo);
+        } else {
+
+          DocumentHolderInfo master = documentHolderRepository.findOne(documentHolderDTO.getDocumentHolderId());
+
+          boolean alreadyExists = false;
+
+          for (DocumentHolderInfo existingChild : standardDocumentHolderInfos) {
+              if (existingChild.getParantId() != null &&
+                  existingChild.getParantId().longValue() == master.getId().longValue()) {
+                  alreadyExists = true;
+                  break;
+              }
+          }
+
+          if (!alreadyExists) {
+              DocumentHolderInfo child = new DocumentHolderInfo();
+              child.setDocumentHolderName(master.getDocumentHolderName());
+              child.setDocumentHolderDescription(master.getDocumentHolderDescription());
+              child.setDocumentHolderType(master.getDocumentHolderType());
+              child.setType(env.getProperty("document.holder.type.standard"));
+              child.setOrganizationId(master.getOrganizationId());
+              child.setParantId(master.getId());     // 🔥 IMPORTANT
+              child.setVesselId(shipProfileInfo.getId());
+              child.setUpdatedDate(new Date());
+
+              documentHolderInfos.add(child);
+          }
+        }
+      }
+
+      if(documentHolderInfos.size() > 0) {
+        documentHolderRepository.save(documentHolderInfos);
+      }
+    }
+
+    if(addCustomDocumentHolderInfo.size() > 0) {
+      List<DocumentHolderInfo> documentHolderInfos = new ArrayList<>();
+      for(DocumentHolderDTO documentHolderDTO : addCustomDocumentHolderInfo) {
+        if(documentHolderDTO.getDocumentHolderId() == null) {
+          DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
+          documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+          documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+          documentHolderInfo.setDocumentHolderType(env.getProperty("document.holder.type"));
+          documentHolderInfo.setType(env.getProperty("document.holder.type.custom"));
+          documentHolderInfo.setOrganizationId(shipProfileInfo.getShipOrganizationInfo().getId());
+          documentHolderInfo.setUpdatedDate(new Date());
+          documentHolderInfo.setVesselId(shipProfileInfo.getId());
+          documentHolderInfos.add(documentHolderInfo);
+        }else {
+          DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderDTO.getDocumentHolderId());
+          documentHolderInfos.add(documentHolderInfo);
+        }
+      }
+
+      if(documentHolderInfos.size() > 0) {
+        documentHolderRepository.save(documentHolderInfos);
+      }
+    }
+
+    Set<UserProfileInfo> commercialmanagers = new HashSet<UserProfileInfo>();
+    if (shipProfileDTO.getTechManagerIds() != null && shipProfileDTO.getTechManagerIds().length > 0) {
+      for (int i = 0; i < shipProfileDTO.getTechManagerIds().length; i++) {
+        UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getTechManagerIds()[i]);
+        if (userInfo != null) {
+          techMasters.add(userInfo);
+        }
+      }
+      shipProfileInfo.setTechMasters(techMasters);
+    }
+    if (shipProfileDTO.getDataOperatorsIds() != null && shipProfileDTO.getDataOperatorsIds().length > 0) {
+      for (int i = 0; i < shipProfileDTO.getDataOperatorsIds().length; i++) {
+        UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getTechManagerIds()[i]);
+        if (userInfo != null) {
+          dataOperators.add(userInfo);
+        }
+      }
+      shipProfileInfo.setDataOperators(dataOperators);
+    }
+
+    if (shipProfileDTO.getCommercialMasterIds() != null && shipProfileDTO.getCommercialMasterIds().length > 0) {
+      for (int i = 0; i < shipProfileDTO.getCommercialMasterIds().length; i++) {
+        UserProfileInfo userInfo = userProfileRepository.findOne(shipProfileDTO.getCommercialMasterIds()[i]);
+        if (userInfo != null) {
+          commercialmanagers.add(userInfo);
+        }
+      }
+      shipProfileInfo.setCommercialMasters(commercialmanagers);
+    }
+
+    if (shipProfileDTO.getShipMasterId() != null) {
+      UserProfileInfo userProfileInfo = userProfileRepository.findOne(shipProfileDTO.getShipMasterId());
+      if (userProfileInfo != null)
+        shipProfileInfo.setShipMaster(userProfileInfo);
+    }
+
+    if (shipProfilePicPath != null)
+      shipProfileInfo.setShipProfilePicPath(shipProfilePicPath);
+
+    shipProfileInfo = shipprofilerepository.saveAndFlush(shipProfileInfo);
+//    if (shipProfileDTO.getDocIds() != null ) {
+//      for(Long documentHolderId : shipProfileDTO.getDocIds()) {
+//        DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderId);
+//        if (documentHolderInfo != null) {
+//          documentHolderInfo.setVesselId((long)0);
+//          documentHolderInfo.setParantId((long)0);
+//          documentHolderRepository.saveAndFlush(documentHolderInfo);
+//        }
+//      }
+//    }
+     if(shipProfileInfo!=null){
              commonMethodsUtility.maintainHistory(shipProfileInfo.getId(),shipProfileInfo.getShipName(),"Vessel", env.getProperty("history.updated"), shipProfileDTO.getLoginId());
              }
-		ShipProfileInfo record = shipprofilerepository.findByIMO(shipProfileDTO.getImo());
-		if (record == null) {
-			return false;
+    ShipProfileInfo record = shipprofilerepository.findByIMO(shipProfileDTO.getImo());
+    if (record == null) {
+      return false;
 
-		} else {
-			return true;
-		}
-	}
-
+    } else {
+      return true;
+    }
+  }
 	@Override
 	public Boolean updateShipStatus(ShipProfileDTO shipProfileDTO) {
 		ShipProfileInfo shipProfileInfo = shipprofilerepository.findOne(shipProfileDTO.getId());
@@ -1730,7 +2058,7 @@ public class ShipProfileServiceImpl implements ShipProfileService {
             shipprofilerepository.delete(shipProfileInfo);
             if(dataDeletedHistoryInfo!=null)
             commonMethodsUtility.maintainHistory(dataDeletedHistoryInfo.getId(),shipProfileInfo.getShipName(),"Vessel", env.getProperty("history.deleted"), shipProfileDTO.getUserId());
-           
+
 			return env.getProperty("success");
 		} else {
 			return env.getProperty("ship.not.found");

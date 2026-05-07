@@ -74,10 +74,21 @@ public class ShipProfileInfo {
 
     @Column(name = "status")
     private Integer status;
-    
+    @Column(name = "dwt")
+    private Double dwt;
+
+    @Column(name = "weight")
+    private Double weight;
+
+    @Column(name = "length")
+    private Double length;
+
+        @Column(name = "breadth")
+        private Double breadth;
+
     @Column(name = "ship_profile_pic_path")
 	private String shipProfilePicPath;
-    
+
     @CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "create_date")
@@ -107,19 +118,19 @@ public class ShipProfileInfo {
     @OneToOne
     private UserProfileInfo commercialMaster;*/
 
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ship_profile_xref_tech_masters",
             joinColumns = {@JoinColumn(name = "ship_profile_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "user_profile_id", referencedColumnName = "id")})
     private Set<UserProfileInfo> techMasters;
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ship_profile_xref_commercial_masters",
             joinColumns = {@JoinColumn(name = "ship_profile_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "user_profile_id", referencedColumnName = "id")})
     private Set<UserProfileInfo> commercialMasters;
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ship_profile_xref_data_operators",
             joinColumns = {@JoinColumn(name = "ship_profile_id", referencedColumnName = "id")},
@@ -129,14 +140,14 @@ public class ShipProfileInfo {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "organization_id", referencedColumnName = "id", nullable = true)
 	private OrganizationInfo shipOrganizationInfo;
-    
+
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "userRequestShipProfile", cascade=CascadeType.ALL)
     private Set<RequestUserInfo> requestUserInfo;
-    
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy="shipProfileInfo" ,cascade = CascadeType.ALL, orphanRemoval=false)
     private List<TaskDetailsInfo> taskDetailsInfos;
-    
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy="shipProfileInfo" ,cascade = CascadeType.ALL, orphanRemoval=false)
     private List<ExpiryDocumentInfo> ExpiryDocumentInfo;
 }

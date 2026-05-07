@@ -14,7 +14,7 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
     List<UserNotificationInfo> findByNotifiedToOrderByNotificationTimeDesc(UserProfileInfo notifiedTo);
 
     List<UserNotificationInfo> findByTaskDetailsInfo(TaskDetailsInfo taskInfo);
-    
+
     UserNotificationInfo findByNotifiedToAndTaskDetailsInfo(UserProfileInfo userProfileInfo, TaskDetailsInfo taskDetailsInfo);
 
     List<UserNotificationInfo> findByNotifiedTo (UserProfileInfo userProfileInfo);

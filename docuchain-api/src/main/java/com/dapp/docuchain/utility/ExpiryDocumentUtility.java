@@ -248,7 +248,7 @@ public class ExpiryDocumentUtility {
 		}else {
 			expiryDocumentDTO.setStatusColor("green");
 		}
-		
+
 		// expiryDocumentDTO.setEncodedFile(fileResponse);
 		expiryDocumentDTO
 				.setDocumentDownloadUrl(env.getProperty("expiryDocument.download.url") + expiryDocumentInfo.getId());

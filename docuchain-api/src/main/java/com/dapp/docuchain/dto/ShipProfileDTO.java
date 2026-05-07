@@ -40,6 +40,10 @@ public class ShipProfileDTO {
     private Long shipTypeId;
     private String shipTypes;
     private Integer status;
+    private Double dwt;
+    private Double weight;
+    private Double length;
+      private Double breadth;
     private String roleName;
     private String UserName;
     private Long commercialMasterId;
@@ -53,7 +57,7 @@ public class ShipProfileDTO {
     private ShipProfileDTO singleShipInfo;
     private List<String> roleNameList;
     private List<String> shipNameList;
-    
+
     private Long[] techManagerIds;
     private Long[] commercialMasterIds;
     private Long[] dataOperatorsIds;

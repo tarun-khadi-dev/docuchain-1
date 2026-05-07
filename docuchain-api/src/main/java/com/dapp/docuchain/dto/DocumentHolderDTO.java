@@ -19,6 +19,8 @@ public class DocumentHolderDTO {
     private Long userId;
     private String organizationName;
     private Long vesselIds [];
+    private String vesselName;
+
     private String type;
     private Date updatedDate;
     private String placeholderBy;

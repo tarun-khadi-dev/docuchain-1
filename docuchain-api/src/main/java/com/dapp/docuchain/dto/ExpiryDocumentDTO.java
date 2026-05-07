@@ -14,7 +14,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class ExpiryDocumentDTO {
 
     private Long id;
@@ -29,7 +28,12 @@ public class ExpiryDocumentDTO {
     private String documentStatus;
     private Long shipProfileId;
     private String shipName;
+
     private String certificateNumber;
+    private String certificateNo;
+    private String imoNumber;
+    // private String rawExtractedText;
+
     private String placeOfIssue;
     private Date issueDate;
     private String issueDateString;
@@ -68,6 +72,8 @@ public class ExpiryDocumentDTO {
     private String issuingAuthority;
     private String currentVersionString;
     private Date uploadDate;
+// Add these to your ExpiryDocumentDTO class
+private Boolean isDraft;
+private Long draftId;
     List<ExpiryDocumentDTO> expiryDocumentDTO;
-
 }
