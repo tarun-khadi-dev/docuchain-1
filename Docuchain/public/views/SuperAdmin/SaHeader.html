@@ -1,164 +1,71 @@
 <header class="docuchain-app-header">
-    <a class="docuchain-header-logo">
-        <img src="image/GN-Logo.png" height="75">
-    </a>
-    <a class="docuchain-sidebar-toggle" href="javascript:void(0);" ng-click="sidebarActiveFun()"></a>
-    <div class="toggleoption" id="toggleoption">
-        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-    </div>
-    <div class="docuchain-count-list">
-        <ul>
-            <li>
-                <a href="javascript:void(0);" ui-sref="dapp.saCompanyProfile">
-                    <div class="countList">
-                        <div class="shipnamelist">
-                            <h1>ORGANIZATIONS</h1>
-                            <h2>{{organization.organizationCount}}</h2>
-                        </div>
-                        <div class="shipimage">
-                            <img src="image/cmpny1.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
+  <a
+    class="docuchain-sidebar-toggle"
+    href="javascript:void(0);"
+    ng-click="sidebarActiveFun()"
+  ></a>
+  <div class="toggleoption" id="toggleoption">
+    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+  </div>
 
-            <li>
-                <a href="javascript:void(0);" ui-sref="dapp.saCompanyProfile">
-                    <div class="countList">
-                        <div class="shipnamelist">
-                            <h1>Active</h1>
-                            <h2 class="textgreen">{{organization.activeCount}}</h2>
-                        </div>
-                        <div class="shipimage" ui-sref="dapp.saCompanyProfile">
-                            <!-- <img src="image/activeSubscription.png"> -->
-                                                        <img src="image/activehome.png">
+  <ul class="docuchain-app-nav">
+    <li
+      class="app-nav__item theme-toggle-btn"
+      ng-click="toggleTheme()"
+      title="Toggle Dark/Light Mode"
+    >
+      <i class="fa" ng-class="isDarkMode ? 'fa-sun-o' : 'fa-moon-o'"></i>
+    </li>
 
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li ui-sref="dapp.saManageSubscription">
-                <a href="javascript:void(0);">
-                    <div class="countList">
-                        <div class="shipnamelist">
-                            <h1>Renewal</h1>
-                            <h2 class="textorange">{{organization.renewalCount}}</h2>
-                        </div>
-                        <div class="shipimage" ui-sref="dapp.saManageSubscription">
-                            <img src="image/renewalSubscription.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-            <li ui-sref="dapp.saManageSubscription">
-                <a href="javascript:void(0);">
-                    <div class="countList">
-                        <div class="shipnamelist">
-                            <h1>Expired</h1>
-                            <h2 class="red">{{organization.expiryCount}}</h2>
-                        </div>
-                        <div class="shipimage" ui-sref="dapp.saManageSubscription">
-                            <img src="image/expiredSubscription.png">
-                        </div>
-                    </div>
-                </a>
-            </li>
-        </ul>
-    </div>
+    <li class="dropdown">
+      <div class="profile-card-wrapper dropdown-toggle" data-toggle="dropdown">
+        <div class="profile-avatar-circle">
+          <img
+            ng-src="{{sessionObject.profilePicture || 'image/avatarimg.jpg'}}"
+            class="profile-img-fluid"
+            alt="User"
+          />
 
-
-    <!-- Navbar Right Menu-->
-    <ul class="docuchain-app-nav">
-        <!-- <li class="dropdown">
-            <a class="app-nav__item animated infinite swing" href="#" data-toggle="dropdown" aria-label="Show notifications">
-                <img src="image/notification.png" alt="notification">
-                <span>3</span>
-            </a>
-            <ul class="app-notification dropdown-menu dropdown-menu-right animated hiding" data-animation="bounceInDown">
-                <li class="app-notification__title">Notifications</li>
-                <div class="app-notification__content">
-                    <li>
-                        <a class="app-notification__item" href="javascript:void(0);">
-                            <span class="app-notification__icon">
-                                <img src="image/transporte-view-green.png">
-                            </span>
-                            <div>
-                                <p class="app-notification__message">Kaeeh Zhan</p>
-                                <p class="app-notification__meta">Just Now</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="app-notification__item" href="javascript:void(0);">
-                            <span class="app-notification__icon">
-                                <img src="image/transporte-view-red.png">
-                            </span>
-                            <div>
-                                <p class="app-notification__message">Kaeeh Zhan</p>
-                                <p class="app-notification__meta">5 min ago</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="app-notification__item" href="javascript:void(0);">
-                            <span class="app-notification__icon">
-                                <img src="image/transporte-view-yellow.png">
-                            </span>
-                            <div>
-                                <p class="app-notification__message">Kaeeh Zhan</p>
-                                <p class="app-notification__meta">2 days ago</p>
-                            </div>
-                        </a>
-                    </li>
-                    <div class="app-notification__content">
-                        <li>
-                            <a class="app-notificatio   n__item" href="javascript:void(0);">
-                                <span class="app-notification__icon">
-                                    <img src="image/transporte-view-yellow.png">
-                                </span>
-                                <div>
-                                    <p class="app-notification__message">Kaeeh Zhan</p>
-                                    <p class="app-notification__meta">3 days ago</p>
-                                </div>
-                            </a>
-                        </li>
-                    </div>
-                </div>
-                <li class="app-notification__footer">
-                    <a href="notification.html">See all Notifications.</a>
-                </li>
-            </ul>
-        </li> -->
-        <li>
-            <a class="app-nav__item" data-toggle="modal" data-target="#logoutlog" data-backdrop="static" aria-label="Show notifications">
-                <img src="image/logout.png" alt="logout">
-            </a>
-        </li>
-
-    </ul>
-    <div class="doculogo">
-        <a href="javascript:void(0);">
-            <img src="image/docuchainLogo.png">
-        </a>
-    </div>
-
-</header>
-<toaster-container toaster-options="{'time-out': 3000,'animation-class':'toaster-top-center'}" class="toaster-top-center"></toaster-container>
-<div class="logout">
-    <div class="modal fade" id="logoutlog" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="logoutdiv">
-                        <img src="image/logoutIcon.png">
-                        <h1>Logout</h1>
-                    </div>
-                </div>
-                <div class="modal-footer1">
-                    <button type="button" class="btnlgt logoutyes" ng-click="logout()"  id="logout">Yes</button>
-                    <button type="button" class="btnlgt logoutno" data-dismiss="modal">No</button>
-                </div>
-            </div>
+          <span
+            ng-if="!sessionObject.profilePicture && !sessionObject.firstName"
+            class="profile-letter"
+          >
+            {{sessionObject.firstName.charAt(0)}}
+          </span>
         </div>
-    </div>
-</div>
+        <div class="profile-text-container">
+          <div class="profile-user-name">
+            {{sessionObject.firstName}} {{sessionObject.lastName}}
+          </div>
+          <div class="profile-user-role">{{sessionObject.role}}</div>
+        </div>
+      </div>
+
+      <ul class="dropdown-menu dropdown-menu-right profile-dropdown-box">
+        <li>
+          <a href="javascript:void(0)" ng-click="userDetails()">
+            <i class="fa fa-user"></i> Profile
+          </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <a href="javascript:void(0)" ng-click="confirmLogout()">
+            <i class="fa fa-sign-out"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="doculogo">
+    <a href="javascript:void(0);">
+      <img
+        ng-src="{{ isDarkMode ? 'image/DocuChain-dark.png' : 'image/DocuChain-Light.png' }}"
+      />
+    </a>
+  </div>
+</header>
+<!-- <toaster-container
+  toaster-options="{'time-out': 3000,'animation-class':'toaster-top-center'}"
+  class="toaster-top-center"
+></toaster-container> -->

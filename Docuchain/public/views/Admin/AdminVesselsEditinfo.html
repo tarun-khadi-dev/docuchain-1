@@ -1,870 +1,1534 @@
-<!-- Body Content -->
 <div class="app-content" ng-if="vesselModel == true">
-    <div class="docubodyTitle">
-        <ul id="breadcrumb">
-            <li>
-                <a ng-click="goOutlist()" class="icon icon-beaker" ui-sref="dapp.adminVessels">Vessel</a>
-            </li>
-            <li>
-                <a class="icon icon-beaker" ui-sref='dapp.adminvesselsEdit'>Edit Vessel Information</a>
-            </li>
-        </ul>
-    </div>
-    <div class="docuContent">
-        <div class="docuTabs">
-            <div class="">
-                <div class="row">
-                    <div class="col-lg-12 col-sm-12 col-xs-12">
-                        <div class="multistep-form-section">
-                            <ul>
-                                <li class="form-step-1 active-tab-menu" ng-if="vesselTick == false">
-                                    <a>Vessel Info</a>
-                                </li>
-                                <li class="completeStatus" ng-if="vesselTick == true">
-                                    <a>Vessel Info</a>
-                                    <button type="button" class="comptStatusbtn">
-                                        <img src="image/circleTick.png">
-                                    </button>
-                                </li>
-                                <li ng-if="vesselTick == false" class="form-step-2">
-                                    <a>Vessel Placeholder</a>
-                                </li>
-                                <li ng-if="vesselTick == true" class="form-step-1 active-tab-menu">
-                                    <a>Vessel Placeholder</a>
-                                    <button type="button" class="comptStatusbtn">
-                                        <img src="image/circleTick.png">
-                                    </button>
-                                </li>
-                                <li ng-if="vesselTick == false" class="form-step-2">
-                                    <a>Vessel Users</a>
-                                </li>
-                                <li ng-if="vesselTick == true" class="form-step-1 active-tab-menu">
-                                    <a>Vessel Users</a>
-                                    <!-- ng-click="vesselUserShow(userData)" -->
-                                </li>
-                            </ul>
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a ng-click="goOutlist()" ui-sref="dapp.adminVessels"
+          ><span class="icon icon-beaker"></span> Vessel</a
+        >
+      </li>
+      <li>
+        <a ui-sref="dapp.adminvesselsEdit"
+          ><span class="icon icon-beaker"></span> Edit Vessel Information</a
+        >
+      </li>
+    </ul>
+  </div>
+  <div class="docuContent">
+    <div class="docuTabs">
+      <div class="">
+        <div class="row">
+          <div class="col-lg-12 col-sm-12 col-xs-12">
+            <div class="modern-stepper">
+              <div class="modern-step activetab" ng-if="vesselTick == false">
+                <a>Vessel Info</a>
+              </div>
+              <div class="modern-step activetab" ng-if="vesselTick == true">
+                <a>Vessel Info <img src="image/circleTick.png" /></a>
+              </div>
+              <div class="modern-step" ng-if="vesselTick == false">
+                <a>Vessel Placeholder</a>
+              </div>
+              <div class="modern-step" ng-if="vesselTick == true">
+                <a>Vessel Placeholder <img src="image/circleTick.png" /></a>
+              </div>
+              <div class="modern-step" ng-if="vesselTick == false">
+                <a>Vessel Users</a>
+              </div>
+              <div class="modern-step" ng-if="vesselTick == true">
+                <a>Vessel Users</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12 right-section">
+            <div class="content-box form-step-1-content active-content">
+              <div
+                id="createshare"
+                ng-if="vesselUser == false"
+                class="docuchain-request"
+              >
+                <div class="docuchainRequestpannel">
+                  <h1>Information</h1>
+                  <form name="addShiProfileForm">
+                    <div class="row" style="margin-bottom: 15px">
+                      <div class="col-lg-8">
+                        <div class="row">
+                          <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <div class="form-group" style="margin-bottom: 15px">
+                              <label>Vessel Name <span>*</span></label>
+                              <input
+                                type="text"
+                                name="shipName"
+                                custom-focus
+                                class="text-box"
+                                ng-model="userData.shipName"
+                                placeholder="Vessel Name"
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <div class="form-group" style="margin-bottom: 15px">
+                              <label>Builder / Yard</label>
+                              <input
+                                type="text"
+                                custom-focus
+                                class="text-box"
+                                ng-model="userData.builder"
+                                placeholder="Builder / Yard"
+                              />
+                            </div>
+                          </div>
                         </div>
+                        <div class="row">
+                          <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <div class="form-group" style="margin-bottom: 0">
+                              <label>Registered Owner <span>*</span></label>
+                              <input
+                                type="text"
+                                custom-focus
+                                class="text-box"
+                                ng-model="userData.registeredOwner"
+                                placeholder="Registered Owner"
+                                required
+                              />
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <div class="form-group" style="margin-bottom: 0">
+                              <label>Call Sign <span>*</span></label>
+                              <input
+                                type="text"
+                                custom-focus
+                                class="text-box"
+                                ng-model="userData.callSign"
+                                placeholder="Call Sign"
+                                required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-lg-4">
+                        <div class="vesselProfileUpload text-center">
+                          <div class="shipProfilePicture">
+                            <div class="uploadImage">
+                              <img
+                                ng-show=" thumbnail.dataUrl == undefined"
+                                src="image/imageUpload.png"
+                              />
+                              <img
+                                ng-show=" thumbnail.dataUrl != undefined"
+                                ng-src="{{ thumbnail.dataUrl }}"
+                              />
+                            </div>
+                            <div class="uploadBrowse">
+                              <div class="form-group1">
+                                <input
+                                  type="file"
+                                  name="file"
+                                  file-input="files"
+                                  accept="image/*"
+                                  ng-model="newFile"
+                                  onchange="
+                                    angular
+                                      .element(this)
+                                      .scope()
+                                      .uploadFile(this.files)
+                                  "
+                                />
+                                <span
+                                  style="color: red"
+                                  id="sizeOffile"
+                                  class="ptag1"
+                                ></span>
+                                <div class="input-group">
+                                  <span class="input-group-btn"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div class="col-lg-12 right-section">
-                        <div class="content-box form-step-1-content active-content">
-                            <div id="createshare" ng-if="vesselUser == false" class="docuchain-request">
-                                <div class="docuchainRequestpannel">
-                                    <h1>Information</h1>
-                                    <form name="addShiProfileForm">
-                                        <div class="row">
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Vessel Name
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" name="shipName" custom-focus class="text-box" ng-model="userData.shipName" placeholder="Vessel Name" required>
 
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Builder / Yard
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" ng-model="userData.builder" placeholder="Builder / Yard">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Call Sign
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" ng-model="userData.callSign" placeholder="Call Sign" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>IMO Number
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input number type="text" custom-focus class="text-box" ng-model="userData.imo" placeholder="IMO Number" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Registered Owner
-                                                        <span>*</span>
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" ng-model="userData.registeredOwner" placeholder="Registered Owner" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>International G.R.T
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" ng-model="userData.internationalGRT" placeholder="International G.R.T">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Keel Laid
-                                                    </label>
-                                                    <div class="row">
-                                                        <div customdatepicker class="datepick" ng-model="userData.keelLaidString" min-date="minDate" max-date="maxDate"></div>
-                                                    </div>
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>IMO Number <span>*</span></label>
+                          <input
+                            type="text"
+                            ng-pattern="/^[0-9]*$/"
+                            number
+                            custom-focus
+                            class="text-box"
+                            ng-model="userData.imo"
+                            placeholder="IMO Number"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Type of Vessel <span>*</span></label>
+                          <div class="vesselType">
+                            <select
+                              custom-focus
+                              class="text-box drop-focus"
+                              ng-model="userData.shipTypes"
+                              required
+                            >
+                              <option value="" selected>Type of Vessel</option>
+                              <option
+                                ng-repeat="vesselsType in vesselsTypeInfos"
+                                ng-selected="userData.shipTypes==vesselsType.vesselsTypeName"
+                              >
+                                {{vesselsType.vesselsTypeName}}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Nationality <span>*</span></label>
+                          <div class="vesselType">
+                            <select
+                              class="text-box drop-focus"
+                              ng-model="userData.countryName"
+                              ng-options="country.countryName as country.countryName for country in countryInfos"
+                              ng-change="onCountryNameChange()"
+                            >
+                              <option value="">Select Nationality</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                    <!-- <div class="row">
+                                            <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label>Type of Vessel
-                                                        <span>*</span>
-                                                    </label>
-                                                    <div class="vesselType">
-                                                        <select custom-focus class="text-box drop-focus" ng-model="userData.shipTypes" required>
-                                                            <option value='' selected>Type of Vessel</option>
-                                                            <option ng-repeat="vesselsType in vesselsTypeInfos" ng-selected="userData.shipTypes==vesselsType.vesselsTypeName">{{vesselsType.vesselsTypeName}}</option>
-
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Nationality
-                                                        <span>*</span>
-                                                    </label>
-                                                    <div class="vesselType">
-                                                        <select class="drop-focus" ng-model="userData.countryName" ng-change="countryChange(userData.countryName)">
-                                                            <option value=''>Select Nationality </option>
-                                                            <option ng-repeat="country in countryInfos" value={{country}} ng-selected="userData.countryName == country.countryName">{{country.countryName}}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>International N.R.T
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" ng-model="userData.internationalNRT" placeholder="International N.R.T">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Delivered
-                                                    </label>
-                                                    <div class="row">
-                                                        <div customdatepicker class="datepick" ng-model="userData.delivered" min-date="minDate1" max-date="maxDate1"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Main Engine Type
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" ng-model="userData.engineType" placeholder="Main Engine Type">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label>Port of Registry
-                                                        <span>*</span>
-                                                    </label>
+                                                    <label>Port of Registry <span>*</span></label>
                                                     <div class="vesselType">
                                                         <select ng-model="userData.stateName" custom-focus class="text-box drop-focus" required>
-                                                            <option value='' selected>Port of Registry</option>
-                                                            <option ng-repeat="port in portInfos" value={{port.portName}} ng-selected="userData.stateName == port.portName">{{port.portName}}
-                                                            </option>
+                                                            <option value="" selected>Port of Registry</option>
+                                                            <option ng-repeat="port in portInfos" value="{{port.portName}}" ng-selected="userData.stateName == port.portName">{{port.portName}}</option>
                                                         </select>
                                                     </div>
-
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                            <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label>Engine Power
-                                                    </label>
-                                                    <input type="text" custom-focus class="text-box" ng-model="userData.bhp" placeholder="Engine Power">
+                                                    <label>Keel Laid</label>
+                                                    <input type="text" class="text-box" placeholder="Keel Laid Date" moment-picker="userData.keelLaidString" locale="en" format="DD-MM-YYYY" time="false" ng-model="userData.keelLaidString" min-date="minDate" max-date="maxDate" />
                                                 </div>
                                             </div>
-                                            <div class="col-lg-12 col-sm-12 col-xs-12">
-                                                <div class="vesselProfileUpload text-center">
-                                                    <div class="shipProfilePicture">
-                                                        <div class="uploadImage">
-                                                            <img ng-show=" thumbnail.dataUrl == undefined" src="image/imageUpload.png">
-                                                            <img ng-show=" thumbnail.dataUrl != undefined" ng-src="{{ thumbnail.dataUrl }}"> </div>
-                                                        <div class="uploadBrowse">
-                                                            <div class="form-group1">
-                                                                <input type="file" name="file" file-input="files" accept="image/*" ng-model="userData.shipProfilePicPath" onchange="angular.element(this).scope().uploadFile(this.files)"
-                                                                />
-                                                                <span style="color:red;" id='sizeOffile' class="ptag1"></span>
-
-                                                                <div class="input-group">
-                                                                    <!-- <input type="text" class="form-control" disabled> -->
-                                                                    <span class="input-group-btn">
-                                                                        <!-- <button class="browse btn btnupload" type="button">
-                                                                            Choose File</button> -->
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label>Delivered</label>
+                                                    <input type="text" class="text-box" placeholder="Delivered Date" moment-picker="userData.delivered" locale="en" format="DD-MM-YYYY" time="false" ng-model="userData.delivered" min-date="minDate1" max-date="maxDate1" />
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="btngroupvessl">
-                                    <button type="submit" ng-disabled="addShiProfileForm.$invalid" ng-click="editShipSaveOne(userData)" class="btn savebtn">SAVE</button>
-                                    <button type="button"  ng-disabled="addShiProfileForm.$invalid" ng-click="vesselplaceholder(userData)" class="btn submibtn">NEXT</button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-        </div>
-    </div>
-</div>
-<!-- Body Content -->
-<div class="app-content"  ng-if="vesselUser == true">
-    <div class="docubodyTitle">
-        <ul id="breadcrumb">
-            <li>
-                <a ng-click="goOutlist()" class="icon icon-beaker" ui-sref="dapp.adminVessels">Vessel</a>
-            </li>
-            <li>
-                <a class="icon icon-beaker" ng-click="prevTovesselInfo()">Edit Vessel Information</a>
-            </li>
-            <li>
-                    <a class="icon icon-beaker" href="javascript:void(0);">Edit Placeholder</a>
-                </li>
-            <li>
-                    <a class="icon icon-beaker">Edit Vessel Users</a>
-                </li>
-        </ul>
-    </div>
-    <div class="docuContent">
-        <div class="docuTabs">
-            <div class="">
-                <div class="row">
-                    <div class="col-lg-12 col-sm-12 col-xs-12">
-                        <div class="multistep-form-section">
-                            <ul>
-                                <li class="form-step-1 active-tab-menu" ng-if="vesselTick == false">
-                                    <a>Vessel Info</a>
-                                </li>
-                                <li class="completeStatus" ng-if="vesselTick == true">
-                                    <a>Vessel Info</a>
-                                    <button type="button" class="comptStatusbtn">
-                                        <img src="image/circleTick.png">
-                                    </button>
-                                </li>
-                                <li ng-if="vesselTick == false" class="form-step-2">
-                                    <a>Vessel Placeholder</a>
-                                </li>
-                                <li ng-if="vesselTick == true" class="form-step-1 active-tab-menu">
-                                    <a>Vessel Placeholder</a>
-                                    <button type="button" class="comptStatusbtn">
-                                        <img src="image/circleTick.png">
-                                    </button>
-                                </li>
-                                <li ng-if="vesselTick == false" class="form-step-2">
-                                    <a>Vessel Users</a>
-                                </li>
-                                <li ng-if="vesselTick == true" class="form-step-1 active-tab-menu">
-                                    <a>Vessel Users</a>
-                                    <!-- ng-click="vesselUserShow(userData)" -->
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 right-section">
-                        <div class="content-box form-step-1-content active-content">
-                            <div id="createshare1" class="docuchain-request">
-                                <div class="docuchainRequestpannel">
-                                    <h1>Assign vessel Users</h1>
-                                    <div class="assignVesselTables">
-                                        <form name="addShiProfileForm">
-                                            <div class="tableUsers">
-                                                <table>
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="addwidth150">Role</th>
-                                                            <th class="addwidth250">Assign Existing Users</th>
-                                                            <th class="addwidth150 text-center">Action</th>
-
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>{{shipMasterName}}</td>
-                                                            <br>
-                                                            <td>
-                                                                <div class="selectUsers">
-                                                                    <div class="vesselType bgVesselType">
-                                                                        <ui-select ng-model="userData.shiMasterInfo" theme="bootstrap" ng-disabled="disabled">
-                                                                            <ui-select-match placeholder="{{shipMasterName}}">{{$select.selected.firstName}}&nbsp;{{$select.selected.lastName}}</ui-select-match>
-                                                                            <ui-select-choices repeat="shipmaster in shipMasterInfos | filter: $select.search | orderBy:'firstName'">
-                                                                                <span ng-bind-html="shipmaster.firstName | highlight: $select.search"></span>
-                                                                                <span ng-bind-html="shipmaster.lastName | highlight: $select.search"></span>
-                                                                                <small>Email: {{shipmaster.mail}}</small>
-                                                                            </ui-select-choices>
-                                                                        </ui-select>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button type="button" class="addNewUser" data-toggle="modal" ng-click="addNewUser(shipMasterName)" data-target="#addNewUser"
-                                                                    data-backdrop="static">
-                                                                    <img src="image/add-user-button.png"> Add New User</button>
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-                                                            <td>{{technicalmasterName}}</td>
-                                                            <td>
-                                                                <div class="selectUsers">
-                                                                    <div class="vesselType bgVesselType">
-                                                                        <ui-select multiple ng-model="userData.techManagerInfoList" theme="bootstrap" ng-change="addTechChange(userData.techManagerInfoList)"
-                                                                            close-on-select="true" title="Choose a User" remove-selected="false">
-                                                                            <ui-select-match placeholder="{{technicalmasterName}}">{{$item.firstName}}&nbsp;{{$item.lastName}}</ui-select-match>
-                                                                            <ui-select-choices repeat="technical in technicalManagerInfos | filter: $select.search | orderBy:'firstName'">
-                                                                                <div ng-bind-html="technical.firstName"></div>
-                                                                                <div ng-bind-html="technical.lastName"></div>
-                                                                                <small>
-                                                                                    Email: {{technical.mail}}
-                                                                                </small>
-                                                                            </ui-select-choices>
-                                                                        </ui-select>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button type="button" class="addNewUser" data-toggle="modal" ng-click="addNewUser(technicalmasterName)" data-target="#addNewUser"
-                                                                    data-backdrop="static">
-                                                                    <img src="image/add-user-button.png"> Add New User</button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>{{commercialmasterName}}</td>
-                                                            <td>
-                                                                <div class="selectUsers">
-                                                                    <div class="vesselType bgVesselType">
-                                                                        <ui-select multiple ng-model="userData.commercialManagerInfoList" theme="bootstrap" ng-change="addComChange(userData.commercialManagerInfoList)"
-                                                                            close-on-select="true" title="Choose a person" remove-selected="false">
-                                                                            <ui-select-match placeholder="{{commercialmasterName}}">{{$item.firstName}}&nbsp;{{$item.lastName}}</ui-select-match>
-                                                                            <ui-select-choices repeat="commercialInfo in commercialManagerInfos | filter: $select.search | orderBy:'firstName'">
-                                                                                <div ng-bind-html="commercialInfo.firstName"></div>
-                                                                                <div ng-bind-html="commercialInfo.lastName"></div>
-                                                                                <small>
-                                                                                    Email: {{commercialInfo.mail}}
-                                                                                </small>
-                                                                            </ui-select-choices>
-                                                                        </ui-select>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button type="button" class="addNewUser" data-toggle="modal" ng-click="addNewUser(commercialmasterName)" data-target="#addNewUser"
-                                                                    data-backdrop="static">
-                                                                    <img src="image/add-user-button.png"> Add New User</button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="btngroupvessl">
-                                    <button type="button" ng-click="prevTovesselInfoLast()" class="btn previousbtn">PREVIOUS</button>
-                                    <button type="button" ng-click="editShipSave(userData)" class="btn submibtn">SUBMIT</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-        </div>
-    </div>
-</div>
-<!-- Body Content of placeholder -->
-<div class="confplaceholder">
-    <div class="modal fade" id="addplaceholder" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Create Placeholder</h4>
-                    <button type="button" class="close" data-dismiss="modal" ng-click="closeAddplaceholder()">&times;</button>
-                </div>
-                <form name="createPlaceholdeForm" ng-submit="addPlaceHolder()" novalidate>
-                    <div class="modal-body">
-                        <div class="subscriptbody">
-                            <div class="form">                                  
-                                <div class="form-group">
-                                    <label>Placeholder Name  <span style="color:red;">*</span></label>
-                                    <input type="text" placeholder="Placeholder Name" custom-focus class="text-box" name="placeholdername" ng-model="placeholdername"
-                                        required/>
-                                </div>
-                            </div>
-                            <div class="form">
-                                <div class="form-group">
-                                    <label>Description</label>
-                                    <input type="text" placeholder="Description" custom-focus class="text-box" name="placeholderdescription" ng-model="placeholderdescription">
-                                </div>
-                            </div> 
-                           
-                        </div>
-                        <div class="modal-footer1">
-                            
-                            <button type="button" class="btn previousbtn" ng-click="clearAddPlaceholder()">CLEAR</button>
-                            <button type="submit" class="btn previousbtn clr448aff" >SUBMIT</button>
-                            
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-    <div class="app-content"  ng-cloak ng-if="vesselplaceholderDiv == true">
-        <div class="docubodyTitle">
-            <ul id="breadcrumb">
-                <li>
-                    <a ui-sref="dapp.adminVessels" class="icon icon-beaker">Vessel</a>
-                </li>
-                <li>
-                    <a class="icon icon-beaker" ng-click="prevTovesselInfo()">Edit Vessel Information</a>
-                </li>
-                <li>
-                        <a class="icon icon-beaker" href="javascript:void(0);">Edit Placeholder</a>
-                    </li>
-                <!-- <li>
-                        <a class="icon icon-beaker" href="javascript:void(0);">Edit Vessel Users</a>
-                    </li> -->
-            </ul>
-        </div>
-        <div class="docuContent" >
-            <div class="docuTabs">
-                <div class="">
+                                        </div> -->
                     <div class="row">
-                        <div class="col-lg-12 col-sm-12 col-xs-12">
-                            <div class="multistep-form-section">
-                                <ul>
-                                    <li class="form-step-1 active-tab-menu" ng-if="vesselTick == false">
-                                        <a ng-click="prevTovesselInfo()">Vessel Info</a>
-                                    </li>
-                                    <li class="completeStatus" ng-if="vesselTick == true">
-                                        <a ng-click="prevTovesselInfo()">Vessel Info</a>
-                                        <button type="button" class="comptStatusbtn">
-                                            <img src="image/circleTick.png">
-                                        </button>
-                                    </li>
-                                    <li ng-if="vesselTick == false" class="form-step-2">
-                                            <a>Vessel Placeholder</a>
-                                        </li>
-                                        <li ng-if="vesselTick == true" class="form-step-1 active-tab-menu">
-                                            <a>Vessel Placeholder</a>
-                                            <button type="button" class="comptStatusbtn">
-                                                <img src="image/circleTick.png">
-                                            </button>
-                                        </li>
-                                    <li ng-if="vesselTick == false" class="form-step-2">
-                                        <a ng-click="vesselUserShow(userData)">Vessel Users</a>
-                                    </li>
-                                    <li ng-if="vesselTick == true" class="form-step-1 active-tab-menu">
-                                        <a ng-click="vesselUserShow(userData)">Vessel Users</a>
-                                    </li>
-                                </ul>
-                            </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Port of Registry <span>*</span></label>
+                          <div class="vesselType">
+                            <select
+                              ng-model="userData.stateName"
+                              custom-focus
+                              class="text-box drop-focus"
+                              required
+                            >
+                              <option value="" selected>
+                                Port of Registry
+                              </option>
+                              <option
+                                ng-repeat="port in portInfos"
+                                value="{{port.portName}}"
+                                ng-selected="userData.stateName == port.portName"
+                              >
+                                {{port.portName}}
+                              </option>
+                            </select>
+                          </div>
                         </div>
-                        <div class="col-lg-12 right-section">
-                            <div class="content-box form-step-1-content active-content">
-                                    <div id="createshare1" class="docuchain-request">
-                                            <div class="docuchainRequestpannel">
-                                                <h1>Assign vessel Users</h1>
-                                                <div class="assignVesselTables">
-                                                    <form name="addShiProfileForm">
-            
-                                                        <div class="tableUsers">
-                                                            <table>
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="addwidth150">Placeholder Type</th>
-                                                                        <th class="addwidth250">Placeholder Name</th>
-                                                                        <th class="addwidth150 text-center">Action</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-            
-                                                                    
-                                                                    <tr>
-            
-                                                                        <td>Custom </td>
-                                                                        <td>
-                                                                            <div class="selectUsers">
-                                                                                <div class="vesselType bgVesselType">
-                                        
-                                                                                    <ui-select multiple ng-model="selectecustom" custom-focus class="text-box" theme="bootstrap" close-on-select="true"
-                                                                                    title="Choose a person" remove-selected="false" ng-change="changeCustom(selectecustom)"  >
-                                                                                    <ui-select-match placeholder="Choose custom placeholder">{{$item.documentHolderName}}</ui-select-match>
-                                                                                    <ui-select-choices repeat="place in allPlaceHolderListCustom | filter: $select.search | orderBy:'documentHolderName'">
-                                                                                        <div ng-bind="place.documentHolderName">
-                                                                                        </div> 
-                                                                                      
-                                                                                    </ui-select-choices>
-                                                                                </ui-select>  
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            <button type="button" class="addNewUser" data-toggle="modal"  data-target="#addplaceholderEdit"
-                                                                                data-backdrop="static">
-                                                                                <img src="image/add-user-button.png"> Add Custom Placeholder</button>
-                                                                        </td>
-            
-                                                                    </tr>
-                                                                    <tr>
-            
-                                                                        <td>Standard</td>
-                                                                        <td>
-                                                                            <div class="selectUsers">
-                                                                                <div class="vesselType bgVesselType">
-                                                     
-                                                                                    <ui-select multiple ng-model="selecteStandard" custom-focus class="text-box" theme="bootstrap" close-on-select="true"
-                                            title="Choose a person" remove-selected="false" ng-change="changeselected(selecteStandard)" >
-                                            <ui-select-match placeholder="Choose placeholder">{{$item.documentHolderName}}</ui-select-match>
-                                            <ui-select-choices repeat="place in allPlaceHolderListEdited | filter: $select.search | orderBy:'documentHolderName'">
-                                                <div ng-bind="place.documentHolderName">
-                                                </div> 
-                                              
-                                            </ui-select-choices>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                                <a href="#" target="_blank" ui-sref="dapp.adminPlaceholder">
-                                                                            <button type="button" class="addNewUser" data-toggle="modal" data-backdrop="static">
-                                                                                <img src="image/add-user-button.png"> Add Standard Placeholder</button></a>
-                                                                        </td>
-            
-                                                                    </tr>
-            
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-            
-                                            <div class="btngroupvessl">
-                                                <button type="button" ng-click="prevTovesselInfo()" class="btn previousbtn">PREVIOUS</button>
-                                                <button type="button"  ng-click="vesselUserShow(userData)" class="btn submibtn">NEXT</button>
-                                                <button type="button" ng-click="editShipSave(userData)" class="btn submibtn">SUBMIT</button>
-                                               
-                                            </div>
-                                        </div>
-            
-                                    </div>
-                                </div>
-            
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="preloader" ng-show="loader">
-                    <div id="cssload-loader">
-                        <div class="cssload-dot"></div>
-                        <div class="cssload-dot"></div>
-                        <div class="cssload-dot"></div>
-                        <div class="cssload-dot"></div>
-                        <div class="cssload-dot"></div>
-                        <div class="cssload-dot"></div>
-                        <div class="cssload-dot"></div>
-                        <div class="cssload-dot"></div>
-                    </div>
-                </div>
-            </div>
-    <!-- Add new Popup -->
-    <div class="confplaceholder">
-        <div class="modal fade" id="addplaceholderEdit" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Create PlaceholderEdit</h4>
-                        <button type="button" class="close" data-dismiss="modal" ng-click="closeAddplaceholder()">&times;</button>
-                    </div>
-                    <form name="createPlaceholdeForm" ng-submit="addplaceholderEdit()" novalidate>
-                        <div class="modal-body">
-                            <div class="subscriptbody">
-                                <div class="form">                                  
-                                    <div class="form-group">
-                                        <label>Placeholder Name  <span style="color:red;">*</span></label>
-                                        <input type="text" placeholder="Placeholder Name" custom-focus class="text-box" name="placeholdername" ng-model="placeholdername"
-                                            required/>
-                                    </div>
-                                </div>
-                                <div class="form">
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <input type="text" placeholder="Description" custom-focus class="text-box" name="placeholderdescription" ng-model="placeholderdescription">
-                                    </div>
-                                </div> 
-                                <!-- <div class="form-group">
-                                        <label>DocumentHolder Name
-                                        </label>
-                                        <div class="vesselType vessletypewidth">
-                                            <ui-select multiple ng-model="userData.selectedocu" custom-focus class="text-box" theme="bootstrap" close-on-select="true"
-                                                title="Choose a person" remove-selected="false" >
-                                                <ui-select-match placeholder="Choose placeholder">{{$item.documentHolderName}}</ui-select-match>
-                                                <ui-select-choices repeat="place in allPlaceHolderListEdited | filter: $select.search | orderBy:'documentHolderName'">
-                                                    <div ng-bind="place.documentHolderName">
-                                                    </div> 
-                                                   
-                                                </ui-select-choices>
-                                            </ui-select>          
-                                        </div>
-                                    </div>                               -->
-                            </div>
-                            <div class="modal-footer1">
-                                
-                                <button type="button" class="btn previousbtn" ng-click="clearAddPlaceholder()">CLEAR</button>
-                                <button type="submit" class="btn previousbtn clr448aff" ng-disabled="createPlaceholdeForm.$pristine|| createPlaceholdeForm.$invalid" >SUBMIT</button>
-                                
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                      </div>
+                      <!-- <div class="col-lg-4">
+        <div class="form-group">
+            <label>Keel Laid</label>
+            <input type="text" class="text-box" placeholder="Keel Laid Date" moment-picker="userData.keelLaidFormatted" locale="en" format="DD-MM-YYYY" time="false" ng-model="userData.keelLaidString" min-date="minDate" max-date="maxDate" />
         </div>
     </div>
-
-    <!-- UPDATE new Popup -->
-    <div class="confplaceholder">
-        <div class="modal fade" id="updateplaceholder" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Update Placeholder</h4>
-                        <button type="button" class="close" data-dismiss="modal" ng-click="clsoedUpdateplaceHolder()">&times;</button>
-                    </div>
-                    <form name="updatePlaceholdeForm" ng-submit="editPlaceHolder()" novalidate>
-                        <div class="modal-body">
-                            <div class="subscriptbody">
-                                <div class="form">
-                                    <div class="form-group">
-                                        <label>Placeholder Name <span style="color:red;">*</span></label>
-                                        <input type="text" placeholder="Placeholder Name" custom-focus class="text-box" name="placeholdername" ng-model="updatePlaceHolder.documentHolderName"
-                                            required>
-                                    </div>
-                                    <!-- <div class="form-group">
-                                            <label>Organization Name <span style="color:red;">*</span></label>
-                                        <select ng-model="updatePlaceHolder.organizationName" ng-disabled="isReadOnly" class="text-box drop-focus" required>
-                                            <option value='' selected>Organization Name</option>
-                                            <option ng-repeat="sub in allSubscriptionList" value={{sub.organizationName}} ng-selected="updatePlaceHolder.organizationName == sub.organizationName">{{sub.organizationName}}
-                                            </option>
-                                                </select>
-                                    </div> -->
-                                </div>
-                                <div class="form">
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <input type="text" placeholder="Description" custom-focus class="text-box" name="placeholderdescription" ng-model="updatePlaceHolder.documentHolderDescription">
-                                    </div>
-                                </div>
-                                <!-- <div class="form">
-                                    <div class="form-group">
-                                        <label>File Name</label>
-                                        <input type="text" placeholder="File Name" custom-focus class="text-box" name="placeholderfilename" ng-model="updatePlaceHolder.documentFileNumber">
-                                    </div>
-                                </div> -->
-                            </div>
-                            <div class="modal-footer1">
-                                <button type="button" class="btngeo clearbtn" ng-click="resetUpdateplaceHolder()">Clear</button>
-                                <button type="submit" class="btngeo submitbtn clr448aff" ng-disabled="updatePlaceholdeForm.$pristine|| updatePlaceholdeForm.$invalid">Submit</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <div class="col-lg-4">
+        <div class="form-group">
+            <label>Delivered</label>
+            <input type="text" class="text-box" placeholder="Delivered Date" moment-picker="userData.deliveredFormatted" locale="en" format="DD-MM-YYYY" time="false" ng-model="userData.delivered" min-date="minDate1" max-date="maxDate1" />
         </div>
-    </div>
-    <!-- Delete Popup -->
-    <div class="deleteMessage">
-        <div class="modal fade" id="delete" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Delete Placeholder </h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="delete-group-body">
-                            <p>
-                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Are you sure you want to delete this place holder?</p>
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btnd buttn-delete" ng-click="deletePlaceHolder()">Yes</button>
-                        <button type="button" class="btnd buttn-no" data-dismiss="modal">No</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-        </div>
+    </div> -->
+                      <!-- <div class="col-lg-4">
+    <div class="form-group">
+        <label>Keel Laid</label>
+        <input class="text-box"
+               placeholder="Keel Laid Date"
+               moment-picker="userData.keelLaidFormatted"  ng-model="userData.keelLaidString"          format="DD-MM-YYYY"
+               locale="en"
+               min-date="minDate"
+               max-date="maxDate">
     </div>
 </div>
 
-<!-- Add New User Popup -->
-<div class="addNewUserSect">
-    <div class="modal fade" id="addNewUser" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{{popuptitle}}</h4>
-                    <button type="button" class="close" data-dismiss="modal" ng-click="popupClear()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="addNew-Userbody">
-                        <form name="addNewUserSelectForm">
-                            <h1>User Information</h1>
-                            <div class="form-group">
-                                <label>First Name
-                                    <span>*</span>
-                                </label>
-                                <input type="text" ng-model="user.id" hidden>
-                                <input type="text" custom-focus class="text-box" placeholder="First Name" ng-model="user.firstName" required>
+<div class="col-lg-4">
+    <div class="form-group">
+        <label>Delivered</label>
+        <input class="text-box"
+               placeholder="Delivered Date"
+               moment-picker="userData.deliveredFormatted" ng-model="userData.delivered"               format="DD-MM-YYYY"
+               locale="en"
+               min-date="minDate1"
+               max-date="maxDate1">
+    </div>
+</div> -->
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Keel Laid</label>
+                          <input
+                            class="text-box"
+                            placeholder="Keel Laid Date"
+                            moment-picker="userData.keelLaidString"
+                            ng-model="userData.keelLaidString"
+                            format="DD-MM-YYYY"
+                            locale="en"
+                            min-date="minDate"
+                            max-date="maxDate"
+                          />
+                        </div>
+                      </div>
 
-                            </div>
-                            <div class="form-group">
-                                <label>Last Name
-                                    <span>*</span>
-                                </label>
-                                <input type="text" custom-focus class="text-box" placeholder="Last Name" ng-model="user.lastName" required>
-
-                            </div>
-                            <div class="form-group">
-                                <label>Email Address
-                                    <span>*</span>
-                                </label>
-                                <input type="text" custom-focus class="text-box" ng-pattern="/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/"
-                                    placeholder="Email Address" ng-model="user.mail" required>
-
-                            </div>
-                            <h1>Login Information</h1>
-                            <div class="form-group">
-                                <label>Username
-                                    <span>*</span>
-                                </label>
-                                <input type="text" custom-focus class="text-box" placeholder="Username" ng-model="user.userName" ng-show="updateUNameDisable"
-                                    required>
-                                <input type="text" placeholder="Username" ng-model="user.userName" ng-show="updateUNameEnable" readonly>
-
-                            </div>
-                            <div class="form-group" ng-show="password">
-                                <label>Password
-                                    <span>*</span>
-                                </label>
-                                <input type="password" custom-focus class="text-box" name="password" placeholder="Password" ng-model="user.password" required
-                                    ng-pattern="/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/">
-
-                                <span ng-show="!addNewUserSelectForm.password.$error.required && (addNewUserSelectForm.password.$error.minlength || addNewUserSelectForm.password.$error.maxlength) && addNewUserSelectForm.password.$dirty"
-                                    style="color:red">Passwords must be between 8 and 20 characters.</span>
-                                <span ng-show="!addNewUserSelectForm.password.$error.required && !addNewUserSelectForm.password.$error.minlength && !addNewUserSelectForm.password.$error.maxlength && addNewUserSelectForm.password.$error.pattern && addNewUserSelectForm.password.$touched"
-                                    style="color:red">Must contain one lower &amp; uppercase letter, and one non-alpha character (a number and
-                                    a symbol.)
-                                </span>
-                                <br />
-                            </div>
-                            <div class="form-group" ng-show="confirmPassword">
-                                <label>Confirm Password
-                                    <span>*</span>
-                                </label>
-                                <input type="password" custom-focus class="text-box" placeholder="Confirm Password" ng-model="user.confirmPassword" ng-change="checkPassword(user.password,user.confirmPassword)"
-                                    required>
-                                <span ng-show="IsMatch" style="color:red">Please enter same password and confirm password</span>
-
-                            </div>
-                            <h1>Profile Picture</h1>
-                            <div class="form-group">
-                                <div class="vesselProfileUpload">
-                                    <div class="userProfilePicture">
-                                        <div class="useruploadImage">
-                                            <img ng-show=" thumbnail.dataUrll == undefined" src="image/avatarimg.jpg">
-                                            <img ng-show=" thumbnail.dataUrll != undefined" ng-src="{{ thumbnail.dataUrll }}">
-                                        </div>
-                                        <div class="userUploadBrowse">
-                                            <div class="form-group1">
-                                                <input type="file" name="file" id="control" file-model-no-preview="data.image" file-input="files" ng-model="newFile" onchange="angular.element(this).scope().uploadFileUser(this.files)"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>User Role
-                                    <span>*</span>
-                                </label>
-                                <div class="vesselType">
-                                    <input ng-model="businessCategory" readonly required>
-                                </div>
-                            </div>
-                        </form>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Delivered</label>
+                          <input
+                            class="text-box"
+                            placeholder="Delivered Date"
+                            moment-picker="userData.delivered"
+                            ng-model="userData.delivered"
+                            format="DD-MM-YYYY"
+                            locale="en"
+                            min-date="minDate1"
+                            max-date="maxDate1"
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div class="modal-footer1">
-                        <button type="button" class="btngeo clearbtn" ng-click="popupClear(); addNewUserSelectForm.$setPristine()">CLEAR</button>
-                        <button type="button" class="btngeo submitbtn clr448aff" data-dismiss="modal" ng-click="addUser(user)" ng-show="addPopupsubmit"
-                            ng-disabled="addNewUserSelectForm.$invalid">SUBMIT</button>
-                        <!-- <button type="button" class="btngeo submitbtn clr448aff" data-dismiss="modal" ng-click="addUser(user)" ng-show="editPopupsubmit">Submit</button> -->
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>International G.R.T</label>
+                          <input
+                            type="text"
+                            custom-focus
+                            class="text-box"
+                            ng-model="userData.internationalGRT"
+                            placeholder="International G.R.T"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>International N.R.T</label>
+                          <input
+                            type="text"
+                            custom-focus
+                            class="text-box"
+                            ng-model="userData.internationalNRT"
+                            placeholder="International N.R.T"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>DWT (Deadweight Tonnage)</label>
+                          <input
+                            type="number"
+                            class="text-box"
+                            ng-model="userData.dwt"
+                            placeholder="Enter DWT"
+                            min="0"
+                          />
+                        </div>
+                      </div>
                     </div>
+
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Length (Meters)</label>
+                          <input
+                            type="number"
+                            class="text-box"
+                            ng-model="userData.length"
+                            placeholder="Enter Length"
+                            min="0"
+                            step="0.01"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Breadth (Meters)</label>
+                          <input
+                            type="number"
+                            class="text-box"
+                            ng-model="userData.breadth"
+                            placeholder="Enter breadth"
+                            min="0"
+                            step="0.01"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Weight (MT)</label>
+                          <input
+                            type="number"
+                            class="text-box"
+                            ng-model="userData.weight"
+                            placeholder="Enter Weight"
+                            min="0"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Main Engine Type</label>
+                          <input
+                            type="text"
+                            custom-focus
+                            class="text-box"
+                            ng-model="userData.engineType"
+                            placeholder="Main Engine Type"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <div class="form-group">
+                          <label>Engine Power</label>
+                          <input
+                            type="text"
+                            custom-focus
+                            class="text-box"
+                            ng-model="userData.bhp"
+                            placeholder="Engine Power"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </form>
                 </div>
+                <!-- <div
+                  class="btngroupvessl"
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    width: 100%;
+                  "
+                >
+                  <button
+                    type="submit"
+                    ng-disabled="addShiProfileForm.$invalid"
+                    ng-click="editShipSaveOne(userData)"
+                    class="btn-modern save-btn"
+                  >
+                    <span class="btn-text">SAVE</span>
+                    <span class="icon-circle"><i class="fa fa-save"></i></span>
+                  </button>
+                  <button
+                    type="button"
+                    ng-disabled="addShiProfileForm.$invalid"
+                    ng-click="vesselplaceholder(userData)"
+                    class="btn-modern next-btn"
+                  >
+                    <span class="btn-text">NEXT</span>
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-right"></i
+                    ></span>
+                  </button>
+                </div> -->
+                <div
+                  class="btngroupvessl bttnGroup"
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 15px;
+                    padding-top: 20px;
+                    border-top: 1px solid rgba(0, 0, 0, 0.05);
+                    margin-top: 20px;
+                  "
+                >
+                  <button
+                    type="submit"
+                    ng-disabled="addShiProfileForm.$invalid"
+                    ng-click="editShipSaveOne(userData)"
+                    class="btn-modern submit-btn"
+                  >
+                    <span class="btn-text">SAVE</span>
+                  </button>
+                  <button
+                    type="button"
+                    ng-disabled="addShiProfileForm.$invalid"
+                    ng-click="vesselplaceholder(userData)"
+                    class="btn-modern submit-btn"
+                  >
+                    <span class="btn-text">NEXT</span>
+                  </button>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="preloader" ng-show="loader">
-        <div id="cssload-loader">
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
-            <div class="cssload-dot"></div>
+  </div>
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app-content" ng-cloak ng-if="vesselplaceholderDiv == true">
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a ui-sref="dapp.adminVessels"
+          ><span class="icon icon-beaker"></span> Vessel</a
+        >
+      </li>
+      <li>
+        <a ng-click="prevTovesselInfo()"
+          ><span class="icon icon-beaker"></span> Edit Vessel Information</a
+        >
+      </li>
+      <li>
+        <a href="javascript:void(0);"
+          ><span class="icon icon-beaker"></span> Edit Placeholder</a
+        >
+      </li>
+    </ul>
+  </div>
+  <div class="docuContent">
+    <div class="docuTabs">
+      <div class="">
+        <div class="row">
+          <div class="col-lg-12 col-sm-12 col-xs-12">
+            <div class="modern-stepper">
+              <div class="modern-step completed" ng-if="vesselTick == false">
+                <a ng-click="prevTovesselInfo()">Vessel Info</a>
+              </div>
+              <div class="modern-step completed" ng-if="vesselTick == true">
+                <a ng-click="prevTovesselInfo()"
+                  >Vessel Info <img src="image/circleTick.png"
+                /></a>
+              </div>
+              <div class="modern-step activetab" ng-if="vesselTick == false">
+                <a>Vessel Placeholder</a>
+              </div>
+              <div class="modern-step activetab" ng-if="vesselTick == true">
+                <a>Vessel Placeholder <img src="image/circleTick.png" /></a>
+              </div>
+              <div class="modern-step" ng-if="vesselTick == false">
+                <a ng-click="vesselUserShow(userData)">Vessel Users</a>
+              </div>
+              <div class="modern-step" ng-if="vesselTick == true">
+                <a ng-click="vesselUserShow(userData)">Vessel Users</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12 right-section">
+            <div class="content-box form-step-1-content active-content">
+              <div id="createshare1" class="docuchain-request">
+                <div class="docuchainRequestpannel">
+                  <h1>Assign vessel Users</h1>
+                  <div class="assignVesselTables">
+                    <form name="addShiProfileForm">
+                      <div class="tableUsers">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th class="addwidth150">Placeholder Type</th>
+                              <th class="addwidth250">Placeholder Name</th>
+                              <th class="addwidth150 text-center">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Custom</td>
+                              <td>
+                                <div class="selectUsers">
+                                  <div class="vesselType bgVesselType">
+                                    <ui-select
+                                      multiple
+                                      ng-model="selectecustom"
+                                      custom-focus
+                                      class="text-box"
+                                      theme="bootstrap"
+                                      close-on-select="true"
+                                      title="Choose a person"
+                                      remove-selected="false"
+                                      ng-change="changeCustom(selectecustom)"
+                                    >
+                                      <ui-select-match
+                                        placeholder="Choose custom placeholder"
+                                        >{{$item.documentHolderName}}</ui-select-match
+                                      >
+                                      <ui-select-choices
+                                        repeat="place in allPlaceHolderListCustom | filter: $select.search | orderBy:'documentHolderName'"
+                                      >
+                                        <div
+                                          ng-bind="place.documentHolderName"
+                                        ></div>
+                                      </ui-select-choices>
+                                    </ui-select>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <button
+                                  type="button"
+                                  class="addNewUser"
+                                  data-toggle="modal"
+                                  data-target="#addplaceholderEdit"
+                                  data-backdrop="static"
+                                >
+                                  <img src="image/add-user-button.png" /> Add
+                                  Custom Placeholder
+                                </button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Standard</td>
+                              <td>
+                                <div class="selectUsers">
+                                  <div
+                                    style="
+                                      display: flex;
+                                      gap: 10px;
+                                      align-items: flex-start;
+                                    "
+                                  >
+                                    <div
+                                      class="vesselType bgVesselType"
+                                      style="flex-grow: 1"
+                                    >
+                                      <ui-select
+                                        multiple
+                                        ng-model="selecteStandard"
+                                        custom-focus
+                                        class="text-box"
+                                        theme="bootstrap"
+                                        close-on-select="false"
+                                        title="Choose a placeholder"
+                                        remove-selected="false"
+                                        ng-change="changeselected(selecteStandard)"
+                                      >
+                                        <ui-select-match
+                                          placeholder="Choose placeholder"
+                                          >{{$item.documentHolderName}}</ui-select-match
+                                        >
+                                        <ui-select-choices
+                                          repeat="place in allPlaceHolderListEdited | filter: $select.search | orderBy:'documentHolderName'"
+                                        >
+                                          <div
+                                            ng-bind="place.documentHolderName"
+                                          ></div>
+                                        </ui-select-choices>
+                                      </ui-select>
+                                    </div>
+
+                                    <div
+                                      class="action-buttons"
+                                      style="
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: 5px;
+                                        margin-top: 2px;
+                                      "
+                                    >
+                                      <button
+                                        type="button"
+                                        class="btn btn-sm"
+                                        style="
+                                          background-color: #448aff;
+                                          color: white;
+                                          padding: 4px 10px;
+                                          font-size: 12px;
+                                          border-radius: 4px;
+                                        "
+                                        ng-click="selectAllStandardEdit()"
+                                      >
+                                        Select All
+                                      </button>
+                                      <button
+                                        type="button"
+                                        class="btn btn-sm btn-default"
+                                        style="
+                                          padding: 4px 10px;
+                                          font-size: 12px;
+                                          border-radius: 4px;
+                                        "
+                                        ng-click="clearAllStandardEdit()"
+                                      >
+                                        Clear
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <a
+                                  href="#"
+                                  target="_blank"
+                                  ui-sref="dapp.adminPlaceholder"
+                                >
+                                  <button
+                                    type="button"
+                                    class="addNewUser"
+                                    data-toggle="modal"
+                                    data-backdrop="static"
+                                  >
+                                    <img src="image/add-user-button.png" /> Add
+                                    Standard Placeholder
+                                  </button>
+                                </a>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- <div
+                  class="btngroupvessl"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 100%;
+                  "
+                >
+                  <button
+                    type="button"
+                    ng-click="prevTovesselInfo()"
+                    class="btn-modern prev-btn"
+                  >
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-left"></i
+                    ></span>
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+                  <div style="display: flex; gap: 10px">
+                    <button
+                      type="button"
+                      ng-click="editShipSave(userData)"
+                      class="btn-modern save-btn"
+                    >
+                      <span class="btn-text">SUBMIT</span>
+                      <span class="icon-circle"
+                        ><i class="fa fa-check"></i
+                      ></span>
+                    </button>
+                    <button
+                      type="button"
+                      ng-click="vesselUserShow(userData)"
+                      class="btn-modern next-btn"
+                    >
+                      <span class="btn-text">NEXT</span>
+                      <span class="icon-circle"
+                        ><i class="fa fa-chevron-right"></i
+                      ></span>
+                    </button>
+                  </div>
+                </div> -->
+                <div
+                  class="btngroupvessl bttnGroup"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 15px;
+                    padding-top: 20px;
+                    border-top: 1px solid rgba(0, 0, 0, 0.05);
+                    margin-top: 20px;
+                  "
+                >
+                  <button
+                    type="button"
+                    ng-click="prevTovesselInfo()"
+                    class="btn-modern clear-btn"
+                  >
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+                  <div style="display: flex; gap: 15px">
+                    <button
+                      type="button"
+                      ng-click="editShipSave(userData)"
+                      class="btn-modern submit-btn"
+                    >
+                      <span class="btn-text">SUBMIT</span>
+                    </button>
+                    <button
+                      type="button"
+                      ng-click="vesselUserShow(userData)"
+                      class="btn-modern submit-btn"
+                    >
+                      <span class="btn-text">NEXT</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app-content" ng-cloak ng-if="vesselUser == true">
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a ui-sref="dapp.adminVessels"
+          ><span class="icon icon-beaker"></span> Vessel</a
+        >
+      </li>
+      <li>
+        <a ng-click="prevTovesselInfo()"
+          ><span class="icon icon-beaker"></span> Edit Vessel Information</a
+        >
+      </li>
+      <li>
+        <a href="javascript:void(0);"
+          ><span class="icon icon-beaker"></span> Edit Placeholder</a
+        >
+      </li>
+      <li>
+        <a><span class="icon icon-beaker"></span> Edit Vessel Users</a>
+      </li>
+    </ul>
+  </div>
+  <div class="docuContent">
+    <div class="docuTabs">
+      <div class="">
+        <div class="row">
+          <div class="col-lg-12 col-sm-12 col-xs-12">
+            <div class="modern-stepper">
+              <div class="modern-step completed" ng-if="vesselTick == false">
+                <a ng-click="prevTovesselInfo()">Vessel Info</a>
+              </div>
+              <div class="modern-step completed" ng-if="vesselTick == true">
+                <a ng-click="prevTovesselInfo()"
+                  >Vessel Info <img src="image/circleTick.png"
+                /></a>
+              </div>
+              <div class="modern-step completed" ng-if="vesselTick == false">
+                <a ng-click="vesselplaceholder(userData)">Vessel Placeholder</a>
+              </div>
+              <div class="modern-step completed" ng-if="vesselTick == true">
+                <a ng-click="vesselplaceholder(userData)"
+                  >Vessel Placeholder <img src="image/circleTick.png"
+                /></a>
+              </div>
+              <div class="modern-step activetab" ng-if="vesselTick == false">
+                <a ng-click="vesselUserShow(userData)">Vessel Users</a>
+              </div>
+              <div class="modern-step activetab" ng-if="vesselTick == true">
+                <a ng-click="vesselUserShow(userData)">Vessel Users</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12 right-section">
+            <div class="content-box form-step-1-content active-content">
+              <div id="createshare1" class="docuchain-request">
+                <div class="docuchainRequestpannel">
+                  <h1>Assign vessel Users</h1>
+                  <div class="assignVesselTables">
+                    <form name="addShiProfileForm">
+                      <div class="tableUsers">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th class="addwidth150">Role</th>
+                              <th class="addwidth250">Assign Existing Users</th>
+                              <th class="addwidth150 text-center">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{{shipMasterName}}</td>
+                              <br />
+                              <td>
+                                <div class="selectUsers">
+                                  <div class="vesselType bgVesselType">
+                                    <ui-select
+                                      ng-model="userData.shiMasterInfo"
+                                      theme="bootstrap"
+                                      ng-disabled="disabled"
+                                    >
+                                      <ui-select-match
+                                        placeholder="{{shipMasterName}}"
+                                        >{{$select.selected.firstName}}&nbsp;{{$select.selected.lastName}}</ui-select-match
+                                      >
+                                      <ui-select-choices
+                                        repeat="shipmaster in shipMasterInfos | filter: $select.search | orderBy:'firstName'"
+                                      >
+                                        <span
+                                          ng-bind-html="shipmaster.firstName | highlight: $select.search"
+                                        ></span>
+                                        <span
+                                          ng-bind-html="shipmaster.lastName | highlight: $select.search"
+                                        ></span>
+                                        <small
+                                          >Email: {{shipmaster.mail}}</small
+                                        >
+                                      </ui-select-choices>
+                                    </ui-select>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <button
+                                  type="button"
+                                  class="addNewUser"
+                                  data-toggle="modal"
+                                  ng-click="addNewUser(shipMasterName)"
+                                  data-target="#addNewUser"
+                                  data-backdrop="static"
+                                >
+                                  <img src="image/add-user-button.png" /> Add
+                                  New User
+                                </button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>{{technicalmasterName}}</td>
+                              <td>
+                                <div class="selectUsers">
+                                  <div class="vesselType bgVesselType">
+                                    <ui-select
+                                      multiple
+                                      ng-model="userData.techManagerInfoList"
+                                      theme="bootstrap"
+                                      ng-change="addTechChange(userData.techManagerInfoList)"
+                                      close-on-select="true"
+                                      title="Choose a User"
+                                      remove-selected="false"
+                                    >
+                                      <ui-select-match
+                                        placeholder="{{technicalmasterName}}"
+                                        >{{$item.firstName}}&nbsp;{{$item.lastName}}</ui-select-match
+                                      >
+                                      <ui-select-choices
+                                        repeat="technical in technicalManagerInfos | filter: $select.search | orderBy:'firstName'"
+                                      >
+                                        <div
+                                          ng-bind-html="technical.firstName"
+                                        ></div>
+                                        <div
+                                          ng-bind-html="technical.lastName"
+                                        ></div>
+                                        <small>
+                                          Email: {{technical.mail}}
+                                        </small>
+                                      </ui-select-choices>
+                                    </ui-select>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <button
+                                  type="button"
+                                  class="addNewUser"
+                                  data-toggle="modal"
+                                  ng-click="addNewUser(technicalmasterName)"
+                                  data-target="#addNewUser"
+                                  data-backdrop="static"
+                                >
+                                  <img src="image/add-user-button.png" /> Add
+                                  New User
+                                </button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>{{commercialmasterName}}</td>
+                              <td>
+                                <div class="selectUsers">
+                                  <div class="vesselType bgVesselType">
+                                    <ui-select
+                                      multiple
+                                      ng-model="userData.commercialManagerInfoList"
+                                      theme="bootstrap"
+                                      ng-change="addComChange(userData.commercialManagerInfoList)"
+                                      close-on-select="true"
+                                      title="Choose a person"
+                                      remove-selected="false"
+                                    >
+                                      <ui-select-match
+                                        placeholder="{{commercialmasterName}}"
+                                        >{{$item.firstName}}&nbsp;{{$item.lastName}}</ui-select-match
+                                      >
+                                      <ui-select-choices
+                                        repeat="commercialInfo in commercialManagerInfos | filter: $select.search | orderBy:'firstName'"
+                                      >
+                                        <div
+                                          ng-bind-html="commercialInfo.firstName"
+                                        ></div>
+                                        <div
+                                          ng-bind-html="commercialInfo.lastName"
+                                        ></div>
+                                        <small>
+                                          Email: {{commercialInfo.mail}}
+                                        </small>
+                                      </ui-select-choices>
+                                    </ui-select>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <button
+                                  type="button"
+                                  class="addNewUser"
+                                  data-toggle="modal"
+                                  ng-click="addNewUser(commercialmasterName)"
+                                  data-target="#addNewUser"
+                                  data-backdrop="static"
+                                >
+                                  <img src="image/add-user-button.png" /> Add
+                                  New User
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- <div
+                  class="btngroupvessl"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    width: 100%;
+                  "
+                >
+                  <button
+                    type="button"
+                    ng-click="prevTovesselInfoLast()"
+                    class="btn-modern prev-btn"
+                  >
+                    <span class="icon-circle"
+                      ><i class="fa fa-chevron-left"></i
+                    ></span>
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+                  <button
+                    type="button"
+                    ng-click="editShipSave(userData)"
+                    class="btn-modern next-btn"
+                  >
+                    <span class="btn-text">SUBMIT</span>
+                    <span class="icon-circle"><i class="fa fa-check"></i></span>
+                  </button>
+                </div> -->
+
+                <div
+                  class="btngroupvessl bttnGroup"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 15px;
+                    padding-top: 20px;
+                    border-top: 1px solid rgba(0, 0, 0, 0.05);
+                    margin-top: 20px;
+                  "
+                >
+                  <button
+                    type="button"
+                    ng-click="prevTovesselInfoLast()"
+                    class="btn-modern clear-btn"
+                  >
+                    <span class="btn-text">PREVIOUS</span>
+                  </button>
+                  <button
+                    type="button"
+                    ng-click="editShipSave(userData)"
+                    class="btn-modern submit-btn"
+                  >
+                    <span class="btn-text">SUBMIT</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
+</div>
+
+<div class="confplaceholder">
+  <div class="modal fade" id="addplaceholderEdit" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Create PlaceholderEdit</h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            ng-click="closeAddplaceholder()"
+          >
+            &times;
+          </button>
+        </div>
+        <form
+          name="createPlaceholdeForm"
+          ng-submit="addplaceholderEdit()"
+          novalidate
+        >
+          <div class="modal-body">
+            <div class="subscriptbody">
+              <div class="form">
+                <div class="form-group">
+                  <label
+                    >Placeholder Name <span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    placeholder="Placeholder Name"
+                    custom-focus
+                    class="text-box"
+                    name="placeholdername"
+                    ng-model="placeholdername"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form">
+                <div class="form-group">
+                  <label>Description</label>
+                  <input
+                    type="text"
+                    placeholder="Description"
+                    custom-focus
+                    class="text-box"
+                    name="placeholderdescription"
+                    ng-model="placeholderdescription"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer1">
+              <button
+                type="button"
+                class="btn previousbtn"
+                ng-click="clearAddPlaceholder()"
+              >
+                CLEAR
+              </button>
+              <button
+                type="submit"
+                class="btn previousbtn clr448aff"
+                ng-disabled="createPlaceholdeForm.$pristine|| createPlaceholdeForm.$invalid"
+              >
+                SUBMIT
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="confplaceholder">
+  <div class="modal fade" id="updateplaceholder" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Update Placeholder</h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            ng-click="clsoedUpdateplaceHolder()"
+          >
+            &times;
+          </button>
+        </div>
+        <form
+          name="updatePlaceholdeForm"
+          ng-submit="editPlaceHolder()"
+          novalidate
+        >
+          <div class="modal-body">
+            <div class="subscriptbody">
+              <div class="form">
+                <div class="form-group">
+                  <label
+                    >Placeholder Name <span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    placeholder="Placeholder Name"
+                    custom-focus
+                    class="text-box"
+                    name="placeholdername"
+                    ng-model="updatePlaceHolder.documentHolderName"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form">
+                <div class="form-group">
+                  <label>Description</label>
+                  <input
+                    type="text"
+                    placeholder="Description"
+                    custom-focus
+                    class="text-box"
+                    name="placeholderdescription"
+                    ng-model="updatePlaceHolder.documentHolderDescription"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer1">
+              <button
+                type="button"
+                class="btngeo clearbtn"
+                ng-click="resetUpdateplaceHolder()"
+              >
+                Clear
+              </button>
+              <button
+                type="submit"
+                class="btngeo submitbtn clr448aff"
+                ng-disabled="updatePlaceholdeForm.$pristine|| updatePlaceholdeForm.$invalid"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="deleteMessage">
+  <div class="modal fade" id="delete" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete Placeholder</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="delete-group-body">
+            <p>
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Are
+              you sure you want to delete this place holder?
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btnd buttn-delete"
+            ng-click="deletePlaceHolder()"
+          >
+            Yes
+          </button>
+          <button type="button" class="btnd buttn-no" data-dismiss="modal">
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="addNewUserSect">
+  <div class="modal fade" id="addNewUser" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{popuptitle}}</h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            ng-click="popupClear()"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="addNew-Userbody">
+            <form name="addNewUserSelectForm">
+              <h1>User Information</h1>
+              <div class="form-group">
+                <label
+                  >First Name
+                  <span>*</span>
+                </label>
+                <input type="text" ng-model="user.id" hidden />
+                <input
+                  type="text"
+                  custom-focus
+                  class="text-box"
+                  placeholder="First Name"
+                  ng-model="user.firstName"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label
+                  >Last Name
+                  <span>*</span>
+                </label>
+                <input
+                  type="text"
+                  custom-focus
+                  class="text-box"
+                  placeholder="Last Name"
+                  ng-model="user.lastName"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label
+                  >Email Address
+                  <span>*</span>
+                </label>
+                <input
+                  type="text"
+                  custom-focus
+                  class="text-box"
+                  ng-pattern="/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/"
+                  placeholder="Email Address"
+                  ng-model="user.mail"
+                  required
+                />
+              </div>
+              <h1>Login Information</h1>
+              <div class="form-group">
+                <label
+                  >Username
+                  <span>*</span>
+                </label>
+                <input
+                  type="text"
+                  custom-focus
+                  class="text-box"
+                  placeholder="Username"
+                  ng-model="user.userName"
+                  ng-show="updateUNameDisable"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Username"
+                  ng-model="user.userName"
+                  ng-show="updateUNameEnable"
+                  readonly
+                />
+              </div>
+              <div class="form-group" ng-show="password">
+                <label
+                  >Password
+                  <span>*</span>
+                </label>
+                <input
+                  type="password"
+                  custom-focus
+                  class="text-box"
+                  name="password"
+                  placeholder="Password"
+                  ng-model="user.password"
+                  required
+                  ng-pattern="/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/"
+                />
+
+                <span
+                  ng-show="!addNewUserSelectForm.password.$error.required && (addNewUserSelectForm.password.$error.minlength || addNewUserSelectForm.password.$error.maxlength) && addNewUserSelectForm.password.$dirty"
+                  style="color: red"
+                  >Passwords must be between 8 and 20 characters.</span
+                >
+                <span
+                  ng-show="!addNewUserSelectForm.password.$error.required && !addNewUserSelectForm.password.$error.minlength && !addNewUserSelectForm.password.$error.maxlength && addNewUserSelectForm.password.$error.pattern && addNewUserSelectForm.password.$touched"
+                  style="color: red"
+                  >Must contain one lower &amp; uppercase letter, and one
+                  non-alpha character (a number and a symbol.)
+                </span>
+                <br />
+              </div>
+              <div class="form-group" ng-show="confirmPassword">
+                <label
+                  >Confirm Password
+                  <span>*</span>
+                </label>
+                <input
+                  type="password"
+                  custom-focus
+                  class="text-box"
+                  placeholder="Confirm Password"
+                  ng-model="user.confirmPassword"
+                  ng-change="checkPassword(user.password,user.confirmPassword)"
+                  required
+                />
+                <span ng-show="IsMatch" style="color: red"
+                  >Please enter same password and confirm password</span
+                >
+              </div>
+              <h1>Profile Picture</h1>
+              <div class="form-group">
+                <div class="vesselProfileUpload">
+                  <div class="userProfilePicture">
+                    <div class="useruploadImage">
+                      <img
+                        ng-show=" thumbnail.dataUrll == undefined"
+                        src="image/avatarimg.jpg"
+                      />
+                      <img
+                        ng-show=" thumbnail.dataUrll != undefined"
+                        ng-src="{{ thumbnail.dataUrll }}"
+                      />
+                    </div>
+                    <div class="userUploadBrowse">
+                      <div class="form-group1">
+                        <input
+                          type="file"
+                          name="file"
+                          id="control"
+                          file-model-no-preview="data.image"
+                          file-input="files"
+                          ng-model="newFile"
+                          onchange="
+                            angular
+                              .element(this)
+                              .scope()
+                              .uploadFileUser(this.files)
+                          "
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label
+                  >User Role
+                  <span>*</span>
+                </label>
+                <div class="vesselType">
+                  <input ng-model="businessCategory" readonly required />
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- <div class="modal-footer1">
+            <button
+              type="button"
+              class="btngeo clearbtn"
+              ng-click="popupClear(); addNewUserSelectForm.$setPristine()"
+            >
+              CLEAR
+            </button>
+            <button
+              type="button"
+              class="btngeo submitbtn clr448aff"
+              data-dismiss="modal"
+              ng-click="addUser(user)"
+              ng-show="addPopupsubmit"
+              ng-disabled="addNewUserSelectForm.$invalid"
+            >
+              SUBMIT
+            </button>
+          </div> -->
+          <div
+            class="modal-footer1 bttnGroup"
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 15px;
+              padding: 20px;
+              border-top: 1px solid rgba(0, 0, 0, 0.05);
+            "
+          >
+            <button
+              type="button"
+              class="btn-modern clear-btn"
+              ng-click="popupClear()"
+            >
+              <span class="btn-text">CLEAR</span>
+            </button>
+            <button
+              type="button"
+              class="btn-modern submit-btn"
+              data-dismiss="modal"
+              ng-click="addUser(user)"
+              ng-disabled="addNewUserSelectForm.$invalid"
+            >
+              <span class="btn-text">SUBMIT</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

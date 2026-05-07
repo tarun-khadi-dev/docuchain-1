@@ -3,99 +3,29 @@
   ng-app="dapp"
   ng-controller="UserDashboardController"
 >
-  <div class="app-sidebar__user">
-    <div class="imgupload">
+  <div class="sidebar-logo-container">
+    <a href="javascript:void(0);" ui-sref="dapp.userDashboard">
       <img
-        class="app-sidebar__user-avatar"
-        ng-click="userDetails()"
-        ng-if="sessionObject.profilePicture"
-        ng-src="{{sessionObject.profilePicture || 'images/default-user.png'}}"
-        alt="Admin Image"
+        ng-src="{{logoPath || 'image/Sealedger- light.png'}}"
+        alt="Logo"
+        class="sidebar-main-logo"
       />
-      <img
-        class="app-sidebar__user-avatar"
-        ng-click="userDetails()"
-        ng-if="!sessionObject.profilePicture"
-        src="image/avatarimg.jpg"
-        alt="Admin Image"
-      />
-    </div>
-    <div>
-      <p
-        class="app-sidebar__user-name"
-        style="cursor: pointer"
-        ng-click="userDetails()"
-      >
-        {{sessionObject.firstName}}&nbsp;{{sessionObject.lastName}}
-      </p>
-      <span
-        class="app-sidebar__user-designation"
-        style="cursor: pointer"
-        ng-click="userDetails()"
-        >{{sessionObject.role}}</span
-      >
-    </div>
+    </a>
   </div>
+
   <ul class="app-menu">
     <li
       ng-repeat="data in sidebarList"
-      ng-click="select($index)"
-      ng-class="{'active-li': $index == selected}"
+      ui-sref-active="active"
+      ng-click="clearFilterAndGo(data.url)"
     >
-      <a class="app-menu__item" ui-sref="{{data.url}}">
-        <div class="{{data.color}}">
-          <img ng-src="image/{{data.imgName}}" alt="dashboardIcon" />
-        </div>
+      <a class="app-menu__item" ui-sref="{{data.url}}" style="cursor: pointer">
+        <i class="{{data.icon}} menu-icon"></i>
         <span class="app-menu__label">{{data.name}}</span>
       </a>
     </li>
-
-    <!-- <li>
-            <a class="app-menu__item" ui-sref="dapp.userVesselDocument">
-                <div class="imgclrs clrff8830">
-                    <img src="image/vesselDocumentIcon.png" alt="dashboardIcon">
-                </div>
-
-                <span class="app-menu__label">Vessel Documents</span>
-            </a>
-        </li>
-        <li>
-            <a class="app-menu__item" ui-sref="dapp.userDoumentApproval">
-                <div class="imgclrs clr187e03">
-                    <img src="image/documentApprovalIcon.png" alt="dashboardIcon">
-                </div>
-
-                <span class="app-menu__label">Document Approval</span>
-                <b class="badge pull-right">3</b>
-
-            </a>
-        </li>
-        <li>
-            <a class="app-menu__item" ui-sref="dapp.userMyWorkspace">
-                <div class="imgclrs clr004283">
-                    <img src="image/workspaceIcon.png" alt="dashboardIcon">
-                </div>
-                <span class="app-menu__label">My Workspace</span>
-            </a>
-        </li>
-        <li>
-            <a class="app-menu__item" ui-sref="dapp.userUserExtension">
-                <div class="imgclrs clr005cf7">
-                    <img src="image/userExtensionIcon.png" alt="dashboardIcon">
-                </div>
-                <span class="app-menu__label">User Extension</span>
-                <b class="badge pull-right">3</b>
-            </a>
-        </li>
-        <li>
-            <a class="app-menu__item" ui-sref="dapp.userTasks">
-                <div class="imgclrs clr8b0ce8">
-                    <img src="image/taskIcon.png" alt="dashboardIcon">
-                </div>
-                <span class="app-menu__label">Tasks</span>
-            </a>
-        </li> -->
   </ul>
+
   <ul class="appstore">
     <li>
       <a

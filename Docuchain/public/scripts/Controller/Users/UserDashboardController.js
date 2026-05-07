@@ -12,9 +12,8 @@ userDashboard.controller('UserDashboardController', [
   'toaster',
   '$timeout',
   'FunctionalityService',
-  // 'uiGmapGoogleMapApi',
-  // 'uiGmapIsReady',
   '$idle',
+  'DeletePopup',
   function (
     $scope,
     $window,
@@ -24,16 +23,14 @@ userDashboard.controller('UserDashboardController', [
     toaster,
     $timeout,
     FunctionalityService,
-    // uiGmapGoogleMapApi,
-    // uiGmapIsReady,
-    $idle
+    $idle,
+    DeletePopup
   ) {
     $scope.sessionObject = JSON.parse(
       $window.localStorage.getItem('sessionObject')
     );
 
     $scope.roleId = $scope.sessionObject.roleId;
-
     $scope.userProfileId = $window.localStorage.getItem('userId');
     $scope.profilePictures = $window.localStorage.getItem('profilePicture');
     $scope.shipProfileInfos = $window.localStorage.getItem('shipProfileInfos');
@@ -45,10 +42,63 @@ userDashboard.controller('UserDashboardController', [
     $scope.sidebarList = [];
     $scope.editShow = true;
     $scope.resetShow = false;
-    $scope.profilePicture;
+    $scope.profilePicture = null;
     $scope.loader = false;
     $rootScope.markers = [];
     $rootScope.selected;
+
+    // Initialize a variable to track which filter is clicked
+    $scope.selectedDocFilter = '';
+
+    // ========================================================
+    // NEW: Dashboard Task Counts & URL Redirection Logic
+    // ========================================================
+    $scope.goToTaskTab = function (tabId) {
+      $window.localStorage.setItem('activeTaskTab', tabId);
+      $state.go('dapp.userTasks');
+    };
+
+    // 1. New function to handle the Stat Card clicks
+    $scope.focusOnTable = function (filterType) {
+      $scope.selectedDocFilter = filterType;
+
+      // Set the filter in local storage so the next page knows what to load
+      if (filterType) {
+        $window.localStorage.setItem('redirectFilterStatus', filterType);
+      } else {
+        $window.localStorage.removeItem('redirectFilterStatus');
+      }
+
+      // Smooth scroll to the table
+      $timeout(function () {
+        var tableElement = document.getElementById('vesselStatisticsTable');
+        if (tableElement) {
+          tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    };
+
+    // 2. Update the existing openEBDState function
+    $scope.openEBDState = function (vessel) {
+      $window.localStorage.removeItem('libShipId');
+      $window.localStorage.removeItem('libshipName');
+
+      $window.localStorage.setItem('libShipId', vessel.id);
+      $window.localStorage.setItem('libshipName', vessel.vesselsName);
+
+      // Ensure the selected filter is passed to the next page
+      if ($scope.selectedDocFilter) {
+        $window.localStorage.setItem(
+          'redirectFilterStatus',
+          $scope.selectedDocFilter
+        );
+      } else {
+        $window.localStorage.removeItem('redirectFilterStatus');
+      }
+
+      $state.go('dapp.userVesselDocumentEBD');
+    };
+
     var latitudehome = 1.3521;
     var longitutehome = 103.8198;
 
@@ -58,16 +108,13 @@ userDashboard.controller('UserDashboardController', [
         function mySuccess(response) {
           $scope.notificationList = response.data.userList;
           $scope.notificationListFielter = $scope.notificationList;
-          console.info(
-            'response.data.userList:',
-            JSON.stringify($scope.notificationListFielter)
-          );
         },
         function myError(err) {
           console.log('Error response');
         }
       );
     });
+
     $scope.$on('$viewContentLoaded', function () {
       var data = { userId: $scope.userProfileId, filterByDay: 'Lastweek' };
       FunctionalityService.getDocumentNotification(data).then(
@@ -75,16 +122,32 @@ userDashboard.controller('UserDashboardController', [
           $scope.notificationListLastweek = response.data.userList;
           $scope.notificationListLastweekFielter =
             $scope.notificationListLastweek;
-          console.info(
-            'response.data.userListLastweek:',
-            JSON.stringify(response.data.userList)
-          );
         },
         function myError(err) {
           console.log('Error response');
         }
       );
     });
+
+    $scope.redirectToEBDWithFilter = function (status) {
+      if (status) {
+        $window.localStorage.setItem('redirectFilterStatus', status);
+      } else {
+        $window.localStorage.removeItem('redirectFilterStatus');
+      }
+
+      if ($scope.shipProfileList && $scope.shipProfileList.length > 0) {
+        $window.localStorage.setItem('libShipId', $scope.shipProfileList[0].id);
+        $window.localStorage.setItem(
+          'libshipName',
+          $scope.shipProfileList[0].shipName ||
+            $scope.shipProfileList[0].vesselsName
+        );
+      }
+
+      $state.go('dapp.userVesselDocumentEBD');
+    };
+
     $scope.$on('$viewContentLoaded', function () {
       var data = { userId: $scope.userProfileId, filterByDay: 'Lastmonth' };
       FunctionalityService.getDocumentNotification(data).then(
@@ -92,77 +155,81 @@ userDashboard.controller('UserDashboardController', [
           $scope.notificationListLastmonth = response.data.userList;
           $scope.notificationListLastmonthFielter =
             $scope.notificationListLastmonth;
-          console.info(
-            'response.data.userListLastmonth:',
-            JSON.stringify(response.data.userList)
-          );
         },
         function myError(err) {
           console.log('Error response');
         }
       );
     });
+
     $scope.$on('$viewContentLoaded', function () {
       var data = { userId: $scope.userProfileId, filterByDay: 'Older' };
       FunctionalityService.getDocumentNotification(data).then(
         function mySuccess(response) {
           $scope.notificationListOlder = response.data.userList;
           $scope.notificationListOlderFielter = $scope.notificationListOlder;
-          console.info(
-            'response.data.userListOlder:',
-            JSON.stringify(response.data.userList)
-          );
         },
         function myError(err) {
           console.log('Error response');
         }
       );
     });
+
     $rootScope.select = function (index) {
-      console.log('index of the sidebar', index);
       $rootScope.selected = index;
     };
-    $scope.thumbnail = {
-      dataUrl: '',
-    };
-    if ($scope.profilePictures != 'undefined') {
+
+    $scope.thumbnail = {};
+    if ($scope.profilePictures && $scope.profilePictures !== 'undefined') {
       $scope.thumbnail.dataUrl = $scope.profilePictures;
-    } else {
-      $scope.thumbnail = {
-        dataUrl: 'undefined',
-      };
     }
-    $scope.thumbnail.dataUrl = $scope.profilePictures;
-    $scope.fileReaderSupported = window.FileReader != null;
+
     $scope.uploadFiledp = function (files) {
-      if (files != null) {
+      if (files && files.length > 0) {
         var file = files[0];
-        if (files[0].size > 2048000) {
-          $rootScope.errorFile = document.getElementById(
-            'sizeOffile'
-          ).innerHTML = 'Picture should be below 1MB';
+        var errorSpan = document.getElementById('sizeOffile');
+
+        if (file.size > 1048576) {
+          if (errorSpan) errorSpan.innerText = 'Picture should be below 1MB';
+          $rootScope.errorFile = 'Picture should be below 1MB';
+          return;
         } else {
-          document.getElementById('sizeOffile').innerHTML = '';
+          if (errorSpan) errorSpan.innerText = '';
           $rootScope.errorFile = '';
         }
-        $scope.profilePicture = file;
-        if ($scope.fileReaderSupported && file.type.indexOf('image') > -1) {
-          $timeout(function () {
-            var fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
-            fileReader.onload = function (e) {
-              $timeout(function () {
-                $scope.thumbnail.dataUrl = e.target.result;
-                $scope.profilePictures = $scope.thumbnail.dataUrl;
-              });
-            };
+
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $scope.$apply(function () {
+            if (!$scope.thumbnail) {
+              $scope.thumbnail = {};
+            }
+            $scope.thumbnail.dataUrl = e.target.result;
+            $scope.profilePicture = file;
           });
-        }
+        };
+        reader.readAsDataURL(file);
       }
     };
 
+    FunctionalityService.getDashboardTopCount($scope.userProfileId).then(
+      function (response) {
+        if (response.data && response.data.shipProfileList.length > 0) {
+          var data = response.data.shipProfileList[0];
+          $scope.vesselsName = data.shipName || data.vesselsName || '';
+          $scope.vesselsCount = data.vesselsCount || data.totalCount || 0;
+          $scope.activeCount = data.activeCount || 0;
+          $scope.renewalCount = data.renewelCount || 0;
+          $scope.expiredCount = data.expiryedCount || 0;
+          $scope.missingCount = data.missingCount || 0;
+        }
+      },
+      function (error) {
+        console.log('User TopCount Error:', error);
+      }
+    );
+
     $scope.openNotification = function (openlink) {
-      console.log('open', openlink);
       if (openlink == 'GeoLocationUpload') $state.go('dapp.userDashboard');
       if (openlink == 'New Document ') $state.go('dapp.userDoumentApproval');
       if (openlink == 'Task ') $state.go('dapp.userTasks');
@@ -171,6 +238,7 @@ userDashboard.controller('UserDashboardController', [
     $scope.openTask = function () {
       $state.go('dapp.userTasks');
     };
+
     $scope.userDetails = function () {
       $state.go('dapp.userProfile');
       $scope.editShow = true;
@@ -184,11 +252,11 @@ userDashboard.controller('UserDashboardController', [
     };
 
     $scope.notificationTypeFilter = function (notificationType) {
-      console.log('notificationTypeFielter:', notificationType);
       $scope.notificationListFielter = [];
       $scope.notificationListLastweekFielter = [];
       $scope.notificationListLastmonthFielter = [];
       $scope.notificationListOlderFielter = [];
+
       angular.forEach($scope.notificationList, function (item) {
         if (notificationType == item.notificationType.trim()) {
           $scope.notificationListFielter.push(item);
@@ -221,7 +289,6 @@ userDashboard.controller('UserDashboardController', [
 
     $scope.snoozeOption = function (snooze, notifId) {
       $scope.loader = true;
-      console.log('id and snooze', snooze, notifId);
       var data = { snooze: snooze, notificationId: notifId };
       FunctionalityService.snoozeUpdate(data).then(
         function (response) {
@@ -245,26 +312,29 @@ userDashboard.controller('UserDashboardController', [
         }
       );
     };
+
     $scope.updateProfileSubmit = function (data) {
       $scope.loader = true;
-
       toaster.clear();
+
       if ($rootScope.errorFile === 'Picture should be below 1MB') {
         $scope.loader = false;
         toaster.pop('error', $rootScope.errorFile);
       } else {
         $rootScope.errorFile = '';
-        var data = {
+        var updateData = {
           userId: $scope.userProfileId,
           firstName: data.firstName,
           lastName: data.lastName,
           mail: data.mail,
         };
 
-        FunctionalityService.editProfileData(data, $scope.profilePicture).then(
+        FunctionalityService.editProfileData(
+          updateData,
+          $scope.profilePicture
+        ).then(
           function (response) {
             $scope.loader = false;
-
             if (response.status == 200 || response.status == 201) {
               toaster.pop('success', response.data.message);
               $scope.message = response.data.userInfos;
@@ -294,7 +364,6 @@ userDashboard.controller('UserDashboardController', [
               $scope.resetShow = false;
               $scope.editShow = false;
               setTimeout(function () {
-                //$state.reload();
                 $window.location.reload();
               }, 1000);
             } else {
@@ -310,26 +379,26 @@ userDashboard.controller('UserDashboardController', [
         );
       }
     };
+
     $scope.resetPassword = function () {
       $scope.resetShow = true;
       $scope.editShow = false;
     };
+
     $scope.resetPasswordSubmit = function (data) {
       $scope.loader = true;
-
       toaster.clear();
 
-      var data = {
+      var resetData = {
         userId: $scope.userProfileId,
         currentPassword: data.currentPassword,
         password: data.password,
         confirmPassword: data.confirmPassword,
       };
 
-      FunctionalityService.resetPswd(data).then(
+      FunctionalityService.resetPswd(resetData).then(
         function (response) {
           $scope.loader = false;
-
           if (response.status == 200 || response.status == 201) {
             toaster.pop('success', response.data.message);
             $scope.resetShow = false;
@@ -349,6 +418,7 @@ userDashboard.controller('UserDashboardController', [
         }
       );
     };
+
     $scope.$on('$viewContentLoaded', function () {
       FunctionalityService.geoLocationlist(
         $window.localStorage.getItem('userId')
@@ -356,114 +426,22 @@ userDashboard.controller('UserDashboardController', [
         function (response) {
           if (response.status == 200) {
             $rootScope.geoLocationlistUser = response.data.userList;
-            //console.log("response.data.userList::",JSON.stringify(response.data.userList))
           }
         },
         function (error) {}
       );
     });
+
     $scope.$on('$viewContentLoaded', function () {
       FunctionalityService.getQuestionAndAnswer().then(
         function (response) {
           if (response.status == 200) {
             $scope.getQuestionAndAnswer = response.data.faqInfos;
-            console.log(
-              '$scope.getQuestionAndAnswer::',
-              JSON.stringify(response.data)
-            );
           }
         },
         function (error) {}
       );
     });
-    // $scope.map = {center: {latitude: 51.219053, longitude: 4.404418 }, zoom: 14 };
-    $scope.$on('$viewContentLoaded', function () {
-      // uiGmapGoogleMapApi.then(function (maps) {
-      //   //var dogParks = $meteor.collection(DogParks);
-      //   // var dogParks = genarateDogParks(2000);
-      //   // if ($rootScope.geoLocationlistUser != undefined){
-      //   //   var dogParks = genarateDogParks($rootScope.geoLocationlistUser.length)
-      //   // }else{
-      //   //   var dogParks = 0;
-      //   // }
-      //   console.log('default values::', latitudehome + '...' + longitutehome);
-      //   $scope.map = {
-      //     zoom: 4,
-      //     bounds: {},
-      //     center: {
-      //       latitude: latitudehome,
-      //       longitude: longitutehome,
-      //     },
-      //   };
-      //   function assignMarkersToMap() {
-      //     angular.forEach($rootScope.geoLocationlistUser, function (item) {
-      //       if (
-      //         item.geoLocationInfos.latitude != undefined &&
-      //         item.geoLocationInfos.longitute != undefined
-      //       ) {
-      //         latitudehome = item.geoLocationInfos.latitude;
-      //         longitutehome = item.geoLocationInfos.longitute;
-      //         $rootScope.markers.push({
-      //           latitude: item.geoLocationInfos.latitude,
-      //           longitude: item.geoLocationInfos.longitute,
-      //           title: item.shipProfileDTO.shipName,
-      //           id: item.geoLocationInfos.id,
-      //           updateDate: item.geoLocationInfos.updateDate,
-      //           imomap: item.shipProfileDTO.imo,
-      //           icon: 'image/shipIcon.png',
-      //         });
-      //       }
-      //     });
-      //     console.log('default values::', latitudehome + '...' + longitutehome);
-      //     console.log(
-      //       'inside assignMarkersToMap::' + JSON.stringify($rootScope.markers)
-      //     );
-      //     return $rootScope.markers;
-      //   }
-      //   $scope.markers = [];
-      //   // uiGmapIsReady.promise().then(function (instances) {
-      //   //   $scope.markers = assignMarkersToMap();
-      //   // });
-      //   $scope.windowCoords = {};
-      //   $scope.onClick = function (marker, eventName, model) {
-      //     $scope.map.center.latitude = model.latitude;
-      //     $scope.map.center.longitude = model.longitude;
-      //     $scope.map.zoom = 11;
-      //     $scope.windowCoords.latitude = model.latitude;
-      //     $scope.windowCoords.longitude = model.longitude;
-      //     $scope.longitude = $scope.windowCoords.longitude;
-      //     $scope.latitude = $scope.windowCoords.latitude;
-      //     $scope.parkName = model.title;
-      //     $scope.updateDate = model.updateDate;
-      //     $scope.imo = model.imomap;
-      //     $scope.show = true;
-      //   };
-      //   $scope.closeClick = function () {
-      //     $scope.show = false;
-      //   };
-      //   $scope.options = {
-      //     scrollwheel: false,
-      //   };
-      //   $scope.show = false;
-      // });
-    });
-
-    // function genarateDogParks(count) {
-    //   var vals = [];
-    //   for (var i = 0; i < count; i++) {
-    //     vals.push({
-    //       latitude: $scope.geoLocationlist[i].geoLocationInfos.latitude,
-    //       longitude: $scope.geoLocationlist[i].geoLocationInfos.longitute,
-    //       _id: i,
-    //       // name: 'Dog Park #' + i
-    //       name: $scope.geoLocationlist[i].shipProfileDTO.shipName,
-    //       imo: $scope.geoLocationlist[i].shipProfileDTO.imo,
-    //       updateDate: $scope.geoLocationlist[i].geoLocationInfos.updateDate,
-
-    //     });
-    //   }
-    //   return vals;
-    // }
 
     function getRandomArbitrary(min, max) {
       return Math.random() * (max - min) + min;
@@ -471,8 +449,9 @@ userDashboard.controller('UserDashboardController', [
 
     $scope.getAllVesselListAndCount = function () {
       $scope.loader = true;
-
-      $scope.buttonToaster();
+      $scope.sessionObject = JSON.parse(
+        $window.localStorage.getItem('sessionObject')
+      );
       var userId = $scope.sessionObject.userId;
       FunctionalityService.getViewShipProfile(userId).then(
         function mySuccess(response) {
@@ -489,50 +468,83 @@ userDashboard.controller('UserDashboardController', [
       );
     };
 
-    $scope.buttonToaster = function () {
-      // toaster.error({ title:"eerroorajvasdffalflalfallafj"});
-    };
-
+    // $scope.shipMasterSidebar = [
+    //   {
+    //     id: 1,
+    //     url: 'dapp.userDashboard',
+    //     color: 'imgclrs clr972323',
+    //     status: 'active',
+    //     name: 'Dashboard',
+    //     imgName: 'dashboardIcon.png',
+    //   },
+    //   {
+    //     id: 2,
+    //     url: 'dapp.userVesselDocumentEBD',
+    //     color: 'imgclrs clrff8830',
+    //     status: 'active',
+    //     name: 'Vessel Documents',
+    //     imgName: 'vesselDocumentIcon.png',
+    //   },
+    //   {
+    //     id: 3,
+    //     url: 'dapp.userDoumentApproval',
+    //     color: 'imgclrs clr187e03',
+    //     status: 'active',
+    //     name: 'Document Approval',
+    //     imgName: 'documentApprovalIcon.png',
+    //   },
+    //   {
+    //     id: 4,
+    //     url: 'dapp.userMyWorkspaceList',
+    //     color: 'imgclrs clr004283',
+    //     status: 'active',
+    //     name: 'My Workspace',
+    //     imgName: 'workspaceIcon.png',
+    //   },
+    //   {
+    //     id: 5,
+    //     url: 'dapp.userTasks',
+    //     color: 'imgclrs clr8b0ce8',
+    //     status: 'active',
+    //     name: 'Tasks',
+    //     imgName: 'taskIcon.png',
+    //   },
+    // ];
     $scope.shipMasterSidebar = [
       {
         id: 1,
         url: 'dapp.userDashboard',
-        color: 'imgclrs clr972323',
+        icon: 'fa fa-home',
         status: 'active',
         name: 'Dashboard',
-        imgName: 'dashboardIcon.png',
       },
       {
         id: 2,
         url: 'dapp.userVesselDocumentEBD',
-        color: 'imgclrs clrff8830',
+        icon: 'fa fa-ship',
         status: 'active',
         name: 'Vessel Documents',
-        imgName: 'vesselDocumentIcon.png',
       },
       {
         id: 3,
         url: 'dapp.userDoumentApproval',
-        color: 'imgclrs clr187e03',
+        icon: 'fa fa-check-square-o',
         status: 'active',
         name: 'Document Approval',
-        imgName: 'documentApprovalIcon.png',
       },
       {
         id: 4,
         url: 'dapp.userMyWorkspaceList',
-        color: 'imgclrs clr004283',
+        icon: 'fa fa-briefcase',
         status: 'active',
         name: 'My Workspace',
-        imgName: 'workspaceIcon.png',
       },
       {
         id: 5,
         url: 'dapp.userTasks',
-        color: 'imgclrs clr8b0ce8',
+        icon: 'fa fa-tasks',
         status: 'active',
         name: 'Tasks',
-        imgName: 'taskIcon.png',
       },
     ];
 
@@ -540,67 +552,65 @@ userDashboard.controller('UserDashboardController', [
       {
         id: 1,
         url: 'dapp.userDashboard',
-        color: 'imgclrs clr972323',
+        icon: 'fa fa-home',
         status: 'active',
         name: 'Dashboard',
-        imgName: 'dashboardIcon.png',
       },
       {
         id: 2,
         url: 'dapp.userVesselDocument',
-        color: 'imgclrs clrff8830',
+        icon: 'fa fa-ship',
         status: 'active',
         name: 'Vessel Documents',
-        imgName: 'vesselDocumentIcon.png',
       },
       {
         id: 3,
         url: 'dapp.userDoumentApproval',
-        color: 'imgclrs clr187e03',
+        icon: 'fa fa-check-square-o',
         status: 'active',
         name: 'Document Approval',
-        imgName: 'documentApprovalIcon.png',
       },
       {
         id: 4,
         url: 'dapp.userMyWorkspace',
-        color: 'imgclrs clr004283',
+        icon: 'fa fa-briefcase',
         status: 'active',
         name: 'My Workspace',
-        imgName: 'workspaceIcon.png',
       },
       {
         id: 5,
         url: 'dapp.userUserExtension',
-        color: 'imgclrs clr005cf7',
+        icon: 'fa fa-puzzle-piece',
         status: 'active',
         name: 'User Extension',
-        imgName: 'userExtensionIcon.png',
       },
       {
         id: 6,
         url: 'dapp.userTasks',
-        color: 'imgclrs clr8b0ce8',
+        icon: 'fa fa-tasks',
         status: 'active',
         name: 'Tasks',
-        imgName: 'taskIcon.png',
       },
     ];
 
     if ($scope.sessionObject.roleId === 3) {
       $scope.sidebarList = $scope.shipMasterSidebar;
-    }
-    if ($scope.sessionObject.roleId != 3) {
+    } else {
       $scope.sidebarList = $scope.otherUserSidebar;
     }
+    // Clears dashboard filters when navigating via sidebar
+    $scope.clearFilterAndGo = function (stateName) {
+      $window.localStorage.removeItem('redirectFilterStatus');
+      $state.go(stateName);
+    };
 
     $scope.clearGeoLocation = function () {
       $scope.latitude = '';
       $scope.longitute = '';
     };
+
     $scope.addGeoLocation = function () {
       $scope.loader = true;
-
       angular.forEach($scope.sessionObject.shipProfileInfos, function (val) {
         $scope.shipId = val.id;
       });
@@ -626,6 +636,7 @@ userDashboard.controller('UserDashboardController', [
         }
       );
     };
+
     $scope.openEBDState = function (vessel) {
       $window.localStorage.removeItem('libShipId');
       $window.localStorage.removeItem('libshipName');
@@ -633,38 +644,33 @@ userDashboard.controller('UserDashboardController', [
       $window.localStorage.setItem('libshipName', vessel.vesselsName);
       $state.go('dapp.userVesselDocumentEBD');
     };
+
+    // LOAD LOGO GLOBALLY FOR SIDEBAR AND HEADER
+    // =========================================================================
+    var savedLogo = $window.localStorage.getItem('logoPicture');
+    if (savedLogo && savedLogo !== 'undefined' && savedLogo !== 'null') {
+      // Use $rootScope so the Header HTML can access this variable too!
+      $rootScope.logoPath = savedLogo;
+    }
+
+    // Listen for the broadcast from AddLogo page
+    $rootScope.$on('logoUpdated', function (event, newLogoUrl) {
+      $rootScope.logoPath = newLogoUrl;
+    });
+
     $scope.checkAll = function () {
-      console.log('inside the check all function');
       if ($scope.selectedAll) {
         $scope.selectedAll = true;
       } else {
         $scope.selectedAll = false;
       }
-      console.log('value:::' + $scope.selectedAll);
       $scope.subCheckBox = $scope.selectedAll;
     };
-    $scope.deleteEntityNotification = function (id) {
-      console.log('inside the entity changes method:::' + id);
-      var notificationId = { notificationId: id };
-      console.log('before check' + $scope.deleteNotificationList.length);
-      $scope.deleteNotificationList.push(notificationId);
-      console.log(
-        'ready for delete notification:::' +
-          JSON.stringify($scope.deleteNotificationList)
-      );
-    };
-    $scope.deleteAllNotification = function (list) {
-      console.log(
-        'click deleteAll check' + $scope.deleteNotificationList.length
-      );
-      if ($scope.deleteNotificationList.length == 0)
-        $scope.deleteNotificationList = list;
-    };
+
     $scope.deleteAllNotificationBySelect = function () {
       var userDto = { userId: $window.localStorage.getItem('userId') };
       FunctionalityService.deleteAllNotification(userDto).then(
         function mySuccess(response) {
-          $('#deleteAll').modal('hide');
           $state.reload();
           $timeout(function () {
             toaster.success({ title: response.data.status });
@@ -676,26 +682,72 @@ userDashboard.controller('UserDashboardController', [
         }
       );
     };
-    $scope.deleteNotification = function (id) {
-      console.log('inside delete notification:::::' + id);
+
+    $scope.confirmDeleteAll = function () {
+      DeletePopup.confirm(
+        'Delete All Notifications',
+        'Are you sure you want to delete all notifications?',
+        function () {
+          $scope.deleteAllNotificationBySelect();
+        }
+      );
+    };
+
+    $scope.confirmDeleteNotification = function (id) {
       $scope.notificationId = id;
-    };
-    $scope.deleteNotificationById = function () {
-      var notificationId = { notificationId: $scope.notificationId };
-      console.log('inside delete notification:::::' + $scope.notificationId);
-      FunctionalityService.deleteNotification(notificationId).then(
-        function mySuccess(response) {
-          $('#delete').modal('hide');
-          $state.reload();
+      DeletePopup.confirm(
+        'Delete Notification',
+        'Are you sure you want to delete this notification?',
+        function () {
           $timeout(function () {
-            toaster.success({ title: response.data.status });
-          }, 1000);
-        },
-        function myError(err) {
-          toaster.error({ title: myError.data.status });
-          console.log('Error response');
+            $scope.deleteNotificationById();
+          });
         }
       );
+    };
+
+    $scope.deleteNotificationById = function () {
+      var notificationId = {
+        notificationId: $scope.notificationId,
+      };
+      FunctionalityService.deleteNotification(notificationId).then(
+        function (response) {
+          toaster.success({ title: response.data.status });
+          $state.reload();
+        },
+        function (err) {
+          console.log('Error response', err);
+        }
+      );
+    };
+
+    // ========================================================
+    // NEW: Dashboard Task Counts & URL Redirection Logic
+    // ========================================================
+    $scope.taskAssignedByYouCount = 0;
+    $scope.taskAssignedToYouCount = 0;
+
+    FunctionalityService.getTaskAssignedByUser($scope.userProfileId).then(
+      function (response) {
+        if (response.data && response.data.taskAssignedByUser) {
+          $scope.taskAssignedByYouCount =
+            response.data.taskAssignedByUser.length;
+        }
+      }
+    );
+
+    FunctionalityService.getTaskAssignedToUser($scope.userProfileId).then(
+      function (response) {
+        if (response.data && response.data.taskAssignedToUser) {
+          $scope.taskAssignedToYouCount =
+            response.data.taskAssignedToUser.length;
+        }
+      }
+    );
+    // Clears filters and forces a fresh reload of the state
+    $scope.clearFilterAndGo = function (stateName) {
+      $window.localStorage.removeItem('redirectFilterStatus');
+      $state.go(stateName, {}, { reload: true });
     };
   },
 ]);

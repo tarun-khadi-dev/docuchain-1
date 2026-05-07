@@ -1,0 +1,106 @@
+<header class="docuchain-app-header">
+  <a class="docuchain-header-logo">
+    <img src="image/Sealedger- light.png" height="75" />
+  </a>
+  <a
+    class="docuchain-sidebar-toggle"
+    href="javascript:void(0);"
+    ng-click="sidebarActiveFun()"
+  ></a>
+  <div class="toggleoption" id="toggleoption">
+    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+  </div>
+
+  <ul class="docuchain-app-nav">
+    <li class="dropdown">
+      <div class="profile-card-wrapper dropdown-toggle" data-toggle="dropdown">
+        <div class="profile-avatar-circle">
+          <img
+            ng-if="sessionObject.profilePicture"
+            ng-src="{{sessionObject.profilePicture}}"
+            class="profile-img-fluid"
+            alt="User"
+          />
+
+          <span ng-if="!sessionObject.profilePicture" class="profile-letter">
+            {{sessionObject.firstName.charAt(0)}}
+          </span>
+        </div>
+
+        <div class="profile-text-container">
+          <div class="profile-user-name">
+            {{sessionObject.firstName}} {{sessionObject.lastName}}
+          </div>
+          <div class="profile-user-role">{{sessionObject.role}}</div>
+        </div>
+      </div>
+
+      <ul class="dropdown-menu dropdown-menu-right profile-dropdown-box">
+        <li>
+          <a href="javascript:void(0)" ng-click="userDetails()">
+            <i class="fa fa-user"></i> Profile
+          </a>
+        </li>
+        <li class="divider"></li>
+        <!-- <li>
+          <a href="javascript:void(0)" ng-click="logout()">
+            <i class="fa fa-sign-out"></i> Logout
+          </a>
+        </li> -->
+        <li>
+          <!-- <a
+            href="javascript:void(0)"
+            data-toggle="modal"
+            data-target="#logoutlog"
+          >
+            <i class="fa fa-sign-out"></i> Logout
+          </a> -->
+          <a href="javascript:void(0)" ng-click="confirmLogout()">
+            <i class="fa fa-sign-out"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <div class="doculogo">
+    <a href="javascript:void(0);">
+      <img src="image/DocuChain-Light.png" />
+    </a>
+  </div>
+</header>
+<!-- <toaster-container
+  toaster-options="{'time-out': 3000,'animation-class':'toaster-top-center'}"
+  class="toaster-top-center"
+></toaster-container> -->
+
+<!-- <div class="logout">
+  <div class="modal fade" id="logoutlog" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="logoutdiv">
+            <img src="image/logoutIcon.png" />
+            <h1>Logout</h1>
+          </div>
+        </div>
+        <div class="modal-footer1">
+          <button
+            type="button"
+            class="btnlgt logoutyes"
+            ng-click="logout()"
+            id="logout"
+          >
+            Yes
+          </button>
+          <button type="button" class="btnlgt logoutno" data-dismiss="modal">
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<toaster-container
+  toaster-options="{'position-class': 'toast-custom-right', 'close-button': false, 'time-out': 2000, 'progress-bar': false}"
+>
+</toaster-container>

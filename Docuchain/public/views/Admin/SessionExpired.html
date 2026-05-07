@@ -1,0 +1,31 @@
+<div class="sessionExpired" ng-app="dapp" ng-controller="SessionExpiredController">
+    <div class="modal fade in" id="deleteGroup" role="dialog" style="display: block; padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Session Expired</h4>                    
+                </div>
+                <div class="modal-body">
+                    <div class="delete-group-body">
+                        <p>
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Your current session has been expired <p><a ng-click="clearSession()" style="cursor: pointer;">Click here</a> to login</p></p>
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="preloader" ng-show="loader">
+        <div id="cssload-loader">
+            <div class="cssload-dot"></div>
+            <div class="cssload-dot"></div>
+            <div class="cssload-dot"></div>
+            <div class="cssload-dot"></div>
+            <div class="cssload-dot"></div>
+            <div class="cssload-dot"></div>
+            <div class="cssload-dot"></div>
+            <div class="cssload-dot"></div>
+        </div>
+    </div>
+</div>

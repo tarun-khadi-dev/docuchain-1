@@ -1,434 +1,877 @@
 <div class="app-content">
-    <div class="docubodyTitle">
-        <ul id="breadcrumb">
-            <li>
-                <a href="javascript:void(0);" class="icon icon-beaker">User Extension</a>
-            </li>
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a href="javascript:void(0);" class="icon icon-beaker"
+          >User Extension</a
+        >
+      </li>
+    </ul>
+  </div>
+  <div class="docuContent">
+    <div class="vesslesDocumentsTable">
+      <div class="userExtensionstabs">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="tab" role="tabpanel">
+              <ul class="nav nav-tabs" role="tablist">
+                <li
+                  role="presentation"
+                  ng-class="{'active': tabName=='tab1'}"
+                  ng-click="tabName='tab1'"
+                >
+                  <a aria-controls="home">Pending</a>
+                </li>
+                <li
+                  role="presentation"
+                  ng-class="{'active': tabName=='tab2'}"
+                  ng-click="tabName='tab2'"
+                >
+                  <a aria-controls="profile">Approved</a>
+                </li>
+                <li
+                  role="presentation"
+                  ng-class="{'active': tabName=='tab3'}"
+                  ng-click="tabName='tab3'"
+                >
+                  <a aria-controls="messages">Rejected</a>
+                </li>
+              </ul>
 
-        </ul>
-    </div>
-    <div class="docuContent">
-        <div class="vesslesDocumentsTable">
-            <div class="userExtensionstabs">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="tab" role="tabpanel">
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li role="presentation"ng-class="{'active': tabName=='tab1'}" ng-click="tabName='tab1'">
-                                    <a  aria-controls="home" >Pending</a>
-                                </li>
-                                <li role="presentation"ng-class="{'active': tabName=='tab2'}" ng-click="tabName='tab2'">
-                                    <a aria-controls="profile" >Approved</a>
-                                </li>
-                                <li role="presentation" ng-class="{'active': tabName=='tab3'}" ng-click="tabName='tab3'">
-                                    <a aria-controls="messages" >Rejected</a>
-                                </li>
-                            </ul>
-                            <!-- Tab panes -->
-                            <div class="tab-content tabs" ng-switch="tabName" >
-                                <div role="tabpanel" class="tab-pane fade in " ng-class="{'active': tabName=='tab1'}" ng-switch-when="tab1" >
-                                    <div class="userextensiontable">
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="datatableEntry">
-                                                    <label>Show
-                                                        <input type="text" ng-model="itemsPerPage">of
-                                                        <span>{{pendingArray.length}}</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="docuchainSearchbox">
-                                                    <div class="searchInput">
-                                                        <input type="text" placeholder="Search" ng-model="search">
-                                <button type="button" class="searchIcon">
-                                                            <i class="fa fa-search" aria-hidden="true"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12 col-xs-12">
-                                                <div class="extensionTable table-responsive">
-                                                    <table>
-                                                        <thead>
-                                                            <tr>
-                                                                <!-- <th class="text-center addwidth50">
-                                                                        <div class="clearcheckbox">
-                                                                                <label class="control control--checkbox">
-                                                                                    <input id="selectAll" type="checkbox">
-                                                                                    <div class="control__indicator"></div>
-                                                                                </label>
-                                                                            </div>
-                                                                </th> -->
-                                                                <th class="addwidth150" ng-click="orderByField='shipName'; reverseSort = !reverseSort" >Vessel Name<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150" ng-click="orderByField='userName'; reverseSort = !reverseSort">Requester<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150" ng-click="orderByField='roleName'; reverseSort = !reverseSort">Requester Role<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150"ng-click="orderByField='userName'; reverseSort = !reverseSort">Requested User<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="text-center addwidth150">Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody >
-                                                            <tr dir-paginate="list in fData=(pendingArray|filter:search) |itemsPerPage:itemsPerPage | orderBy:'shipName' | orderBy:orderByField:reverseSort" current-page="currentPage"> 
-                                                                <!-- <td class="text-center">
-                                                                    <div class="userextensioncheckbox">
-                                                                        <input class="inp-cbx" id="cbx15" type="checkbox" style="display: none;" />
-                                                                        <label class="cbx" for="cbx15">
-                                                                            <span>
-                                                                                <svg width="12px" height="10px" viewbox="0 0 12 10">
-                                                                                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                                                                                </svg>
-                                                                            </span>
-                                                                        </label>
-                                                                    </div>
-                                                                </td> -->
-                                                                <td>{{list.shipName}}</td>
-                                                                <td>{{list.userName}}</td>
-                                                                <td>{{list.roleName}}</td>
-                                                                <td class="listtechnical">
-                                                                    <ul>
-                                                                            <li ng-repeat="user in list.userProfileInfos | limitTo : 2">
-                                                                                <a>{{user.userName}} </a>
-                                                                                
-                                                                            </li>
-                                                                            <!-- <li>
-                                                                                <a href="javascript:void(0);">John Ford</a>
-                                                                                <button type="button" class="Listclose">
-                                                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                                                                                </button>
-                                                                            </li> -->
-                                                                            
-                                                                        </ul>
-                                                            </td>
-
-                                                                <td class="text-center">
-                                                                    <button type="button" class="btn approvebtn" data-toggle="modal" data-target="#approve" data-backdrop="static" ng-click="approveUser(list.requestId)">
-                                                                        Approve
-                                                                    </button>
-                                                                    <button type="button" class="btn rejectbtn" data-toggle="modal" data-target="#reject" data-backdrop="static" ng-click="rejectedUser(list.requestId)">
-                                                                        Reject
-                                                                    </button>
-
-                                                                </td>
-                                                            </tr>     
-                                                            <tr ng-show="fData.length == 0">
-                                                                    <td colspan="10" class="not-found-div">
-                                                                        No Records Found
-                                                                    </td>
-                                                                </tr>                                                      
-
-                                                        </tbody> 
-                                                    </table>
-                                                </div> 
-                                                <div class="vesselstablebottom">
-                                                    <!-- <div class="docuVesselsBtn pull-left">
-                                                        <button type="button" class="btnuserextension activeAll">Approve All</button>
-                                                        <button type="button" class="btnuserextension deleteAll">Reject All</button>
-                                                    </div> -->
-
-                                                    <ul class="pagination pull-right">                                                       
-                                                            <dir-pagination-controls  direction-links="true" boundary-links="true">
-                                                                </dir-pagination-controls>                                                    
-                                                    </ul>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div role="tabpanel" class="tab-pane fade in"  ng-class="{'active': tabName=='tab2'}" ng-switch-when="tab2" >
-                                    <div class="userextensiontable">
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="datatableEntry">
-                                                    <label>Show
-                                                        <input type="text" ng-model="itemsPerPage">of
-                                                        <span>{{approveArray.length}}</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="docuchainSearchbox">
-                                                    <div class="searchInput">
-                                                        <input type="text" placeholder="Search" ng-model="search">
-                                                        <button type="button" class="searchIcon">
-                                                            <i class="fa fa-search" aria-hidden="true"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12 col-xs-12">
-                                                <div class="extensionTable table-responsive">
-                                                    <table>
-                                                        <thead>
-                                                            <tr>
-                                                                <!-- <th class="text-center addwidth50">
-                                                                    <input type="checkbox">
-                                                                </th> -->
-                                                                <th class="addwidth150" ng-click="orderByField='shipName'; reverseSort = !reverseSort">Vessel Name <i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150" ng-click="orderByField='userName'; reverseSort = !reverseSort">Requester<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150" ng-click="orderByField='roleName'; reverseSort = !reverseSort">Requester Role<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150" ng-click="orderByField='userName'; reverseSort = !reverseSort">Requested User<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="text-center addwidth150">Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody >
-                                                            <tr dir-paginate="list in fData=(approveArray|filter:search )|itemsPerPage:itemsPerPage | orderBy:'shipName' | orderBy:orderByField:reverseSort" current-page="currentPage">
-                                                                <!-- <td class="text-center">
-                                                                    <div class="userextensioncheckbox">
-                                                                        <input class="inp-cbx" id="cbx15" type="checkbox" style="display: none;" />
-                                                                        <label class="cbx" for="cbx15">
-                                                                            <span>
-                                                                                <svg width="12px" height="10px" viewbox="0 0 12 10">
-                                                                                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                                                                                </svg>
-                                                                            </span>
-                                                                        </label>
-                                                                    </div>
-                                                                </td> -->
-                                                                <td>{{list.shipName}}</td>
-                                                                <td>{{list.userName}}</td>
-                                                                <td>{{list.roleName}}</td>
-                                                                <td class="listtechnical">
-                                                                    <ul>
-                                                                            <li ng-repeat="user in list.userProfileInfos | limitTo : 2">
-                                                                                <a>{{user.userName}} </a>
-                                                                                
-                                                                            </li>
-                                                                            <!-- <li>
-                                                                                <a href="javascript:void(0);">John Ford</a>
-                                                                                <button type="button" class="Listclose">
-                                                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                                                                                </button>
-                                                                            </li> -->
-                                                                            
-                                                                        </ul>
-                                                            </td>
-                                                            <td class="textgreen">Approved</td>
-                                                                <!-- <td class="text-center">
-                                                                    <button type="button" class="btn approvebtn" data-toggle="modal" data-target="#approve" data-backdrop="static" ng-click="approveUser(list.requestId)">
-                                                                        Approve
-                                                                    </button>
-                                                                    <button type="button" class="btn rejectbtn" data-toggle="modal" data-target="#reject" data-backdrop="static" ng-click="rejectedUser(list.requestId)">
-                                                                        Reject
-                                                                    </button>
-
-                                                                </td> -->
-                                                            </tr>   
-                                                            <tr ng-show="fData.length == 0">
-                                                                    <td colspan="10" class="not-found-div">
-                                                                        No Records Found
-                                                                    </td>
-                                                                </tr>                                                        
-
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="vesselstablebottom">
-                                                    <!-- <div class="docuVesselsBtn pull-left">
-                                                        <button type="button" class="btnuserextension activeAll">Approve All</button>
-                                                        <button type="button" class="btnuserextension deleteAll">Reject All</button>
-                                                    </div> -->
-
-                                                    <ul class="pagination pull-right">
-                                                        <dir-pagination-controls  direction-links="true" boundary-links="true">
-                                                        </dir-pagination-controls>  
-                                                    </ul>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div role="tabpanel" class="tab-pane fade in"  ng-class="{'active': tabName=='tab3'}" ng-switch-when="tab3" >
-                                    <div class="userextensiontable">
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="datatableEntry">
-                                                    <label>Show
-                                                        <input type="text" ng-model="itemsPerPage">of
-                                                        <span>{{rejectedArray.length}}</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="docuchainSearchbox">
-                                                    <div class="searchInput">
-                                                        <input type="text" placeholder="Search" ng-model="search">
-                                                        <button type="button" class="searchIcon">
-                                                            <i class="fa fa-search" aria-hidden="true"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12 col-xs-12">
-                                                <div class="extensionTable table-responsive">
-                                                    <table>
-                                                        <thead>
-                                                            <tr>
-                                                                <!-- <th class="text-center addwidth50">
-                                                                    <input type="checkbox">
-                                                                </th> -->
-                                                                <th class="addwidth150" ng-click="orderByField='shipName'; reverseSort = !reverseSort">Vessel Name <i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150" ng-click="orderByField='userName'; reverseSort = !reverseSort">Requester<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150" ng-click="orderByField='roleName'; reverseSort = !reverseSort">Requester Role <i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="addwidth150" ng-click="orderByField='userName'; reverseSort = !reverseSort">Requested User <i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                <th class="text-center addwidth150">Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr  dir-paginate="list in fData=(rejectedArray|filter:search) |itemsPerPage:itemsPerPage | orderBy:'shipName' | orderBy:orderByField:reverseSort" current-page="currentPage">
-                                                                <td>{{list.shipName}}</td>
-                                                                <td>{{list.userName}}</td>
-                                                                <td>{{list.roleName}}</td>
-                                                                <td class="listtechnical">
-                                                                    <ul>
-                                                                            <li ng-repeat="user in list.userProfileInfos | limitTo : 2">
-                                                                                <a>{{user.userName}} </a>
-                                                                                
-                                                                            </li>
-                                                                            <!-- <li>
-                                                                                <a href="javascript:void(0);">John Ford</a>
-                                                                                <button type="button" class="Listclose">
-                                                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                                                                                </button>
-                                                                            </li> -->
-                                                                            
-                                                                        </ul>
-                                                            </td>
-                                                                <td class="textred">Rejected</td>
-                                                                <!-- <td class="text-center">
-                                                                    <button type="button" class="btn approvebtn" data-toggle="modal" data-target="#approve" data-backdrop="static" ng-click="approveUser(list.requestId)">
-                                                                        Approve
-                                                                    </button>
-                                                                    <button type="button" class="btn rejectbtn" data-toggle="modal" data-target="#reject" data-backdrop="static" ng-click="rejectedUser(list.requestId)">
-                                                                        Reject
-                                                                    </button>
-
-                                                                </td> -->
-                                                            </tr>      
-                                                            <tr ng-show="fData.length == 0">
-                                                                    <td colspan="10" class="not-found-div">
-                                                                        No Records Found
-                                                                    </td>
-                                                                </tr>                                                     
-
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="vesselstablebottom">
-                                                    <!-- <div class="docuVesselsBtn pull-left">
-                                                        <button type="button" class="btnuserextension activeAll">Approve All</button>
-                                                        <button type="button" class="btnuserextension deleteAll">Reject All</button>
-                                                    </div> -->
-
-                                                    <ul class="pagination pull-right">
-                                                        <dir-pagination-controls  direction-links="true" boundary-links="true">
-                                                        </dir-pagination-controls>  
-                                                    </ul>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+              <div class="tab-content tabs" ng-switch="tabName">
+                <div
+                  role="tabpanel"
+                  class="tab-pane fade in"
+                  ng-class="{'active': tabName=='tab1'}"
+                  ng-switch-when="tab1"
+                >
+                  <div class="userextensiontable">
+                    <div class="row" style="margin-bottom: 5px">
+                      <div class="col-lg-6 col-md-6">
+                        <div class="datatableEntry">
+                          <label
+                            >Show
+                            <input
+                              type="text"
+                              ng-model="itemsPerPage"
+                              style="width: 40px; height: 30px"
+                            />
+                            of <span>{{pendingArray.length}}</span></label
+                          >
                         </div>
+                      </div>
+                      <div class="col-lg-6 col-md-6">
+                        <div class="docuchainSearchbox">
+                          <div class="searchInput">
+                            <input
+                              type="text"
+                              placeholder="Search..."
+                              ng-model="search"
+                              style="height: 30px"
+                            />
+                            <button type="button" class="searchIcon">
+                              <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="preloader" ng-show="loader">
-            <div id="cssload-loader">
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-            </div>
-        </div>
-    </div>
 
-</div>
+                    <div class="row">
+                      <div class="col-lg-12 col-xs-12">
+                        <div class="extensionTable table-responsive">
+                          <table
+                            class="table custom-modern-table"
+                            style="
+                              table-layout: fixed;
+                              width: 100%;
+                              margin-bottom: 0;
+                            "
+                          >
+                            <!-- <thead>
+                              <tr>
+                                <th
+                                  style="width: 25%"
+                                  ng-click="orderByField='shipName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Vessel Name <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requester <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='roleName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requester Role <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requested User <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th class="text-center" style="width: 15%">
+                                  <div class="th-content justify-center">
+                                    Action
+                                  </div>
+                                </th>
+                              </tr>
+                            </thead> -->
+                            <thead>
+                              <tr>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='shipName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Vessel Name <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
 
-<!-- Approve Popup -->
-<div class="approvePopup remarks">
-    <div class="modal fade" id="approve" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Approve</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <label>Remarks</label>
-                        <textarea custom-focus class="text-box" ng-model="remark"  maxlength="100"></textarea>
-                </div>
-                <div class="modal-footer1">
-                        
-                    <button type="button" class="btngeo approveclear" ng-click="approvePopupClear()">CLEAR</button>
-                    <button type="button" class="btngeo approvesubmit" ng-click="approveUserPopup(remark)">APPROVE</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-</div>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requester <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
 
-<!-- Reject Popup -->
-<div class="rejectPopup remarks">
-    <div class="modal fade" id="reject" role="dialog">
-        <div class="modal-dialog"> 
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Reject</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>         
-                <div class="modal-body">
-                        <label>Remarks</label>
-                            <textarea custom-focus class="text-box" ng-model="remarkReject"  maxlength="100"></textarea>
-                    </div>       
-                <div class="modal-footer1">
-                    <button type="button" class="btngeo approveclear" ng-click="rejectPopupClear()">CLEAR</button>
-                    <button type="button" class="btngeo extensionrejecbtn" ng-click="rejectedUserPopup(remarkReject)">REJECT</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='roleName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requester Role <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
 
-<div class="commercialUsers">
-    <div class="modal fade" id="userList" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">View More Users</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="commerciallistbody">
-                        <ul>
-                            <li ng-repeat="list in listUser">  
-                                <a href="javascript:void(0);">{{list.userName}} </a>
-                                <button type="button" class="Listclose">
-                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                                </button>
-                            </li>
-                          
-                         
-                        </ul>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requested User <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+
+                                <th class="text-center" style="width: 20%">
+                                  <div class="th-content justify-center">
+                                    Action
+                                  </div>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr
+                                dir-paginate="list in fData=(pendingArray|filter:search) |itemsPerPage:itemsPerPage | orderBy:'shipName' | orderBy:orderByField:reverseSort"
+                                current-page="currentPage"
+                              >
+                                <td class="font-weight-medium">
+                                  {{list.shipName}}
+                                </td>
+                                <td>{{list.userName}}</td>
+                                <td>{{list.roleName}}</td>
+                                <td>
+                                  <div class="modern-chip-group">
+                                    <div
+                                      class="modern-chip"
+                                      ng-repeat="user in list.userProfileInfos | limitTo : 2"
+                                    >
+                                      <span class="chip-text"
+                                        >{{user.userName}}</span
+                                      >
+                                    </div>
+                                  </div>
+                                </td>
+                                <td
+                                  class="text-center"
+                                  style="white-space: nowrap"
+                                >
+                                  <button
+                                    type="button"
+                                    class="btn-approve-modern"
+                                    data-toggle="modal"
+                                    data-target="#approve"
+                                    data-backdrop="static"
+                                    ng-click="approveUser(list.requestId)"
+                                  >
+                                    <i class="fa fa-check"></i> Approve
+                                  </button>
+                                  <button
+                                    type="button"
+                                    class="btn-reject-modern"
+                                    data-toggle="modal"
+                                    data-target="#reject"
+                                    data-backdrop="static"
+                                    ng-click="rejectedUser(list.requestId)"
+                                  >
+                                    <i class="fa fa-times"></i> Reject
+                                  </button>
+                                </td>
+                              </tr>
+                              <tr ng-show="fData.length == 0">
+                                <td colspan="5" class="text-center p-4">
+                                  No Records Found
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <div class="pagination-footer">
+                          <div class="pagination-info text-muted">
+                            Showing {{pendingArray.length > 0 ? (itemsPerPage *
+                            (currentPage - 1) + 1) : 0}} to {{itemsPerPage *
+                            currentPage > pendingArray.length ?
+                            pendingArray.length : itemsPerPage * currentPage}}
+                            of {{pendingArray.length}} entries
+                          </div>
+                          <div class="pagination-controls">
+                            <dir-pagination-controls
+                              direction-links="true"
+                              boundary-links="true"
+                            ></dir-pagination-controls>
+                          </div>
+                        </div>
+                      </div>
                     </div>
+                  </div>
                 </div>
+
+                <div
+                  role="tabpanel"
+                  class="tab-pane fade in"
+                  ng-class="{'active': tabName=='tab2'}"
+                  ng-switch-when="tab2"
+                >
+                  <div class="userextensiontable">
+                    <div class="row" style="margin-bottom: 5px">
+                      <div class="col-lg-6 col-md-6">
+                        <div class="datatableEntry">
+                          <label
+                            >Show
+                            <input
+                              type="text"
+                              ng-model="itemsPerPage"
+                              style="width: 40px; height: 30px"
+                            />
+                            of <span>{{approveArray.length}}</span></label
+                          >
+                        </div>
+                      </div>
+                      <div class="col-lg-6 col-md-6">
+                        <div class="docuchainSearchbox">
+                          <div class="searchInput">
+                            <input
+                              type="text"
+                              placeholder="Search..."
+                              ng-model="search"
+                              style="height: 30px"
+                            />
+                            <button type="button" class="searchIcon">
+                              <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-12 col-xs-12">
+                        <div class="extensionTable table-responsive">
+                          <table
+                            class="table custom-modern-table"
+                            style="
+                              table-layout: fixed;
+                              width: 100%;
+                              margin-bottom: 0;
+                            "
+                          >
+                            <thead>
+                              <tr>
+                                <th
+                                  style="width: 25%"
+                                  ng-click="orderByField='shipName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Vessel Name <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requester <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='roleName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requester Role <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requested User <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th class="text-center" style="width: 15%">
+                                  <div class="th-content justify-center">
+                                    Status
+                                  </div>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr
+                                dir-paginate="list in fData=(approveArray|filter:search) |itemsPerPage:itemsPerPage | orderBy:'shipName' | orderBy:orderByField:reverseSort"
+                                current-page="currentPage"
+                              >
+                                <td class="font-weight-medium">
+                                  {{list.shipName}}
+                                </td>
+                                <td>{{list.userName}}</td>
+                                <td>{{list.roleName}}</td>
+                                <td>
+                                  <div class="modern-chip-group">
+                                    <div
+                                      class="modern-chip"
+                                      ng-repeat="user in list.userProfileInfos | limitTo : 2"
+                                    >
+                                      <span class="chip-text"
+                                        >{{user.userName}}</span
+                                      >
+                                    </div>
+                                  </div>
+                                </td>
+                                <td class="text-center">
+                                  <span class="status-badge created"
+                                    >Approved</span
+                                  >
+                                </td>
+                              </tr>
+                              <tr ng-show="fData.length == 0">
+                                <td colspan="5" class="text-center p-4">
+                                  No Records Found
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <div class="pagination-footer">
+                          <div class="pagination-info text-muted">
+                            Showing {{approveArray.length > 0 ? (itemsPerPage *
+                            (currentPage - 1) + 1) : 0}} to {{itemsPerPage *
+                            currentPage > approveArray.length ?
+                            approveArray.length : itemsPerPage * currentPage}}
+                            of {{approveArray.length}} entries
+                          </div>
+                          <div class="pagination-controls">
+                            <dir-pagination-controls
+                              direction-links="true"
+                              boundary-links="true"
+                            ></dir-pagination-controls>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  role="tabpanel"
+                  class="tab-pane fade in"
+                  ng-class="{'active': tabName=='tab3'}"
+                  ng-switch-when="tab3"
+                >
+                  <div class="userextensiontable">
+                    <div class="row" style="margin-bottom: 5px">
+                      <div class="col-lg-6 col-md-6">
+                        <div class="datatableEntry">
+                          <label
+                            >Show
+                            <input
+                              type="text"
+                              ng-model="itemsPerPage"
+                              style="width: 40px; height: 30px"
+                            />
+                            of <span>{{rejectedArray.length}}</span></label
+                          >
+                        </div>
+                      </div>
+                      <div class="col-lg-6 col-md-6">
+                        <div class="docuchainSearchbox">
+                          <div class="searchInput">
+                            <input
+                              type="text"
+                              placeholder="Search..."
+                              ng-model="search"
+                              style="height: 30px"
+                            />
+                            <button type="button" class="searchIcon">
+                              <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-12 col-xs-12">
+                        <div class="extensionTable table-responsive">
+                          <table
+                            class="table custom-modern-table"
+                            style="
+                              table-layout: fixed;
+                              width: 100%;
+                              margin-bottom: 0;
+                            "
+                          >
+                            <thead>
+                              <tr>
+                                <th
+                                  style="width: 25%"
+                                  ng-click="orderByField='shipName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Vessel Name <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requester <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='roleName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requester Role <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th
+                                  style="width: 20%"
+                                  ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                >
+                                  <div class="th-content">
+                                    Requested User <i class="fa fa-sort"></i>
+                                  </div>
+                                </th>
+                                <th class="text-center" style="width: 15%">
+                                  <div class="th-content justify-center">
+                                    Status
+                                  </div>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr
+                                dir-paginate="list in fData=(rejectedArray|filter:search) |itemsPerPage:itemsPerPage | orderBy:'shipName' | orderBy:orderByField:reverseSort"
+                                current-page="currentPage"
+                              >
+                                <td class="font-weight-medium">
+                                  {{list.shipName}}
+                                </td>
+                                <td>{{list.userName}}</td>
+                                <td>{{list.roleName}}</td>
+                                <td>
+                                  <div class="modern-chip-group">
+                                    <div
+                                      class="modern-chip"
+                                      ng-repeat="user in list.userProfileInfos | limitTo : 2"
+                                    >
+                                      <span class="chip-text"
+                                        >{{user.userName}}</span
+                                      >
+                                    </div>
+                                  </div>
+                                </td>
+                                <td class="text-center">
+                                  <span class="status-badge deleted"
+                                    >Rejected</span
+                                  >
+                                </td>
+                              </tr>
+                              <tr ng-show="fData.length == 0">
+                                <td colspan="5" class="text-center p-4">
+                                  No Records Found
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <div class="pagination-footer">
+                          <div class="pagination-info text-muted">
+                            Showing {{rejectedArray.length > 0 ? (itemsPerPage *
+                            (currentPage - 1) + 1) : 0}} to {{itemsPerPage *
+                            currentPage > rejectedArray.length ?
+                            rejectedArray.length : itemsPerPage * currentPage}}
+                            of {{rejectedArray.length}} entries
+                          </div>
+                          <div class="pagination-controls">
+                            <dir-pagination-controls
+                              direction-links="true"
+                              boundary-links="true"
+                            ></dir-pagination-controls>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+
+    <div class="preloader" ng-show="loader">
+      <div id="cssload-loader">
+        <div class="cssload-dot"></div>
+        <div class="cssload-dot"></div>
+        <div class="cssload-dot"></div>
+        <div class="cssload-dot"></div>
+        <div class="cssload-dot"></div>
+        <div class="cssload-dot"></div>
+        <div class="cssload-dot"></div>
+        <div class="cssload-dot"></div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- <div class="approvePopup remarks">
+  <div class="modal fade" id="approve" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Approve</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <label>Remarks</label>
+          <textarea
+            custom-focus
+            class="text-box"
+            ng-model="remark"
+            maxlength="100"
+          ></textarea>
+        </div>
+        <div class="modal-footer1">
+          <button
+            type="button"
+            class="btn-modern clear-btn"
+            ng-click="approvePopupClear()"
+          >
+            <span class="btn-text">CLEAR</span>
+            <span class="icon-circle"><i class="fa fa-times"></i></span>
+          </button>
+          <button
+            type="button"
+            class="btn-modern submit-btn"
+            data-dismiss="modal"
+            ng-click="approveUserPopup(remark)"
+          >
+            <span class="btn-text">APPROVE</span>
+            <span class="icon-circle"><i class="fa fa-check"></i></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="subscriptionPopup">
+  <div class="modal fade" id="approve" role="dialog">
+    <div class="modal-dialog" style="max-width: 450px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Approve Request</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label
+              style="
+                font-weight: 600;
+                color: #083b66;
+                margin-bottom: 8px;
+                display: block;
+              "
+              >Remarks</label
+            >
+            <textarea
+              class="text-box"
+              ng-model="remark"
+              maxlength="100"
+              style="
+                height: 80px;
+                width: 100%;
+                border-radius: 6px;
+                border: 1px solid #ddd;
+                padding: 10px;
+              "
+            ></textarea>
+          </div>
+        </div>
+        <div
+          class="modal-footer1 bttnGroup"
+          style="
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+          "
+        >
+          <button
+            type="button"
+            class="btn-modern clear-btn"
+            ng-click="approvePopupClear()"
+            style="margin: 0 !important"
+          >
+            <span class="btn-text">CLEAR</span>
+          </button>
+          <button
+            type="button"
+            class="btn-modern submit-btn"
+            data-dismiss="modal"
+            ng-click="approveUserPopup(remark)"
+            style="margin: 0 !important"
+          >
+            <span class="btn-text">APPROVE</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="rejectPopup remarks">
+  <div class="modal fade" id="reject" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Reject</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <label>Remarks</label>
+          <textarea
+            custom-focus
+            class="text-box"
+            ng-model="remarkReject"
+            maxlength="100"
+          ></textarea>
+        </div>
+        <div class="modal-footer1">
+          <button
+            type="button"
+            class="btn-modern clear-btn"
+            ng-click="rejectPopupClear()"
+          >
+            <span class="btn-text">CLEAR</span>
+            <span class="icon-circle"><i class="fa fa-times"></i></span>
+          </button>
+          <button
+            type="button"
+            class="btn-modern submit-btn"
+            style="background: #ef4444; border-color: #dc2626"
+            data-dismiss="modal"
+            ng-click="rejectedUserPopup(remarkReject)"
+          >
+            <span class="btn-text" style="color: white">REJECT</span>
+            <span class="icon-circle" style="color: #ef4444"
+              ><i class="fa fa-times"></i
+            ></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="subscriptionPopup">
+  <div class="modal fade" id="reject" role="dialog">
+    <div class="modal-dialog" style="max-width: 450px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Reject Request</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label
+              style="
+                font-weight: 600;
+                color: #083b66;
+                margin-bottom: 8px;
+                display: block;
+              "
+              >Remarks</label
+            >
+            <textarea
+              class="text-box"
+              ng-model="remarkReject"
+              maxlength="100"
+              style="
+                height: 80px;
+                width: 100%;
+                border-radius: 6px;
+                border: 1px solid #ddd;
+                padding: 10px;
+              "
+            ></textarea>
+          </div>
+        </div>
+        <div
+          class="modal-footer1 bttnGroup"
+          style="
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+          "
+        >
+          <button
+            type="button"
+            class="btn-modern clear-btn"
+            ng-click="rejectPopupClear()"
+            style="margin: 0 !important"
+          >
+            <span class="btn-text">CLEAR</span>
+          </button>
+          <button
+            type="button"
+            class="btn-modern submit-btn"
+            style="background: #ef4444; border-color: #ef4444"
+            data-dismiss="modal"
+            ng-click="rejectedUserPopup(remarkReject)"
+            style="margin: 0 !important"
+          >
+            <span class="btn-text">REJECT</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="commercialUsers">
+  <div class="modal fade" id="userList" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">View More Users</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="commerciallistbody">
+            <ul>
+              <li ng-repeat="list in listUser">
+                <a href="javascript:void(0);">{{list.userName}}</a>
+                <button type="button" class="Listclose">
+                  <i class="fa fa-times-circle" aria-hidden="true"></i>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="subscriptionPopup">
+  <div class="modal fade" id="userList" role="dialog">
+    <div class="modal-dialog" style="max-width: 400px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Requested Users</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="commerciallistbody">
+            <ul style="list-style: none; padding: 0; margin: 0">
+              <li
+                ng-repeat="list in listUser"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  padding: 10px 15px;
+                  border-bottom: 1px solid #eee;
+                "
+              >
+                <span style="font-weight: 500; color: #333"
+                  >{{list.userName}}</span
+                >
+                <button
+                  type="button"
+                  style="
+                    background: none;
+                    border: none;
+                    color: #ef4444;
+                    font-size: 18px;
+                  "
+                >
+                  <i class="fa fa-times-circle"></i>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="modal-footer"
+          style="padding: 15px; border-top: 1px solid rgba(0, 0, 0, 0.05)"
+        >
+          <button
+            type="button"
+            class="btn-modern clear-btn"
+            data-dismiss="modal"
+            style="width: 100%; margin: 0"
+          >
+            <span class="btn-text">CLOSE</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<toaster-container
+  toaster-options="{'position-class': 'toast-custom-right', 'close-button': true, 'time-out': 5000}"
+></toaster-container>

@@ -1,111 +1,190 @@
+<div class="app-content" ng-controller="SaAauditLogController">
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a> <span class="icon icon-beaker"> </span>Super Admin Audit Log</a>
+      </li>
+    </ul>
+  </div>
 
-    <!-- Body Content -->
-    <div class="app-content">
-        <div class="docubodyTitle">
-            <ul id="breadcrumb">
-                <li>
-                    <a >
-                        <span class="icon icon-beaker"> </span>Super Admin Audit Log</a>
-                </li>
-            </ul>
+  <div class="docuContent">
+    <div class="manageOrganization vesslesDocumentsTable">
+      <div class="row" style="margin-bottom: 5px">
+        <div class="col-lg-4 col-md-4">
+          <div class="datatableEntry">
+            <label
+              >Show
+              <input
+                type="text"
+                ng-model="itemsPerPage"
+                style="width: 40px; height: 30px"
+              />
+              of
+              <span>{{historyList.length}}</span>
+            </label>
+          </div>
         </div>
-        <div class="docuContent">
-            <div class="manageOrganization vesslesDocumentsTable">
-                <div class="vessellistable">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div class="datatableEntry">
-                                <label>Show
-                                    <input type="text" ng-model="itemsPerPage">of
-                                    <span>{{historyList.length}}</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="filtersearchoption">
-                                <div class="filterbox">
-                                    <label>Activity</label>
-                                    <div class="filterselect">
-                                        <select ng-model="activity" ng-change="activityFunction(activity)" >
-                                            <option ng-selected="true" value="All">All</option>
-                                            <option value="Organization">Organization</option>
-                                            <option value="Subscription">Subscription</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- <div class="filterbox">
-                                    <label>Event</label>
-                                    <div class="filterselect">
-                                        <select ng-model="event" ng-change="eventFunction(event)">
-                                            <option  value="All" ng-selected="true">All</option>
-                                            <option value="Created">Create</option>
-                                            <option value="Update">Update</option> 
-                                            <option value="Delete">Delete</option>
-                                        </select>
-                                    </div>
-                                </div> -->
-                                <div class="docuchainSearchbox docuapprovalSearch">
-                                    <div class="searchInput bgwhiteinput">
-                                        <input type="text" placeholder="Search" ng-model="search"> 
-                                        <button type="button" class="searchIcon">
-                                            <i class="fa fa-search" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12 col-xs-12">
-                            <div class="taskMangeTable table-responsive">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                                <!-- ng-click="orderByField='selectType'; reverseSort = !reverseSort" -->
-                                            <th>Event Date & Time<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                            <th>Modified By<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                            <th >Action<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                            <th class="text-center" >Module<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                            <th class="text-center"  >Item<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                        </tr>
-                                    </thead> 
-                                    <tbody>
-                                        <tr dir-paginate="list in fData = (historyList|filter:search) |itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort" current-page="currentPage">
-                                            <td class="text-center">{{list.date}}</td>
-                                            <td>{{list.modifiedByName}}</td>
-                                            <td class="text-center">{{list.objectStatus}} </td>
-                                            <td>{{list.objectName}}</td>
-                                            <td>{{list.selectType}}</td>
-                                        </tr>    
-                                        <tr ng-show="fData.length == 0" >
-                                            <td colspan="9" style="padding: 10px 5px;color: black;text-align: center; font-size: 14px;">No records found</td> </tr>                                    
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="vesselstablebottom">
-                                <ul class="pagination pull-right"> 
-                                    <dir-pagination-controls direction-links="true" boundary-links="true">
-                                    </dir-pagination-controls>
-                                </ul>
+        <div class="col-lg-8 col-md-8">
+          <div class="filtersearchoption">
+            <div class="filterbox">
+              <label>Activity</label>
+              <div class="filterselect">
+                <select
+                  ng-model="activity"
+                  ng-change="activityFunction(activity)"
+                  style="height: 30px; padding: 2px 10px"
+                >
+                  <option value="All">All</option>
+                  <option value="Organization">Organization</option>
+                  <option value="Subscription">Subscription</option>
+                </select>
+              </div>
+            </div>
 
-                            </div>
-                        </div> 
-                    </div>
-                </div>
+            <div class="docuchainSearchbox docuapprovalSearch">
+              <div class="searchInput bgwhiteinput">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  ng-model="search"
+                  style="height: 30px"
+                />
+                <button type="button" class="searchIcon">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
+          </div>
         </div>
-        <div class="preloader" ng-show="loader">
-            <div id="cssload-loader">
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
-                <div class="cssload-dot"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12 col-xs-12">
+          <div class="docuchainmanageOrganization">
+            <div class="systemConfig table-responsive">
+              <table
+                class="table custom-modern-table"
+                style="table-layout: fixed; width: 100%; margin-bottom: 0"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      ng-click="orderByField='date'; reverseSort = !reverseSort"
+                      style="width: 20%"
+                    >
+                      <div class="th-content">
+                        Event Date & Time <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                    <th
+                      ng-click="orderByField='modifiedByName'; reverseSort = !reverseSort"
+                      style="width: 20%"
+                    >
+                      <div class="th-content">
+                        Modified By <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                    <th
+                      ng-click="orderByField='objectStatus'; reverseSort = !reverseSort"
+                      style="width: 15%"
+                    >
+                      <div class="th-content">
+                        Action <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                    <th
+                      ng-click="orderByField='objectName'; reverseSort = !reverseSort"
+                      style="width: 20%"
+                    >
+                      <div class="th-content">
+                        Module <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                    <th
+                      ng-click="orderByField='selectType'; reverseSort = !reverseSort"
+                      style="width: 25%"
+                    >
+                      <div class="th-content">
+                        Item <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    dir-paginate="list in fData = (historyList | filter:search | orderBy:orderByField:reverseSort) | itemsPerPage:itemsPerPage"
+                    current-page="currentPage"
+                  >
+                    <td class="text-center">{{list.date}}</td>
+                    <td class="font-weight-medium">{{list.modifiedByName}}</td>
+                    <!-- <td class="text-center">
+                      <span
+                        class="status-badge"
+                        ng-class="{'active': list.objectStatus === 'Updated'}"
+                      >
+                        {{list.objectStatus}}
+                      </span>
+                    </td> -->
+                    <td class="">
+                      <span
+                        class="status-badge"
+                        ng-class="{
+          'created': list.objectStatus === 'Created',
+          'updated': list.objectStatus === 'Updated',
+          'deleted': list.objectStatus === 'Deleted'
+        }"
+                      >
+                        {{list.objectStatus}}
+                      </span>
+                    </td>
+                    <td>{{list.objectName}}</td>
+                    <td class="text-muted">{{list.selectType}}</td>
+                  </tr>
+                  <tr ng-show="fData.length == 0">
+                    <td colspan="5" class="text-center p-4">
+                      No records found
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+
+            <div class="pagination-footer">
+              <div class="pagination-info">
+                Showing {{historyList.length > 0 ? (itemsPerPage * (currentPage
+                - 1) + 1) : 0}} to {{itemsPerPage * currentPage >
+                historyList.length ? historyList.length : itemsPerPage *
+                currentPage}} of {{historyList.length}} entries
+              </div>
+              <div class="pagination-controls">
+                <dir-pagination-controls
+                  max-size="5"
+                  direction-links="true"
+                  boundary-links="true"
+                ></dir-pagination-controls>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-   
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
+</div>
+
+<toaster-container
+  toaster-options="{'position-class': 'toast-custom-right', 'close-button': false, 'time-out': 2000, 'progress-bar': false}"
+>
+</toaster-container>

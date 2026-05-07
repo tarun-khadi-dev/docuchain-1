@@ -4,21 +4,137 @@
   ng-controller="UserDocumentApprovalController"
   ng-init="getDcoumentApprovelList()"
 >
+  <!-- <style>
+    .split-modal-row {
+      display: flex;
+      flex-wrap: wrap;
+      height: 75vh; /* Fixed height for the modal body */
+      margin: 0;
+      overflow: hidden;
+    }
+    .split-modal-left {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 15px;
+    }
+    .split-modal-right {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 0;
+      border-left: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+    .split-modal-scroll {
+      flex: 1;
+      overflow-y: auto; /* Adds scrollbar only to the form fields */
+      padding: 15px 20px;
+    }
+    .split-modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      background: #fff;
+    }
+    /* Responsive fallback for smaller screens */
+    @media (max-width: 991px) {
+      .split-modal-row {
+        height: auto;
+        display: block;
+      }
+      .split-modal-left {
+        height: 60vh;
+      }
+      .split-modal-right {
+        height: auto;
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+      }
+      .split-modal-scroll {
+        overflow-y: visible;
+      }
+    }
+  </style> -->
+  <style>
+    .split-modal-row {
+      display: flex;
+      flex-wrap: wrap;
+      height: calc(
+        100vh - 140px
+      ); /* Dynamically leaves room for the header and screen margins */
+      max-height: 650px; /* Safe maximum height */
+      margin: 0;
+      overflow: hidden;
+    }
+    .split-modal-left {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 15px;
+    }
+    .split-modal-right {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 0;
+      border-left: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+    .split-modal-scroll {
+      flex: 1;
+      overflow-y: auto; /* Adds scrollbar only to the form fields */
+      padding: 15px 20px;
+    }
+    .split-modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      background: #fff;
+    }
+    /* Responsive fallback for smaller screens */
+    @media (max-width: 991px) {
+      .split-modal-row {
+        height: auto;
+        max-height: none;
+        display: block;
+      }
+      .split-modal-left {
+        height: 60vh;
+      }
+      .split-modal-right {
+        height: auto;
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+      }
+      .split-modal-scroll {
+        overflow-y: visible;
+      }
+    }
+  </style>
   <div class="docubodyTitle">
     <ul id="breadcrumb">
       <li>
         <a href="javascript:void(0);">
-          <span class="icon icon-beaker"> </span> Document Approval</a
-        >
+          <!-- <i
+            class="fa fa-check-square-o"
+            style="margin-right: 8px; color: #083b66"
+          ></i> -->
+          Document Approval
+        </a>
       </li>
     </ul>
   </div>
+
   <div class="docuchainContent">
     <div class="row">
       <div class="col-lg-12">
         <div class="docuuserdoculist">
           <div class="tab" role="tabpanel">
-            <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
               <li role="presentation" class="active">
                 <a
@@ -39,7 +155,7 @@
                 >
               </li>
             </ul>
-            <!-- Tab panes -->
+
             <div class="tab-content docuApproval tabs">
               <div
                 role="tabpanel"
@@ -47,34 +163,62 @@
                 id="Section1"
               >
                 <div class="vessellistable">
-                  <div class="row">
-                    <div class="col-lg-6">
+                  <div class="row" style="margin-bottom: 5px">
+                    <div class="col-lg-6 col-md-6">
                       <div class="datatableEntry">
                         <label
-                          >Show <input type="text" ng-model="itemsPerPage" />of
-                          <span>{{documentListLen}}</span>
+                          >Show
+                          <input
+                            type="text"
+                            ng-model="itemsPerPage"
+                            style="width: 40px; height: 30px"
+                          />
+                          of <span>{{documentListLen}}</span>
                         </label>
                       </div>
                     </div>
-                    <div class="col-lg-6">
-                      <div class="filtersearchoption">
-                        <div class="filterbox">
-                          <label>Filter by Status</label>
-                          <div class="filterselect">
-                            <select ng-model="selectStatus">
-                              <option value="">All</option>
-                              <option value="Pending">Pending</option>
-                              <option value="Approved">Approved</option>
-                              <option value="Rejected">Rejected</option>
-                            </select>
-                          </div>
+                    <div class="col-lg-6 col-md-6">
+                      <div
+                        class="filtersearchoption"
+                        style="
+                          justify-content: flex-end;
+                          display: flex;
+                          gap: 15px;
+                        "
+                      >
+                        <div
+                          class="filterbox"
+                          style="display: flex; align-items: center; gap: 10px"
+                        >
+                          <label
+                            style="margin: 0; font-size: 12px; font-weight: 600"
+                            >Filter by Status:</label
+                          >
+                          <select
+                            ng-model="selectStatus"
+                            style="
+                              height: 30px;
+                              border-radius: 6px;
+                              border: 1px solid #e2e8f0;
+                              padding: 2px 10px;
+                            "
+                          >
+                            <option value="">All</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                          </select>
                         </div>
-                        <div class="docuchainSearchbox docuapprovalSearch">
+                        <div
+                          class="docuchainSearchbox docuapprovalSearch"
+                          style="margin: 0"
+                        >
                           <div class="searchInput bgwhiteinput">
                             <input
                               type="text"
-                              placeholder="Search"
+                              placeholder="Search..."
                               ng-model="searchApproveDoc"
+                              style="height: 30px"
                             />
                             <button type="button" class="searchIcon">
                               <i class="fa fa-search" aria-hidden="true"></i>
@@ -84,723 +228,841 @@
                       </div>
                     </div>
                   </div>
+
                   <div class="row">
                     <div class="col-lg-12 col-xs-12">
-                      <div class="taskMangeTable table-responsive">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th
-                                ng-click="orderByField='documentHolderName'; reverseSort = !reverseSort"
-                              >
-                                Certificate Name
-                                <i
-                                  class="fa fa-sort float-right"
-                                  aria-hidden="true"
-                                ></i>
-                              </th>
-                              <th
-                                ng-click="orderByField='shipName'; reverseSort = !reverseSort"
-                              >
-                                Vessel Name<i
-                                  class="fa fa-sort float-right"
-                                  aria-hidden="true"
-                                ></i>
-                              </th>
-                              <th
-                                ng-click="orderByField='certificateNumber'; reverseSort = !reverseSort"
-                              >
-                                Certificate No
-                                <i
-                                  class="fa fa-sort float-right"
-                                  aria-hidden="true"
-                                ></i>
-                              </th>
-                              <th
-                                ng-click="orderByField='placeOfIssue'; reverseSort = !reverseSort"
-                              >
-                                Place of Issue
-                                <i
-                                  class="fa fa-sort float-right"
-                                  aria-hidden="true"
-                                ></i>
-                              </th>
-                              <th
-                                ng-click="orderByField='issueDate'; reverseSort = !reverseSort"
-                              >
-                                Date of Issue<i
-                                  class="fa fa-sort float-right"
-                                  aria-hidden="true"
-                                ></i>
-                              </th>
-                              <th
-                                ng-click="orderByField='expiryDate'; reverseSort = !reverseSort"
-                              >
-                                Date of Expiry
-                                <i
-                                  class="fa fa-sort float-right"
-                                  aria-hidden="true"
-                                ></i>
-                              </th>
-                              <th class="text-center docuactions">Actions</th>
-                              <th class="text-center">Status</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr
-                              dir-paginate="documnet in documentList|filter:searchApproveDoc |filter:selectStatus|itemsPerPage:itemsPerPage | orderBy:'documentHolderName' | orderBy:orderByField:reverseSort"
-                              current-page="currentPage"
+                      <table
+                        class="table custom-modern-table"
+                        style="
+                          table-layout: fixed;
+                          width: 100%;
+                          margin-bottom: 0;
+                        "
+                      >
+                        <thead>
+                          <tr
+                            style="font-size: 11px; text-transform: uppercase"
+                          >
+                            <th
+                              style="width: 18%"
+                              ng-click="orderByField='documentHolderName'; reverseSort = !reverseSort"
                             >
-                              <td>{{documnet.documentHolderName}}</td>
-                              <td>{{documnet.shipName}}</td>
-                              <td>{{documnet.certificateNumber}}</td>
-                              <td>{{documnet.placeOfIssue}}</td>
-                              <td>
-                                {{documnet.issueDate | date:'dd-MM-yyyy'}}
-                              </td>
-                              <td>
-                                {{documnet.expiryDate | date:'dd-MM-yyyy'}}
-                              </td>
+                              <div class="th-content">
+                                CERTIFICATE<br />NAME <i class="fa fa-sort"></i>
+                              </div>
+                            </th>
+                            <th
+                              style="width: 14%"
+                              ng-click="orderByField='shipName'; reverseSort = !reverseSort"
+                            >
+                              <div class="th-content">
+                                VESSEL<br />NAME <i class="fa fa-sort"></i>
+                              </div>
+                            </th>
+                            <th
+                              style="width: 14%"
+                              ng-click="orderByField='certificateNumber'; reverseSort = !reverseSort"
+                            >
+                              <div class="th-content">
+                                CERTIFICATE<br />NO <i class="fa fa-sort"></i>
+                              </div>
+                            </th>
+                            <th
+                              style="width: 14%"
+                              ng-click="orderByField='placeOfIssue'; reverseSort = !reverseSort"
+                            >
+                              <div class="th-content">
+                                PLACE OF<br />ISSUE <i class="fa fa-sort"></i>
+                              </div>
+                            </th>
+                            <th
+                              style="width: 10%"
+                              ng-click="orderByField='issueDate'; reverseSort = !reverseSort"
+                            >
+                              <div class="th-content">
+                                DATE OF<br />ISSUE <i class="fa fa-sort"></i>
+                              </div>
+                            </th>
+                            <th
+                              style="width: 10%"
+                              ng-click="orderByField='expiryDate'; reverseSort = !reverseSort"
+                            >
+                              <div class="th-content">
+                                DATE OF<br />EXPIRY <i class="fa fa-sort"></i>
+                              </div>
+                            </th>
+                            <th class="text-center" style="width: 10%">
+                              <div class="th-content justify-center">
+                                ACTIONS
+                              </div>
+                            </th>
+                            <th class="text-center" style="width: 10%">
+                              <div class="th-content justify-center">
+                                STATUS
+                              </div>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            dir-paginate="documnet in documentList | filter:searchApproveDoc | filter:selectStatus | itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort"
+                            current-page="currentPage"
+                          >
+                            <td
+                              class="font-weight-medium text-wrap"
+                              style="word-break: break-word"
+                            >
+                              {{documnet.documentHolderName}}
+                            </td>
 
-                              <td class="text-center addwidth150">
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  tooltips
-                                  tooltip-template="View document"
-                                  ng-click="viewDocumentInformation(documnet)"
-                                >
-                                  <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
-                                <a
-                                  class="btned editBtn"
-                                  tooltips
-                                  tooltip-template="Download document"
-                                  href="{{documnet.documentDownloadUrl}}"
-                                >
-                                  <i
-                                    class="fa fa-download"
-                                    aria-hidden="true"
-                                  ></i>
-                                </a>
-                              </td>
-                              <td
-                                class="text-center"
-                                ng-show='documnet.documentStatus==="Pending"'
+                            <td style="word-break: break-word; font-size: 13px">
+                              {{documnet.shipName}}
+                            </td>
+
+                            <td style="word-break: break-word; font-size: 13px">
+                              {{documnet.certificateNumber}}
+                            </td>
+
+                            <td style="word-break: break-word; font-size: 13px">
+                              {{documnet.placeOfIssue}}
+                            </td>
+
+                            <td style="font-size: 13px">
+                              {{documnet.issueDate | date:'dd-MM-yyyy'}}
+                            </td>
+
+                            <td style="font-size: 13px">
+                              {{documnet.expiryDate | date:'dd-MM-yyyy'}}
+                            </td>
+
+                            <td
+                              class="text-center"
+                              style="
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                gap: 5px;
+                              "
+                            >
+                              <button
+                                type="button"
+                                class="modern-action-btn btn-view"
+                                tooltips
+                                tooltip-template="View document"
+                                ng-click="viewDocumentInformation(documnet)"
                               >
-                                <button
-                                  type="button"
-                                  class="btn pendingbtn"
-                                  tooltips
-                                  tooltip-template="Click to approve/reject document"
-                                  ng-click="approveAndRejectPopup(documnet)"
-                                >
-                                  Pending
-                                </button>
-                              </td>
-                              <td
-                                class="text-center"
-                                ng-show='documnet.documentStatus==="Approved"'
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                              </button>
+
+                              <a
+                                class="modern-action-btn btn-download"
+                                tooltips
+                                tooltip-template="Download document"
+                                href="{{documnet.documentDownloadUrl}}"
+                                style="text-decoration: none"
                               >
-                                <button
-                                  type="button"
-                                  class="btn approvebtn"
-                                  data-toggle="modal"
-                                  data-target="#approve"
-                                  data-backdrop="static"
-                                >
-                                  {{documnet.documentStatus}}
-                                </button>
-                              </td>
-                              <td
-                                class="text-center"
+                                <i
+                                  class="fa fa-download"
+                                  aria-hidden="true"
+                                ></i>
+                              </a>
+                            </td>
+
+                            <td class="text-center">
+                              <button
+                                type="button"
+                                class="btn-modern"
+                                ng-show="documnet.documentStatus==='Pending'"
+                                ng-click="approveAndRejectPopup(documnet)"
+                                style="
+                                  height: 26px;
+                                  padding: 0 10px;
+                                  font-size: 11px;
+                                  border-radius: 4px;
+                                  border: 1px solid #f59e0b;
+                                  color: #d97706;
+                                  background: #fffbeb;
+                                  cursor: pointer;
+                                  outline: none;
+                                "
+                              >
+                                Pending
+                              </button>
+
+                              <span
+                                class="status-badge created"
+                                ng-show="documnet.documentStatus==='Approved'"
+                                style="
+                                  display: inline-block;
+                                  padding: 2px 8px;
+                                  border-radius: 4px;
+                                  font-size: 11px;
+                                  font-weight: 600;
+                                "
+                              >
+                                {{documnet.documentStatus}}
+                              </span>
+
+                              <span
+                                class="status-badge deleted"
                                 ng-show="documnet.documentStatus==='Rejected'"
+                                style="
+                                  display: inline-block;
+                                  padding: 2px 8px;
+                                  border-radius: 4px;
+                                  font-size: 11px;
+                                  font-weight: 600;
+                                "
                               >
-                                <button
-                                  type="button"
-                                  class="btn rejectbtn"
-                                  data-toggle="modal"
-                                  data-target="#reject"
-                                  data-backdrop="static"
-                                >
-                                  {{documnet.documentStatus}}
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        <div
-                          class="not-found-div"
-                          ng-show="(documentList|filter:searchApproveDoc).length==0"
-                        >
-                          No records found
+                                {{documnet.documentStatus}}
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="pagination-footer">
+                        <div class="pagination-info text-muted">
+                          Showing {{documentList.length > 0 ? (itemsPerPage *
+                          (currentPage - 1) + 1) : 0}} to {{itemsPerPage *
+                          currentPage > documentList.length ?
+                          documentList.length : itemsPerPage * currentPage}} of
+                          {{documentList.length}} entries
                         </div>
-                      </div>
-                      <div class="vesselstablebottom">
-                        <dir-pagination-controls
-                          max-size="5"
-                          direction-links="true"
-                          boundary-links="true"
-                        ></dir-pagination-controls>
+                        <div class="pagination-controls">
+                          <dir-pagination-controls
+                            max-size="5"
+                            direction-links="true"
+                            boundary-links="true"
+                          ></dir-pagination-controls>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div role="tabpanel" class="tab-pane fade" id="Section2">
-                <div class="vessellistable">
-                  <div class="row">
-                    <div class="col-lg-6">
-                      <div class="datatableEntry">
-                        <label
-                          >Show <input type="text" placeholder="6" />of
-                          <span>60</span>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div class="filtersearchoption">
-                        <div class="filterbox">
-                          <label>Filter by Status</label>
-                          <div class="filterselect">
-                            <select>
-                              <option selected="">All</option>
-                              <option value="Popeda">Pending</option>
-                              <option value="Popeda">Approved</option>
-                              <option value="Popeda">Rejected</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="docuchainSearchbox docuapprovalSearch">
-                          <div class="searchInput bgwhiteinput">
-                            <input type="text" placeholder="Search" />
-                            <button type="button" class="searchIcon">
-                              <i class="fa fa-search" aria-hidden="true"></i>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-12 col-xs-12">
-                      <div class="taskMangeTable">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Certificate</th>
-                              <th>Vessel Name</th>
-                              <th>Certificate No</th>
-                              <th>Place of Issue</th>
-                              <th>Date of Issue</th>
-                              <th>Date of Expiry</th>
-                              <th class="text-center addwidth80">Status</th>
-                              <th class="text-center">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>Certificate of Ship Registry</td>
-                              <td>Popeda</td>
-                              <td>ABC283792</td>
-                              <td>Singapore</td>
-                              <td>05-Jan-2018</td>
-                              <td>05-Jan-2018</td>
-
-                              <td class="text-center addwidth150">
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#viewtasks"
-                                  data-backdrop="static"
-                                >
-                                  <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#updatetask"
-                                  data-backdrop="static"
-                                >
-                                  <i
-                                    class="fa fa-download"
-                                    aria-hidden="true"
-                                  ></i>
-                                </button>
-                              </td>
-
-                              <td class="text-center">
-                                <button
-                                  type="button"
-                                  class="btn approvebtn"
-                                  data-toggle="modal"
-                                  data-target="#approve"
-                                  data-backdrop="static"
-                                >
-                                  Approve
-                                </button>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Certificate of Ship Registry</td>
-                              <td>Popeda</td>
-                              <td>ABC283792</td>
-                              <td>Singapore</td>
-                              <td>05-Jan-2018</td>
-                              <td>05-Jan-2018</td>
-
-                              <td class="text-center addwidth150">
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#viewtasks"
-                                  data-backdrop="static"
-                                >
-                                  <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#updatetask"
-                                  data-backdrop="static"
-                                >
-                                  <i
-                                    class="fa fa-download"
-                                    aria-hidden="true"
-                                  ></i>
-                                </button>
-                              </td>
-
-                              <td class="text-center">
-                                <button
-                                  type="button"
-                                  class="btn rejectbtn"
-                                  data-toggle="modal"
-                                  data-target="#reject"
-                                  data-backdrop="static"
-                                >
-                                  Reject
-                                </button>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Certificate of Ship Registry</td>
-                              <td>Popeda</td>
-                              <td>ABC283792</td>
-                              <td>Singapore</td>
-                              <td>05-Jan-2018</td>
-                              <td>05-Jan-2018</td>
-
-                              <td class="text-center addwidth150">
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#viewtasks"
-                                  data-backdrop="static"
-                                >
-                                  <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#updatetask"
-                                  data-backdrop="static"
-                                >
-                                  <i
-                                    class="fa fa-download"
-                                    aria-hidden="true"
-                                  ></i>
-                                </button>
-                              </td>
-
-                              <td class="text-center">
-                                <button
-                                  type="button"
-                                  class="btn pendingbtn"
-                                  data-toggle="modal"
-                                  data-target="#approve"
-                                  data-backdrop="static"
-                                >
-                                  Pending
-                                </button>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Certificate of Ship Registry</td>
-                              <td>Popeda</td>
-                              <td>ABC283792</td>
-                              <td>Singapore</td>
-                              <td>05-Jan-2018</td>
-                              <td>05-Jan-2018</td>
-
-                              <td class="text-center addwidth150">
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#viewtasks"
-                                  data-backdrop="static"
-                                >
-                                  <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#updatetask"
-                                  data-backdrop="static"
-                                >
-                                  <i
-                                    class="fa fa-download"
-                                    aria-hidden="true"
-                                  ></i>
-                                </button>
-                              </td>
-
-                              <td class="text-center">
-                                <button
-                                  type="button"
-                                  class="btn approvebtn"
-                                  data-toggle="modal"
-                                  data-target="#approve"
-                                  data-backdrop="static"
-                                >
-                                  Approve
-                                </button>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Certificate of Ship Registry</td>
-                              <td>Popeda</td>
-                              <td>ABC283792</td>
-                              <td>Singapore</td>
-                              <td>05-Jan-2018</td>
-                              <td>05-Jan-2018</td>
-
-                              <td class="text-center addwidth150">
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#viewtasks"
-                                  data-backdrop="static"
-                                >
-                                  <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#updatetask"
-                                  data-backdrop="static"
-                                >
-                                  <i
-                                    class="fa fa-download"
-                                    aria-hidden="true"
-                                  ></i>
-                                </button>
-                              </td>
-
-                              <td class="text-center">
-                                <button
-                                  type="button"
-                                  class="btn rejectbtn"
-                                  data-toggle="modal"
-                                  data-target="#reject"
-                                  data-backdrop="static"
-                                >
-                                  Reject
-                                </button>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Certificate of Ship Registry</td>
-                              <td>Popeda</td>
-                              <td>ABC283792</td>
-                              <td>Singapore</td>
-                              <td>05-Jan-2018</td>
-                              <td>05-Jan-2018</td>
-
-                              <td class="text-center addwidth150">
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#viewtasks"
-                                  data-backdrop="static"
-                                >
-                                  <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
-                                <button
-                                  type="button"
-                                  class="btned editBtn"
-                                  data-toggle="modal"
-                                  data-target="#updatetask"
-                                  data-backdrop="static"
-                                >
-                                  <i
-                                    class="fa fa-download"
-                                    aria-hidden="true"
-                                  ></i>
-                                </button>
-                              </td>
-
-                              <td class="text-center">
-                                <button
-                                  type="button"
-                                  class="btn pendingbtn"
-                                  data-toggle="modal"
-                                  data-target="#approve"
-                                  data-backdrop="static"
-                                >
-                                  Pending
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div class="vesselstablebottom">
-                        <ul class="pagination pull-right">
-                          <li class="disabled">
-                            <a href="#"> Previous </a>
-                          </li>
-                          <li class="active">
-                            <a href="javascript:void(0);">1</a>
-                          </li>
-                          <li>
-                            <a href="javascript:void(0);">2</a>
-                          </li>
-                          <li>
-                            <a href="javascript:void(0);">3</a>
-                          </li>
-                          <li>
-                            <a href="javascript:void(0);">4</a>
-                          </li>
-                          <li>
-                            <a href="javascript:void(0);"> Next </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div role="tabpanel" class="tab-pane fade" id="Section2"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- Approve Document Pdf -->
-  <div class="librariy-pdfview">
-    <div class="modal fade" id="approveDocument" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">
-              Document Information - {{approveDocumentInfo.documentHolderName}}
-            </h4>
-            <button type="button" class="close" data-dismiss="modal">×</button>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-lg-6 col-sm-6 col-xs-12">
-                <div class="pdf-viewer">
-                  <h1>PDF View</h1>
-                  <div class="pdffile">
-                    <div class="pdficondiv">
-                      <embed ng-src="{{viewDocumentUrl}}" width="500" />
-                    </div>
+
+  <!-- <div class="subscriptionPopup">
+    <div class="librariy-pdfview">
+      <div class="modal fade" id="approveDocument" role="dialog">
+        <div class="modal-dialog" style="max-width: 1200px; width: 95%">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">
+                Document Information -
+                {{approveDocumentInfo.documentHolderName}}
+              </h4>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+
+            <div class="modal-body" style="padding: 0">
+              <div class="split-modal-row">
+                <div class="col-lg-7 col-md-6 col-sm-12 split-modal-left">
+                  <h3
+                    style="
+                      color: #083b66;
+                      font-size: 15px;
+                      font-weight: 600;
+                      margin-top: 0;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    PDF View
+                  </h3>
+                  <div
+                    style="
+                      flex: 1;
+                      border: 1px solid #e2e8f0;
+                      border-radius: 4px;
+                      overflow: hidden;
+                      background: #fff;
+                    "
+                  >
+                    <embed
+                      ng-src="{{viewDocumentUrl}}"
+                      width="100%"
+                      height="100%"
+                    />
                   </div>
                 </div>
-              </div>
-              <div class="col-lg-6 col-sm-6 col-xs-12 pdfborder">
-                <div class="pdf-viewerform">
-                  <div class="library-content">
+
+                <div class="col-lg-5 col-md-6 col-sm-12 split-modal-right">
+                  <div class="split-modal-scroll">
+                    <h3
+                      style="
+                        color: #083b66;
+                        font-size: 16px;
+                        font-weight: 600;
+                        border-bottom: 1px solid #e2e8f0;
+                        padding-bottom: 8px;
+                        margin-top: 0;
+                        margin-bottom: 15px;
+                      "
+                    >
+                      Document Details
+                    </h3>
                     <form>
                       <div class="form-group">
-                        <label> Certificate No </label>
+                        <label>Certificate No</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="approveDocumentInfo.certificateNumber"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Place of Issue </label>
+                        <label>Place of Issue</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="approveDocumentInfo.placeOfIssue"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Date of Issue </label>
+                        <label>Date of Issue</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="approveDocumentInfo.issueDate"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Date of expiry </label>
+                        <label>Date of Expiry</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="approveDocumentInfo.expiryDate"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Last Annual </label>
+                        <label>Last Annual</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="approveDocumentInfo.lastAnnual"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Next annual </label>
+                        <label>Next Annual</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="approveDocumentInfo.nextAnnual"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Remarks </label>
+                        <label>Remarks</label>
                         <textarea
+                          class="text-box form-control"
                           ng-model="approveDocumentInfo.remarks"
+                          style="height: 100px; padding: 10px"
                         ></textarea>
                       </div>
                     </form>
                   </div>
+
+                  <div class="split-modal-footer">
+                    <button
+                      type="button"
+                      class="btn-modern clear-btn"
+                      ng-click="rejectExpiryDocument()"
+                      style="
+                        border-color: #ef4444;
+                        color: #ef4444;
+                        margin: 0 !important;
+                      "
+                    >
+                      <span class="btn-text">REJECT</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-modern submit-btn"
+                      ng-click="approvedExpiryDocument()"
+                      style="margin: 0 !important"
+                    >
+                      <span class="btn-text">APPROVE</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="pdfviewbtn">
-              <button
-                type="button"
-                class="btnn rejectbtn"
-                ng-click="rejectExpiryDocument()"
-              >
-                Reject
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div class="subscriptionPopup">
+    <div class="librariy-pdfview">
+      <div class="modal fade" id="approveDocument" role="dialog">
+        <div
+          class="modal-dialog"
+          style="max-width: 1200px; width: 95%; margin: 40px auto"
+        >
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">
+                Document Information -
+                {{approveDocumentInfo.documentHolderName}}
+              </h4>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
               </button>
-              <button
-                type="button"
-                class="btnn approvebtn"
-                ng-click="approvedExpiryDocument()"
-              >
-                Approve
-              </button>
+            </div>
+
+            <div class="modal-body" style="padding: 0">
+              <div class="split-modal-row">
+                <div class="col-lg-7 col-md-6 col-sm-12 split-modal-left">
+                  <h3
+                    style="
+                      color: #083b66;
+                      font-size: 15px;
+                      font-weight: 600;
+                      margin-top: 0;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    PDF View
+                  </h3>
+                  <div
+                    style="
+                      flex: 1;
+                      border: 1px solid #e2e8f0;
+                      border-radius: 4px;
+                      overflow: hidden;
+                      background: #fff;
+                    "
+                  >
+                    <embed
+                      ng-src="{{viewDocumentUrl}}"
+                      width="100%"
+                      height="100%"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-lg-5 col-md-6 col-sm-12 split-modal-right">
+                  <div class="split-modal-scroll">
+                    <h3
+                      style="
+                        color: #083b66;
+                        font-size: 16px;
+                        font-weight: 600;
+                        border-bottom: 1px solid #e2e8f0;
+                        padding-bottom: 8px;
+                        margin-top: 0;
+                        margin-bottom: 15px;
+                      "
+                    >
+                      Document Details
+                    </h3>
+                    <form>
+                      <div class="form-group">
+                        <label>Certificate No</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="approveDocumentInfo.certificateNumber"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Place of Issue</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="approveDocumentInfo.placeOfIssue"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Date of Issue</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="approveDocumentInfo.issueDate"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Date of Expiry</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="approveDocumentInfo.expiryDate"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Last Annual</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="approveDocumentInfo.lastAnnual"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Next Annual</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="approveDocumentInfo.nextAnnual"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Remarks</label>
+                        <textarea
+                          class="text-box form-control"
+                          ng-model="approveDocumentInfo.remarks"
+                          style="height: 100px; padding: 10px"
+                        ></textarea>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div class="split-modal-footer">
+                    <button
+                      type="button"
+                      class="btn-modern clear-btn"
+                      ng-click="rejectExpiryDocument()"
+                      style="
+                        border-color: #ef4444;
+                        color: #ef4444;
+                        margin: 0 !important;
+                      "
+                    >
+                      <span class="btn-text">REJECT</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-modern submit-btn"
+                      ng-click="approvedExpiryDocument()"
+                      style="margin: 0 !important"
+                    >
+                      <span class="btn-text">APPROVE</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- View Document Pdf -->
-  <div class="librariy-pdfview">
-    <div class="modal fade" id="viewDocument" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">
-              Document Information -
-              {{viewDocumentObjectInfo.documentHolderName}}
-            </h4>
-            <button type="button" class="close" data-dismiss="modal">×</button>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-lg-8 col-sm-6 col-xs-12">
-                <div class="pdf-viewer">
-                  <h1>PDF View</h1>
-                  <div class="pdffile">
-                    <div class="pdficondiv">
-                      <embed
-                        ng-src="{{viewDocumentUrl}}"
-                        width="500"
-                        height="500"
-                      />
-                    </div>
+  <!-- <div class="subscriptionPopup">
+    <div class="librariy-pdfview">
+      <div class="modal fade" id="viewDocument" role="dialog">
+        <div class="modal-dialog" style="max-width: 1200px; width: 95%">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">
+                Document Information -
+                {{viewDocumentObjectInfo.documentHolderName}}
+              </h4>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+
+            <div class="modal-body" style="padding: 0">
+              <div class="split-modal-row">
+                <div class="col-lg-7 col-md-6 col-sm-12 split-modal-left">
+                  <h3
+                    style="
+                      color: #083b66;
+                      font-size: 15px;
+                      font-weight: 600;
+                      margin-top: 0;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    PDF View
+                  </h3>
+                  <div
+                    style="
+                      flex: 1;
+                      border: 1px solid #e2e8f0;
+                      border-radius: 4px;
+                      overflow: hidden;
+                      background: #fff;
+                    "
+                  >
+                    <embed
+                      ng-src="{{viewDocumentUrl}}"
+                      width="100%"
+                      height="100%"
+                    />
                   </div>
                 </div>
-              </div>
-              <div class="col-lg-4 col-sm-6 col-xs-12 pdfborder">
-                <div class="pdf-viewerform">
-                  <div class="library-content">
+
+                <div class="col-lg-5 col-md-6 col-sm-12 split-modal-right">
+                  <div class="split-modal-scroll">
+                    <h3
+                      style="
+                        color: #083b66;
+                        font-size: 16px;
+                        font-weight: 600;
+                        border-bottom: 1px solid #e2e8f0;
+                        padding-bottom: 8px;
+                        margin-top: 0;
+                        margin-bottom: 15px;
+                      "
+                    >
+                      Document Details
+                    </h3>
                     <form>
                       <div class="form-group">
-                        <label> Certificate No </label>
+                        <label>Certificate No</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="viewDocumentObjectInfo.certificateNumber"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Place of Issue </label>
+                        <label>Place of Issue</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="viewDocumentObjectInfo.placeOfIssue"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Date of Issue </label>
+                        <label>Date of Issue</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="viewDocumentObjectInfo.issueDate"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Date of expiry </label>
+                        <label>Date of Expiry</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="viewDocumentObjectInfo.expiryDate"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Last Annual </label>
+                        <label>Last Annual</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="viewDocumentObjectInfo.lastAnnual"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Next annual </label>
+                        <label>Next Annual</label>
                         <input
                           type="text"
+                          class="text-box form-control"
                           ng-model="viewDocumentObjectInfo.nextAnnual"
                           readonly
                         />
                       </div>
                       <div class="form-group">
-                        <label> Remarks </label>
+                        <label>Remarks</label>
                         <textarea
+                          class="text-box form-control"
                           ng-model="viewDocumentObjectInfo.remarks"
                           readonly
+                          style="
+                            height: 100px;
+                            padding: 10px;
+                            background-color: #f8fafc;
+                          "
                         ></textarea>
                       </div>
                     </form>
                   </div>
+
+                  <div class="split-modal-footer">
+                    <button
+                      type="button"
+                      class="btn-modern clear-btn"
+                      data-dismiss="modal"
+                      style="margin: 0 !important"
+                    >
+                      <span class="btn-text">CLOSE</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <!-- <div class="pdfviewbtn">
-                            <button type="button" class="btnn rejectbtn">Reject</button>
-                            <button type="button" class="btnn approvebtn">Approve</button>
-                        </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div class="subscriptionPopup">
+    <div class="librariy-pdfview">
+      <div class="modal fade" id="viewDocument" role="dialog">
+        <div
+          class="modal-dialog"
+          style="max-width: 1200px; width: 95%; margin: 40px auto"
+        >
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">
+                Document Information -
+                {{viewDocumentObjectInfo.documentHolderName}}
+              </h4>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+
+            <div class="modal-body" style="padding: 0">
+              <div class="split-modal-row">
+                <div class="col-lg-7 col-md-6 col-sm-12 split-modal-left">
+                  <h3
+                    style="
+                      color: #083b66;
+                      font-size: 15px;
+                      font-weight: 600;
+                      margin-top: 0;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    PDF View
+                  </h3>
+                  <div
+                    style="
+                      flex: 1;
+                      border: 1px solid #e2e8f0;
+                      border-radius: 4px;
+                      overflow: hidden;
+                      background: #fff;
+                    "
+                  >
+                    <embed
+                      ng-src="{{viewDocumentUrl}}"
+                      width="100%"
+                      height="100%"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-lg-5 col-md-6 col-sm-12 split-modal-right">
+                  <div class="split-modal-scroll">
+                    <h3
+                      style="
+                        color: #083b66;
+                        font-size: 16px;
+                        font-weight: 600;
+                        border-bottom: 1px solid #e2e8f0;
+                        padding-bottom: 8px;
+                        margin-top: 0;
+                        margin-bottom: 15px;
+                      "
+                    >
+                      Document Details
+                    </h3>
+                    <form>
+                      <div class="form-group">
+                        <label>Certificate No</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="viewDocumentObjectInfo.certificateNumber"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Place of Issue</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="viewDocumentObjectInfo.placeOfIssue"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Date of Issue</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="viewDocumentObjectInfo.issueDate"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Date of Expiry</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="viewDocumentObjectInfo.expiryDate"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Last Annual</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="viewDocumentObjectInfo.lastAnnual"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Next Annual</label>
+                        <input
+                          type="text"
+                          class="text-box form-control"
+                          ng-model="viewDocumentObjectInfo.nextAnnual"
+                          readonly
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label>Remarks</label>
+                        <textarea
+                          class="text-box form-control"
+                          ng-model="viewDocumentObjectInfo.remarks"
+                          readonly
+                          style="
+                            height: 100px;
+                            padding: 10px;
+                            background-color: #f8fafc;
+                          "
+                        ></textarea>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div class="split-modal-footer">
+                    <button
+                      type="button"
+                      class="btn-modern clear-btn"
+                      data-dismiss="modal"
+                      style="margin: 0 !important"
+                    >
+                      <span class="btn-text">CLOSE</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -816,44 +1078,6 @@
       <div class="cssload-dot"></div>
       <div class="cssload-dot"></div>
       <div class="cssload-dot"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Delete Popup -->
-<div class="geoLocationPopup">
-  <div class="modal fade" id="geoLocation" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Geo Location</h4>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="form-group">
-              <label>Latitude</label>
-              <input type="text" placeholder="13.0637824" />
-            </div>
-            <div class="form-group">
-              <label>Longitude</label>
-              <input type="text" placeholder="80.2627584" />
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer1">
-          <button type="button" class="btngeo clearbtn">CLEAR</button>
-          <button
-            type="button"
-            class="btngeo submitbtn clr448aff"
-            data-dismiss="modal"
-          >
-            SUBMIT
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </div>

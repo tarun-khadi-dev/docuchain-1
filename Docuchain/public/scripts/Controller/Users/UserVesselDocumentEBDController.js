@@ -36,8 +36,14 @@
 //     $scope.libShipId;
 //     $scope.libshipName;
 //     $scope.loader = false;
-//     $scope.group = {};
-//     $scope.vesselSelectedList = [];
+
+//     // $scope.group = {};
+//     // $scope.vesselSelectedList = [];
+
+//     $scope.group = {
+//       vesselSelectedList: [],
+//     };
+
 //     $scope.formattedIssueDate = '';
 //     $scope.formattedExpiryDate = '';
 //     $scope.formattedlastAnnual = '';
@@ -57,13 +63,10 @@
 //     } else if ($scope.sessionObject.shipProfileInfos.length > 0) {
 //       $scope.libShipId = $scope.sessionObject.shipProfileInfos[0].id;
 //       $scope.libshipName = $scope.sessionObject.shipProfileInfos[0].shipName;
-
-//       // angular.forEach($scope.sessionObject.shipProfileInfos, function(val) {
-//       //     console.log("shipProfileInfos[0].shipName::"+val);
-//       //     $scope.vesselSelectedList.push(val);
-//       // })
-//       // $scope.group.vesselSelectedList = $scope.vesselSelectedList;
 //     }
+
+//     //for creating group
+//     $scope.oldAndNewExpDocWithoutDub = [];
 
 //     $scope.selctedcheckboxlst = [];
 //     $scope.expiryDocumentHolderList = [];
@@ -95,6 +98,9 @@
 //       "$window.localStorage.getItem('userId');",
 //       $window.localStorage.getItem('userId')
 //     );
+//     $scope.userDetails = function () {
+//       $state.go('dapp.userProfile');
+//     };
 
 //     $scope.getAllExpiryList = function () {
 //       $scope.loader = true;
@@ -111,10 +117,26 @@
 //             $scope.expiryDocumentHolderListLen =
 //               $scope.expiryDocumentHolderList.length;
 //             $scope.loader = false;
+
 //             console.log(
 //               'response.data.expiryDocumentList' +
 //                 JSON.stringify($scope.expiryDocumentHolderList)
 //             );
+
+//             // --- REDIRECTION FILTER LOGIC START ---
+//             // Check if we navigated here from the dashboard with a specific filter
+//             var savedStatus = $window.localStorage.getItem(
+//               'redirectFilterStatus'
+//             );
+//             if (savedStatus) {
+//               // Apply the filter programmatically
+//               $scope.documentTypeFilter(savedStatus);
+//               // Set the dropdown model so the UI matches the filter
+//               $scope.selectStatus = savedStatus;
+//               // Clear the storage so it doesn't affect subsequent manual navigations
+//               $window.localStorage.removeItem('redirectFilterStatus');
+//             }
+//             // --- REDIRECTION FILTER LOGIC END ---
 //           }
 //         },
 //         function myError(err) {
@@ -131,21 +153,16 @@
 //         userId: $scope.sessionObject.userId,
 //         roleId: $scope.sessionObject.roleId,
 //       };
-//       FunctionalityService.getVesselProfileList(data1).then(
+
+//       // to display vessels in dropdown while creating EBD
+//       FunctionalityService.getShipProfileList($scope.sessionObject.userId).then(
 //         function (response) {
-//           $scope.loader = false;
-
 //           if (response.status == 200) {
-//             angular.forEach(response.data.shipProfileList, function (val) {
-//               if (val.id != $scope.libShipId) $scope.vesselList.push(val);
-//             });
-//             //  $scope.vesselList = response.data.shipProfileList;
-
-//             // $scope.vesselListLength = $scope.vesselList.length;
+//             $scope.vesselList = response.data.shipProfileList;
+//             console.log('All Org Vessels:', $scope.vesselList);
 //           }
 //         },
 //         function myError(err) {
-//           $scope.loader = false;
 //           console.log('Error response', err);
 //         }
 //       );
@@ -168,157 +185,168 @@
 //             $scope.groupList = response.data.groupList;
 //             $scope.groupListLength = $scope.groupList.length;
 //           }
-//           // else {
-//           //     toaster.clear();
-//           //     toaster.error({ title: response.data.message});
-//           // }
 //         },
 //         function myError(err) {
 //           $scope.loader = false;
 //           console.log('Error response', err);
 //         }
 //       );
-
-//       //     FunctionalityService.getGroupList($scope.sessionObject.userId)
-//       //         .then(function (response) {
-//       //             $scope.loader = false;
-
-//       //             if (response.status == 200) {
-//       //                 $scope.message = JSON.stringify(response.data.groupList);
-//       //                 $scope.groupList = response.data.groupList;
-//       //                 $scope.groupListLength = $scope.groupList.length;
-//       //             } else {
-//       //                 toaster.clear();
-//       //                 toaster.error({ title: response.data.message });
-//       //             }
-//       //         }, function myError(err) {
-//       //             $scope.loader = false;
-//       //             console.log("Error response", err);
-//       //           });
 //     };
 
 //     $scope.faq = function () {
-//       $state.go('dapp.faq');
+//       // $state.go('dapp.faq'); // REDIRECT DISABLED
 //     };
 
-//     //Thi method is used for file scan file file and open the create popup
-//     $scope.uploadFile = function () {
-//       toaster.clear();
-//       $rootScope.convertedFile = '';
-//       $scope.isDisabled = true;
-//       if ($scope.myFile != undefined) {
-//         $scope.loader = true;
-//         var file = $scope.myFile;
-//         if ($scope.myFile.size < 20971520) {
-//           if ($scope.myFile != undefined) {
-//             $rootScope.uploadDocFile = $scope.myFile;
-//             $rootScope.convertedFile = $sce.trustAsResourceUrl(
-//               URL.createObjectURL($scope.myFile)
-//             );
+//     $scope.saveAsDraft = function () {
+//       $scope.loader = true;
 
-//             FunctionalityService.scanExpiryDocument(
-//               $rootScope.uploadDocFile
-//             ).then(
-//               function (response) {
-//                 $scope.loader = false;
+//       // Prepare data (same as createDocument but logic handles status on backend)
+//       var draftData = {
+//         certificateNumber: $scope.libcreate.certificateNumber,
+//         placeOfIssue: $scope.libcreate.placeOfIssue,
+//         issueDate: $scope.dateConversion($scope.libcreate.dateOfIssue),
+//         expiryDate: $scope.dateConversion($scope.libcreate.dateOfExpiry),
+//         lastAnnual: $scope.dateConversion($scope.libcreate.lastAnnual),
+//         nextAnnual: $scope.dateConversion($scope.libcreate.nextAnnual),
+//         uploadedUserId: $scope.sessionObject.userId,
+//         shipProfileId: $scope.libShipId,
+//         documentHolderId: $rootScope.docId,
+//         remarks: $scope.libcreate.remarks,
+//         issuingAuthority: $scope.issuingAuthority,
+//         // --- ADD THESE NEW FIELDS ---
+//         draftId: $scope.currentDraftId || null,
+//         documentDataId: $scope.currentDocumentDataId || null,
+//         isDraft: true,
+//       };
 
-//                 if (response.status == 200 || response.status == 201) {
-//                   $('#fileupload').modal('hide');
-//                   $('#filename').val('');
-//                   //var issuedate = $filter('date')(response.data.expiryDocumentDTOs.issueDate,'MMM dd, yyyy');
-//                   //var expiryDate = $filter('date')(response.data.expiryDocumentDTOs.expiryDate,'MMM dd, yyyy');
-//                   if (
-//                     response.data.expiryDocumentDTOs != null &&
-//                     Object.keys(response.data.expiryDocumentDTOs).length != 0
-//                   ) {
-//                     $scope.libcreate.certificateNumber =
-//                       response.data.expiryDocumentDTOs.certificateNumber;
-//                     $scope.libcreate.placeOfIssue =
-//                       response.data.expiryDocumentDTOs.placeOfIssue;
-//                     $scope.libcreate.dateOfIssue =
-//                       response.data.expiryDocumentDTOs.issueDate;
-//                     $scope.libcreate.dateOfExpiry =
-//                       response.data.expiryDocumentDTOs.expiryDate;
-//                     //$scope.libcreate.issuingAuthority = response.data.expiryDocumentDTOs.issuingAuthority;
-//                   }
-//                   $('#createEBD').modal('toggle');
-//                 } else {
-//                   $scope.loader = false;
-//                   $scope.scanfail = false;
-//                   $('#createEBD').modal('toggle');
-//                 }
-//               },
-//               function myError(err) {
-//                 $scope.loader = false;
-//                 console.log('Error response', err);
-//               }
-//             );
-//           } else {
-//             $scope.loader = false;
-//             $('#filename').val('');
-//             $scope.scanfail = true;
-//             toaster.clear();
-//             toaster.error({ title: 'Please choose file' });
-//             // $scope.scanMsg = "Please choose file"
-//             // $timeout(function () {
-//             //     $scope.isDisabled = false;
-//             //     $scope.scanfail = false;
-//             // }, 1000);
-//           }
-//         } else {
+//       FunctionalityService.saveDraftDocument(
+//         JSON.stringify(draftData),
+//         $rootScope.uploadDocFile
+//       ).then(
+//         function (response) {
 //           $scope.loader = false;
-//           $('#filename').val('');
-//           toaster.clear();
-//           toaster.info({ title: 'Please choose less than 5Mb file' });
+//           if (response.status == 200) {
+//             $('#createEBD').modal('hide');
+//             $scope.clearFields();
+//             $scope.getAllExpiryList();
+//             toaster.success({ title: 'Draft saved successfully' });
+//           }
+//         },
+//         function (err) {
+//           $scope.loader = false;
+//           toaster.error({ title: 'Failed to save draft' });
 //         }
-//       } else {
-//         $scope.loader = false;
-//         toaster.error('Please choose a file');
-//       }
+//       );
 //     };
 
-//     //This method is used to clear the file upload fields
+//     $scope.uploadFile = function () {
+//       if (!$scope.myFile) return;
+
+//       // 1. Instant PDF Preview
+//       $rootScope.convertedFile = $sce.trustAsResourceUrl(
+//         URL.createObjectURL($scope.myFile)
+//       );
+//       $rootScope.uploadDocFile = $scope.myFile; // Crucial for final submit
+
+//       // 2. Clear old fields and LOCK UI
+//       $scope.isScanning = true;
+//       $scope.libcreate = {};
+//       $scope.issuingAuthority = '';
+
+//       $('#fileupload').modal('hide');
+//       $('#createEBD').modal('show');
+
+//       // 3. Call OCR Scan
+//       FunctionalityService.scanExpiryDocument($scope.myFile).then(
+//         function (response) {
+//           // Use $timeout to ensure data-binding occurs and UI unlocks
+//           $timeout(function () {
+//             $scope.isScanning = false;
+
+//             if (response.status == 200 || response.status == 201) {
+//               var scannedData = response.data.expiryDocumentDTOs;
+//               if (scannedData != null) {
+//                 $scope.issuingAuthority = scannedData.issuingAuthority || '';
+//                 $scope.libcreate.certificateNumber =
+//                   scannedData.certificateNumber || '';
+//                 $scope.libcreate.placeOfIssue = scannedData.placeOfIssue || '';
+//                 $scope.libcreate.remarks = scannedData.remarks || '';
+
+//                 // Date Formatting
+//                 if (scannedData.issueDateString) {
+//                   $scope.libcreate.dateOfIssue = moment(
+//                     scannedData.issueDateString,
+//                     'DD-MM-YYYY'
+//                   ).format('DD-MM-YYYY');
+//                 }
+//                 if (scannedData.expiryDateString) {
+//                   $scope.libcreate.dateOfExpiry = moment(
+//                     scannedData.expiryDateString,
+//                     'DD-MM-YYYY'
+//                   ).format('DD-MM-YYYY');
+//                 }
+
+//                 // Reset Annuals as they aren't usually scanned
+//                 $scope.libcreate.lastAnnual = '';
+//                 $scope.libcreate.nextAnnual = '';
+//               }
+//             }
+//           }, 500);
+//         },
+//         function (error) {
+//           $scope.isScanning = false;
+//           toaster.error({ title: 'Extraction failed, please fill manually.' });
+//         }
+//       );
+//     };
 //     $scope.clearFileField = function () {
 //       $('#filename').val('');
 //       $scope.loader = false;
 //       $scope.isDisabled = false;
 //     };
 
-//     //Store document gobally while uploading
 //     $scope.storeDocumentholder = function (obj) {
 //       $rootScope.dcoumentHolderName = obj.documentHolderName;
 //       $rootScope.docId = obj.documentHolderId;
 //       $scope.clearFileField();
 //     };
 
-//     //This method is used to create Document
 //     $scope.createDocument = function () {
 //       $scope.loader = true;
 
-//       //var dt=$scope.libcreate.dateOfExpiry;
+//       // Convert all 4 date fields using the conversion helper before saving
+//       $scope.formattedIssueDate = $scope.dateConversion(
+//         $scope.libcreate.dateOfIssue
+//       );
+//       $scope.formattedExpiryDate = $scope.dateConversion(
+//         $scope.libcreate.dateOfExpiry
+//       );
+//       $scope.formattedlastAnnual = $scope.dateConversion(
+//         $scope.libcreate.lastAnnual
+//       );
+//       $scope.formattednextAnnual = $scope.dateConversion(
+//         $scope.libcreate.nextAnnual
+//       );
 
-//       $scope.formattedIssueDate = $filter('date')(
-//         $scope.libcreate.dateOfIssue,
-//         'yyyy-MM-dd'
-//       );
-//       $scope.formattedExpiryDate = $filter('date')(
-//         $scope.libcreate.dateOfExpiry,
-//         'yyyy-MM-dd'
-//       );
 //       $scope.saveData = {
 //         certificateNumber: $scope.libcreate.certificateNumber,
 //         placeOfIssue: $scope.libcreate.placeOfIssue,
 //         issueDate: $scope.formattedIssueDate,
 //         expiryDate: $scope.formattedExpiryDate,
-//         lastAnnual: $scope.libcreate.lastAnnual,
-//         nextAnnual: $scope.libcreate.nextAnnual,
+//         lastAnnual: $scope.formattedlastAnnual,
+//         nextAnnual: $scope.formattednextAnnual,
 //         uploadedUserId: $scope.sessionObject.userId,
 //         loginId: $scope.sessionObject.userId,
 //         shipProfileId: $scope.libShipId,
 //         documentHolderId: $rootScope.docId,
 //         remarks: $scope.libcreate.remarks,
 //         issuingAuthority: $scope.issuingAuthority,
+//         // --- ADD THESE NEW FIELDS ---
+//         draftId: $scope.currentDraftId || null,
+//         documentDataId: $scope.currentDocumentDataId || null,
+//         isDraft: false,
 //       };
+
 //       FunctionalityService.saveExpiryDocument(
 //         JSON.stringify($scope.saveData),
 //         $rootScope.uploadDocFile
@@ -345,49 +373,61 @@
 //         }
 //       );
 //     };
+
+//     // Helper to convert DD-MM-YYYY string format to YYYY-MM-DD for the API
 //     $scope.dateConversion = function (day) {
+//       if (!day || day == '') {
+//         return null;
+//       }
 //       var stringDate1 = day;
 //       var splitDate1 = stringDate1.split('-');
 //       var day1 = splitDate1[0];
 //       var month1 = splitDate1[1];
 //       var year1 = splitDate1[2];
-//       this.dStartDate = year1 + '-' + month1 + '-' + day1;
-//       return this.dStartDate;
+//       return year1 + '-' + month1 + '-' + day1;
 //     };
+
 //     $scope.cancelExpiry = function () {
 //       $('#viewExpiryDocument').modal('hide');
-//       $state.reload();
 //     };
-//     //This function is used for clear all fields while adding
+
 //     $scope.updateExpiryDoc = function () {
+//       $scope.loader = true;
+
+//       // Convert all 4 date fields using the conversion helper before updating
 //       if (
 //         $scope.issueDateStringEdit != '' &&
 //         $scope.issueDateStringEdit != undefined
-//       )
+//       ) {
 //         $scope.formattedIssueDate = $scope.dateConversion(
 //           $scope.issueDateStringEdit
 //         );
+//       }
 //       if (
 //         $scope.expiryDateStringEdit != '' &&
 //         $scope.expiryDateStringEdit != undefined
-//       )
+//       ) {
 //         $scope.formattedExpiryDate = $scope.dateConversion(
 //           $scope.expiryDateStringEdit
 //         );
+//       }
 //       if (
 //         $scope.lastAnnualStringEdit != '' &&
 //         $scope.lastAnnualStringEdit != undefined
-//       )
+//       ) {
 //         $scope.formattedlastAnnual = $scope.dateConversion(
 //           $scope.lastAnnualStringEdit
 //         );
+//       }
 //       if (
 //         $scope.nextAnnualStringEdit != '' &&
 //         $scope.nextAnnualStringEdit != undefined
-//       )
+//       ) {
 //         $scope.formattednextAnnual = $scope.dateConversion(
 //           $scope.nextAnnualStringEdit
 //         );
+//       }
+
 //       var data = {
 //         id: $scope.docId,
 //         certificateNumber: $scope.certificateNumberEdit,
@@ -396,24 +436,21 @@
 //         expiryDate: $scope.formattedExpiryDate,
 //         lastAnnual: $scope.formattedlastAnnual,
 //         nextAnnual: $scope.formattednextAnnual,
-//         //"uploadedUserId":$window.localStorage.getItem('userId'),
-//         loginId: $window.localStorage.getItem('userId'),
-//         uploadedUserId: $window.localStorage.getItem('userId'),
+//         loginId: $scope.sessionObject.userId,
+//         uploadedUserId: $scope.sessionObject.userId,
 //         shipProfileId: $scope.libShipId,
 //         documentHolderId: $scope.docHolderId,
 //         remarks: $scope.remarksEdit,
 //         issuingAuthority: $scope.issuingAuthorityEdit,
 //       };
-//       console.log('data of update doc::' + JSON.stringify(data));
+
 //       FunctionalityService.updateExpiryDocument(data).then(
 //         function (response) {
 //           $scope.loader = false;
 
 //           if (response.status == 200 || response.status == 201) {
 //             $('#viewExpiryDocument').modal('hide');
-
-//             $state.reload();
-//             //$state.go('dapp.userVesselDocumentEBD');
+//             $scope.getAllExpiryList(); // Refresh list to reflect changes
 //             $timeout(function () {
 //               toaster.clear();
 //               toaster.success({ title: response.data.message });
@@ -425,11 +462,12 @@
 //         },
 //         function myError(err) {
 //           $scope.loader = false;
-//           toaster.error({ title: response.data.message });
+//           toaster.error({ title: 'Error updating document' });
 //           console.log('Error response', err);
 //         }
 //       );
 //     };
+
 //     $scope.clearFields = function () {
 //       $scope.libcreate.certificateNumber = '';
 //       $scope.libcreate.placeOfIssue = '';
@@ -442,56 +480,105 @@
 //       $('#filename').val('');
 //       $scope.loader = false;
 //       $scope.uploadDocFile = '';
+//       // --- ADD THESE RESETS ---
+//       $scope.currentDraftId = null;
+//       $scope.currentDocumentDataId = null;
 //     };
 
-//     $scope.closeViewPopup = function () {
-//       // $window.location.reload();
-//       //$state.reload();
-//       //    $('#embedContainer').reload();
-//       //delete $scope.viewDocumentUrl;
-//       //$('#viewExpiryDocument').remove();
-//       //$('#viewExpiryDocument').hide();
-//       //$state.reload();
+//     // $scope.handleDraftClick = function (doc) {
+//     //   Swal.fire({
+//     //     html: `<div class="logout-card">
+//     //             <div class="logout-icon">
+//     //                 <i class="fa fa-file-text-o"></i>
+//     //             </div>
+//     //             <h3>Draft Available</h3>
+//     //             <p>Do you want to resume your saved draft or upload a completely new document?</p>
+//     //         </div>`,
+//     //     width: 480,
+//     //     showCancelButton: true,
+//     //     confirmButtonColor: '#4a7be6', // Match the primary blue
+//     //     cancelButtonColor: '#6c757d', // Match the secondary grey
+//     //     confirmButtonText: 'Resume Draft',
+//     //     cancelButtonText: 'Upload New',
+//     //   }).then(function (result) {
+//     //     if (result.isConfirmed) {
+//     //       // User chose to "Resume Draft" (Blue Button)
+//     //       $scope.$apply(function () {
+//     //         $scope.resumeDraft(doc);
+//     //       });
+//     //     } else if (result.dismiss === Swal.DismissReason.cancel) {
+//     //       // User chose to "Upload New" (Grey Button)
+//     //       $scope.$apply(function () {
+//     //         // Clear any existing draft tracking so it acts like a brand new upload
+//     //         $scope.currentDraftId = doc.draftId; // Keep draftId so backend overwrites/deletes it
+//     //         $scope.currentDocumentDataId = null;
+
+//     //         // Trigger the standard upload flow
+//     //         $scope.storeDocumentholder(doc);
+//     //         $('#fileupload').modal('show');
+//     //       });
+//     //     }
+//     //   });
+//     // };
+//     $scope.handleDraftClick = function (doc) {
+//       Swal.fire({
+//         html: `<div class="logout-card">
+//                 <div class="logout-icon">
+//                     <i class="fa fa-file-text-o"></i>
+//                 </div>
+//                 <h3>Draft Available</h3>
+//                 <p>Do you want to resume your saved draft or upload a completely new document?</p>
+//             </div>`,
+//         width: 480,
+//         showCloseButton: true, // <--- THIS BRINGS THE "X" BACK
+//         showCancelButton: true,
+//         confirmButtonColor: '#4a7be6', // Blue color for resume
+//         cancelButtonColor: '#6c757d', // Grey color for new upload
+//         confirmButtonText: 'Resume Draft',
+//         cancelButtonText: 'Upload New',
+//       }).then(function (result) {
+//         if (result.isConfirmed) {
+//           // User chose to "Resume Draft"
+//           $scope.$apply(function () {
+//             $scope.resumeDraft(doc);
+//           });
+//         } else if (result.dismiss === Swal.DismissReason.cancel) {
+//           // User chose to "Upload New"
+//           $scope.$apply(function () {
+//             // Clear any existing draft tracking so it acts like a brand new upload
+//             $scope.currentDraftId = doc.draftId;
+//             $scope.currentDocumentDataId = null;
+
+//             // Trigger the standard upload flow
+//             $scope.storeDocumentholder(doc);
+//             $('#fileupload').modal('show');
+//           });
+//         }
+//       });
 //     };
-//     //This method is used view Document information
+//     $scope.closeViewPopup = function () {};
+
 //     $scope.viewExpiryDocumentInformation = function (documentObj) {
-//       $timeout(function () {
-//         //$('#embedContainer').show();
-//         $('#viewExpiryDocument').modal('show');
+//       $scope.viewDocumentObjectInfo = documentObj;
+//       $scope.docId = documentObj.id;
+//       $scope.docHolderId = documentObj.documentHolderId;
 
-//         $scope.viewDocumentObjectInfo = documentObj;
-//         $scope.docId = documentObj.id;
-//         $scope.docHolderId = documentObj.documentHolderId;
-//         $scope.viewDocumentUrl = $sce.trustAsResourceUrl(
-//           $scope.viewDocumentObjectInfo.documentPreviewUrl
-//         );
-//         console.log($scope.viewDocumentUrl);
-//         var pdfViewerEmbed = document.getElementById('embedContainer');
-//         pdfViewerEmbed.setAttribute('src', $scope.viewDocumentUrl);
-//         pdfViewerEmbed.outerHTML = pdfViewerEmbed.outerHTML.replace(
-//           /src="(.+?)"/,
-//           'src="' + $scope.viewDocumentUrl + '"'
-//         );
-//         // $('#embedContainer').html(' <div class="pdficondiv" id="embedContainer"><embed ng-src="{{viewDocumentUrl}}" width="500"></div>');
-//         $scope.certificateNumberEdit =
-//           $scope.viewDocumentObjectInfo.certificateNumber;
-//         $scope.issuingAuthorityEdit =
-//           $scope.viewDocumentObjectInfo.issuingAuthority;
-//         // $scope.issueDateStringEdit = $scope.viewDocumentObjectInfo.expiryDateString;
-//         $scope.placeOfIssueEdit = $scope.viewDocumentObjectInfo.placeOfIssue;
-//         $scope.issueDateStringEdit =
-//           $scope.viewDocumentObjectInfo.issueDateString;
-//         $scope.expiryDateStringEdit =
-//           $scope.viewDocumentObjectInfo.expiryDateString;
-//         $scope.lastAnnualStringEdit =
-//           $scope.viewDocumentObjectInfo.lastAnnualString;
-//         $scope.nextAnnualStringEdit =
-//           $scope.viewDocumentObjectInfo.nextAnnualString;
-//         $scope.remarksEdit = $scope.viewDocumentObjectInfo.remarksEdit;
-//       }, 1000);
+//       $scope.viewDocumentUrl = $sce.trustAsResourceUrl(
+//         documentObj.documentPreviewUrl
+//       );
+
+//       $scope.certificateNumberEdit = documentObj.certificateNumber;
+//       $scope.issuingAuthorityEdit = documentObj.issuingAuthority;
+//       $scope.placeOfIssueEdit = documentObj.placeOfIssue;
+//       $scope.issueDateStringEdit = documentObj.issueDateString;
+//       $scope.expiryDateStringEdit = documentObj.expiryDateString;
+//       $scope.lastAnnualStringEdit = documentObj.lastAnnualString;
+//       $scope.nextAnnualStringEdit = documentObj.nextAnnualString;
+//       $scope.remarksEdit = documentObj.remarks;
+
+//       $('#viewExpiryDocument').modal('show');
 //     };
 
-//     //This Method is used to get history for particular document
 //     $scope.openHistoryPopup = function (documentObj) {
 //       $scope.loader = true;
 
@@ -518,81 +605,234 @@
 //       );
 //     };
 
-//     //This method is used for open Group tag EBD
-//     $scope.openGroupTagEBDPopup = function (expiryDataObj) {
-//       $scope.loader = true;
+//     // $scope.openGroupTagEBDPopup = function (expiryDataObj) {
+//     //   $scope.loader = true;
 
-//       $scope.groupTagExpiryDoc = expiryDataObj;
+//     //   $scope.groupTagExpiryDoc = expiryDataObj;
+
+//     //   var groupdata = {
+//     //     userProfileId: $scope.sessionObject.userId,
+//     //     shipId: $scope.libShipId,
+//     //   };
+
+//     //   FunctionalityService.getGroupListShip(groupdata).then(
+//     //     function (response) {
+//     //       $scope.loader = false;
+
+//     //       if (response.status == 200) {
+//     //         $scope.message = JSON.stringify(response.data.groupList);
+//     //         $scope.groupListExpiry = response.data.groupList;
+//     //         $scope.groupListExpiryLength = $scope.groupListExpiry.length;
+//     //       }
+//     //     },
+//     //     function myError(err) {
+//     //       $scope.loader = false;
+//     //       console.log('Error response', err);
+//     //     }
+//     //   );
+//     // };
+
+//     // group tag share when selected multiple placeholders
+//     //     $scope.openGroupTagEBDPopup = function(expiryDataObj) {
+
+//     //       if ($scope.selctedExpiredDocumentList.length === 0) {
+//     //         toaster.clear();
+//     //         toaster.info({
+//     //             title: 'Please select the document before tagging',
+//     //         });
+//     //         return;
+//     //     }
+//     //     $scope.loader = true;
+//     //     // Handle selection
+//     //     if ($scope.selctedExpiredDocumentList.length > 0) {
+//     //         $scope.groupTagExpiryDocList = angular.copy($scope.selctedExpiredDocumentList);
+//     //     } else {
+//     //         $scope.groupTagExpiryDocList = [expiryDataObj];
+//     //     }
+//     //     var groupdata = {
+//     //         userProfileId: $scope.sessionObject.userId,
+//     //         shipId: $scope.libShipId,
+//     //     };
+//     //     FunctionalityService.getGroupListShip(groupdata)
+//     //     .then(function(response) {
+//     //         $scope.loader = false;
+//     //         if (response.status == 200) {
+//     //             $scope.groupListExpiry = response.data.groupList;
+//     //             $('#tagGroupPopup').modal('show');
+//     //         }
+//     //     }, function(err) {
+//     //         $scope.loader = false;
+//     //         console.log('Error response', err);
+//     //     });
+//     // };
+
+//     $scope.openGroupTagEBDPopup = function (expiryDataObj) {
+//       //  CASE 1: Bulk selection
+//       if ($scope.selctedExpiredDocumentList.length > 0) {
+//         $scope.groupTagExpiryDocList = angular.copy(
+//           $scope.selctedExpiredDocumentList
+//         );
+//       }
+//       //  CASE 2: Single row click
+//       else if (expiryDataObj) {
+//         $scope.groupTagExpiryDocList = [expiryDataObj];
+//       }
+//       //  CASE 3: Nothing selected
+//       else {
+//         toaster.clear();
+//         toaster.info({
+//           title: 'Please select the document before tagging',
+//         });
+//         return;
+//       }
+//       $scope.loader = true;
 
 //       var groupdata = {
 //         userProfileId: $scope.sessionObject.userId,
 //         shipId: $scope.libShipId,
 //       };
-
 //       FunctionalityService.getGroupListShip(groupdata).then(
 //         function (response) {
 //           $scope.loader = false;
-
 //           if (response.status == 200) {
-//             $scope.message = JSON.stringify(response.data.groupList);
 //             $scope.groupListExpiry = response.data.groupList;
-//             $scope.groupListExpiryLength = $scope.groupListExpiry.length;
+//             // Open modal
+//             $('#tagGroupPopup').modal('show');
 //           }
-//           // else {
-//           //     toaster.clear();
-//           //     toaster.error({ title: response.data.message});
-//           // }
 //         },
-//         function myError(err) {
+//         function (err) {
 //           $scope.loader = false;
 //           console.log('Error response', err);
 //         }
 //       );
-//       // FunctionalityService.getGroupList($scope.sessionObject.userId)
-//       //     .then(function (response) {
-//       //         $scope.loader = false;
-
-//       //         if (response.status == 200) {
-//       //             $scope.message = JSON.stringify(response.data.groupList);
-//       //             $scope.groupListExpiry = response.data.groupList;
-//       //         }
-//       //     }, function myError(err) {
-//       //         $scope.loader = false;
-//       //         console.log("Error response", err);
-//       //       });
 //     };
 
-//     //This method is used to tag the expiry document into the group
+//     ///////////////////////////////////////////////////////////////
+
+//     //   $scope.tagExpiryDocumentToGRoup = function () {
+//     //     $scope.loader = true;
+
+//     //     var documentHolderIds = [];
+
+//     //     angular.forEach($scope.selctedExpiredDocumentList, function (doc) {
+//     //         documentHolderIds.push(doc.documentHolderId);
+//     //     });
+
+//     //     var payload = {
+//     //         groupId: $scope.gorupSelected,
+//     //         userProfileId: $scope.sessionObject.userId,
+//     //         documentHolderIds: documentHolderIds,
+//     //         loginId: $scope.sessionObject.userId
+//     //     };
+
+//     //     FunctionalityService.addMultipleExpiryDocToGroup(payload)
+//     //     .then(function (response) {
+//     //         $scope.loader = false;
+
+//     //         if (response.status == 200) {
+//     //             $('#tagGroupPopup').modal('hide');
+
+//     //             toaster.success({
+//     //                 title: "Documents tagged successfully"
+//     //             });
+
+//     //             // reset selection
+//     //             $scope.checkall = false;
+//     //             $scope.selctedExpiredDocumentList = [];
+
+//     //         } else {
+//     //             toaster.error({
+//     //                 title: "Error tagging documents"
+//     //             });
+//     //         }
+
+//     //     }, function (err) {
+//     //         $scope.loader = false;
+//     //         console.log(err);
+//     //     });
+//     // };
+//     $scope.resumeDraft = function (doc) {
+//       // 1. Set global document tracking variables
+//       $rootScope.dcoumentHolderName = doc.documentHolderName;
+//       $rootScope.docId = doc.documentHolderId;
+
+//       // 2. Track draft-specific IDs so backend knows we are resuming
+//       $scope.currentDraftId = doc.draftId;
+//       $scope.currentDocumentDataId = doc.documentDataId;
+
+//       // 3. Pre-fill the form with draft data
+//       $scope.libcreate = {
+//         certificateNumber: doc.certificateNumber,
+//         placeOfIssue: doc.placeOfIssue,
+//         dateOfIssue: doc.issueDateString,
+//         dateOfExpiry: doc.expiryDateString,
+//         lastAnnual: doc.lastAnnualString,
+//         nextAnnual: doc.nextAnnualString,
+//         remarks: doc.remarks,
+//       };
+//       $scope.issuingAuthority = doc.issuingAuthority;
+
+//       // 4. Set the PDF Preview URL and clear any pending file uploads
+//       if (doc.documentPreviewUrl) {
+//         $rootScope.convertedFile = $sce.trustAsResourceUrl(
+//           doc.documentPreviewUrl
+//         );
+//       }
+//       $rootScope.uploadDocFile = null;
+//       $scope.isScanning = false;
+
+//       // 5. Open the Creation Form Modal directly (skip the upload modal)
+//       $('#createEBD').modal('show');
+//     };
+
 //     $scope.tagExpiryDocumentToGRoup = function () {
+//       if (
+//         !$scope.groupTagExpiryDocList ||
+//         $scope.groupTagExpiryDocList.length === 0
+//       ) {
+//         toaster.error({ title: 'No document selected' });
+//         return;
+//       }
+
 //       $scope.loader = true;
 
-//       var addExpiryDocToGroupData = {
+//       var documentHolderIds = [];
+
+//       angular.forEach($scope.groupTagExpiryDocList, function (doc) {
+//         documentHolderIds.push(doc.documentHolderId);
+//       });
+
+//       var payload = {
 //         groupId: $scope.gorupSelected,
 //         userProfileId: $scope.sessionObject.userId,
-//         documentHolderId: $scope.groupTagExpiryDoc.documentHolderId,
+//         documentHolderIds: documentHolderIds,
 //         loginId: $scope.sessionObject.userId,
 //       };
-//       FunctionalityService.addExpiryDocToGroup(
-//         JSON.stringify(addExpiryDocToGroupData)
-//       ).then(
+
+//       FunctionalityService.addMultipleExpiryDocToGroup(payload).then(
 //         function (response) {
 //           $scope.loader = false;
 
-//           if (response.status == 200 || response.status == 201) {
+//           if (response.status == 200) {
 //             $('#tagGroupPopup').modal('hide');
-//             $state.reload();
-//             $timeout(function () {
-//               toaster.clear();
-//               toaster.success({ title: response.data.message });
-//             }, 1000);
+
+//             toaster.success({
+//               title: 'Documents tagged successfully',
+//             });
+
+//             // Reset
+//             $scope.checkall = false;
+//             $scope.selctedExpiredDocumentList = [];
+//             $scope.groupTagExpiryDocList = [];
 //           } else {
-//             toaster.clear();
-//             toaster.error({ title: response.data.message });
+//             toaster.error({
+//               title: response.data.message,
+//             });
 //           }
 //         },
-//         function myError(err) {
+//         function (err) {
 //           $scope.loader = false;
-//           console.log('Error response', err);
+//           console.log(err);
 //         }
 //       );
 //     };
@@ -601,9 +841,7 @@
 //       $scope.gorupSelected = '';
 //     };
 
-//     $scope.close = function () {
-//       $state.reload();
-//     };
+//     $scope.close = function () {};
 
 //     $scope.selctedExpiredDocumentList = [];
 
@@ -644,26 +882,35 @@
 //         $scope.checkall = false;
 //       }
 //     };
+
 //     $scope.groupExpiryDoclist = [];
+
 //     $scope.viewGroup = function (group) {
 //       $scope.loader = true;
 
+//       // ✅ Reset previous data
+//       $scope.groupExpiryDoclist = [];
+
 //       $scope.groupEmailForShare = group.emailId;
+//       $scope.groupIdForShare = group.id;
+
 //       FunctionalityService.viewGroup(group.id).then(
 //         function (response) {
 //           $scope.loader = false;
 
-//           $scope.groupIdForShare = group.id;
-//           $scope.groupExpiryDoclist =
-//             response.data.groupInfo.expiryDocumentDtos;
+//           var groupInfo = response.data.groupInfo || {};
+
+//           $scope.groupExpiryDoclist = groupInfo.expiryDocumentDtos || [];
+
+//           console.log('Loaded group docs:', $scope.groupExpiryDoclist);
+
 //           $scope.showUpdateIngroupCheck = true;
 //         },
-//         function myError(err) {
+//         function (err) {
 //           $scope.loader = false;
 //           console.log('Error response', err);
 //         }
 //       );
-//       $scope.groupIdForShare = group.id;
 //     };
 
 //     $scope.IsVisible = false;
@@ -671,10 +918,51 @@
 //       $scope.IsVisible = true;
 //       $scope.groupExpiryDoclist = [];
 //       $scope.groupIdForShare = '';
-//       $scope.showUpdateIngroupCheck = false;
+//       $scope.showUpdateIngroupCheck = true;
 //     };
-//     $scope.createbutton = false;
-//     $scope.showgroup = false;
+
+//     // This watcher listens for changes in the selected vessels list. When a vessel is selected, it automatically loads the associated documents for that vessel and updates the UI accordingly.
+//     $scope.$watch(
+//       'group.vesselSelectedList',
+//       function (newVal) {
+//         if (newVal && newVal.length > 0) {
+//           $scope.groupExpiryDoclist = [];
+//           angular.forEach(newVal, function (vessel) {
+//             FunctionalityService.getAllExpiryDocumentList(vessel.id, 0).then(
+//               function (response) {
+//                 if (response.status === 200) {
+//                   angular.forEach(
+//                     response.data.expiryDocumentList,
+//                     function (doc) {
+//                       if (doc.id != null && doc.documentStatus === 'Approved') {
+//                         // Avoid duplicates
+//                         var exists = $scope.groupExpiryDoclist.some(
+//                           function (d) {
+//                             return d.id === doc.id;
+//                           }
+//                         );
+//                         if (!exists) {
+//                           $scope.groupExpiryDoclist.push(doc);
+//                         }
+//                       }
+//                     }
+//                   );
+//                   console.log(
+//                     'Updated Existing Docs:',
+//                     $scope.groupExpiryDoclist
+//                   );
+//                 }
+//               },
+//               function (err) {
+//                 console.log('Error loading ship documents', err);
+//               }
+//             );
+//           });
+//         }
+//       },
+//       true
+//     );
+
 //     $scope.showTable = function () {
 //       if ($scope.groupSearch != undefined) {
 //         if ($scope.groupSearch != '') {
@@ -683,8 +971,6 @@
 //         }
 //       }
 //     };
-//     $scope.createbutton = false;
-//     $scope.showUpdateIngroupCheck = false;
 
 //     $scope.$watch('groupSearch', function (query) {
 //       $scope.groupSearchlength = $filter('filter')($scope.groupList, query);
@@ -696,7 +982,6 @@
 //         $scope.createbutton = false;
 //         $scope.IsVisible = false;
 //         $scope.showUpdateIngroupCheck = false;
-//         // $scope.groupList = [];
 //         $scope.showgroup = false;
 //         $scope.groupExpiryDoclist = [];
 //       }
@@ -729,14 +1014,17 @@
 //         }
 //       );
 //     };
+
 //     $scope.sharePopup = function () {
 //       if ($scope.selctedExpiredDocumentList.length > 0) {
 //         $('#sharepopup').modal('toggle');
-//         $scope.selctedcheckboxlst = $scope.selctedcheckboxlst.concat(
+//         // $scope.selctedcheckboxlst = $scope.selctedcheckboxlst.concat(
+//         //   $scope.selctedExpiredDocumentList
+//         // );
+//         $scope.selctedcheckboxlst = angular.copy(
 //           $scope.selctedExpiredDocumentList
 //         );
 
-//         //$scope.selctedcheckboxlst.push( $scope.selctedExpiredDocumentList);
 //         $scope.selecetedCheckBoxValue = function (
 //           selctedExpiredDocumentList,
 //           active
@@ -758,20 +1046,22 @@
 //       }
 //     };
 
-//     $scope.shipIds = [];
-//     //$scope.vesselSelectedList==[];
-
 //     $scope.shareexpirydocument = function (group) {
-//       $('#shareMail').modal('toggle');
-//       console.log('$scope.vesselInfo::' + $scope.libshipName);
+//       // --- NEW SORTING LOGIC ---
+//       // This helper function extracts the number at the start of the name (e.g., "01", "10") and sorts numerically
+//       var sortDocumentsByNumber = function (a, b) {
+//         var numA = parseInt(a.documentHolderName.match(/\d+/)) || 0;
+//         var numB = parseInt(b.documentHolderName.match(/\d+/)) || 0;
+//         return numA - numB;
+//       };
+//       // -------------------------
+
 //       if ($scope.groupIdForShare != '') {
+//         // Existing Group Flow (already works correctly)
 //         if ($scope.groupIdForShare != undefined) {
 //           $scope.checkedUsers = [];
 //           angular.forEach($scope.groupExpiryDoclist, function (user) {
 //             if (user.Selected) {
-//               if ($scope.checkedUsers != '') {
-//                 $scope.checkedUsers += ' , ';
-//               }
 //               $scope.shareExpDoc.push(user);
 //             }
 //           });
@@ -799,6 +1089,7 @@
 //           angular.forEach($scope.oldAndNewExpDoc, function (value, key) {
 //             $scope.documentHolderIds.push(value.documentHolderId);
 //           });
+
 //           if ($scope.updateInGroup == true) {
 //             var addexdoctogroup = {
 //               groupId: $scope.groupIdForShare,
@@ -815,32 +1106,69 @@
 
 //                 if (response.status == 200) {
 //                   $scope.expDocUrl = '';
-//                   angular.forEach(
-//                     $scope.oldAndNewExpDocWithoutDub,
-//                     function (value, key) {
-//                       $scope.expDocUrl =
-//                         $scope.expDocUrl +
-//                         '\n' +
-//                         (value.documentHolderName +
-//                           ': \n' +
-//                           value.documentDownloadUrl +
-//                           '\n');
+//                   var hasExistingSelection = false;
+
+//                   // SORT BEFORE BUILDING HTML
+//                   $scope.groupExpiryDoclist.sort(sortDocumentsByNumber);
+//                   $scope.selctedcheckboxlst.sort(sortDocumentsByNumber);
+
+//                   angular.forEach($scope.groupExpiryDoclist, function (value) {
+//                     if (value.Selected) {
+//                       hasExistingSelection = true;
 //                     }
-//                   );
-//                   $state.reload();
-//                   $('#sharepopup').modal('hide');
-//                   $scope.url =
-//                     'mailto:' +
-//                     '?subject=' +
-//                     $scope.libshipName +
-//                     '%20Documents' +
-//                     '&body=%0D%0A%0D%0ABelow are the list of document attached.%0D%0A%0D%0A' +
-//                     encodeURIComponent($scope.expDocUrl) +
-//                     '%0D%0A%0D%0A%0D%0A%0D%0A%0D%0ANote: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.  Check your e-mail security settings to determine how attachments are handled.';
-//                   window.location.href = $scope.url;
+//                   });
+
+//                   if (hasExistingSelection) {
+//                     angular.forEach(
+//                       $scope.groupExpiryDoclist,
+//                       function (value) {
+//                         if (value.Selected) {
+//                           // USE PROPER HTML TAGS
+//                           $scope.expDocUrl +=
+//                             '<strong>' +
+//                             value.documentHolderName +
+//                             ':</strong><br>' +
+//                             '<a href="' +
+//                             value.documentDownloadUrl +
+//                             '">' +
+//                             value.documentDownloadUrl +
+//                             '</a><br><br>';
+//                         }
+//                       }
+//                     );
+//                   } else {
+//                     angular.forEach(
+//                       $scope.selctedcheckboxlst,
+//                       function (value) {
+//                         if (value) {
+//                           // USE PROPER HTML TAGS
+//                           $scope.expDocUrl +=
+//                             '<strong>' +
+//                             value.documentHolderName +
+//                             ':</strong><br>' +
+//                             '<a href="' +
+//                             value.documentDownloadUrl +
+//                             '">' +
+//                             value.documentDownloadUrl +
+//                             '</a><br><br>';
+//                         }
+//                       }
+//                     );
+//                   }
+
 //                   $scope.expDocUrlshare =
 //                     $scope.expDocUrl +
-//                     '\n\nNote: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.  Check your e-mail security settings to determine how attachments are handled.';
+//                     '<br><br>Note: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.';
+//                   $('#sharepopup').modal('hide');
+//                   $('#shareMail').modal('show');
+
+//                   $timeout(function () {
+//                     if (CKEDITOR.instances.mailEditor) {
+//                       CKEDITOR.instances.mailEditor.setData(
+//                         $scope.expDocUrlshare || ''
+//                       );
+//                     }
+//                   }, 300);
 //                 } else {
 //                   toaster.error('Problem in sharing expiry document');
 //                 }
@@ -851,77 +1179,84 @@
 //               }
 //             );
 //           } else {
-//             // $scope.expDocUrl = "";
-//             // angular.forEach($scope.selctedcheckboxlst, function (value, key) {
-//             //     $scope.expDocUrl = $scope.expDocUrl + ("\n" + value.documentHolderName + ": \n" + value.documentDownloadUrl + "\n");
-//             // });
-//             // var mailToLink = $scope.groupSearch;
-//             // $scope.url = 'mailto:' + mailToLink + '?subject=' + 'Share Expiry Document' + '&body=HI%20Dear/Madam,%20' + $window.encodeURIComponent($scope.expDocUrl)
-//             // window.location.href = $scope.url;
-
 //             $scope.expDocUrl = '';
+
+//             // SORT BEFORE BUILDING HTML
+//             $scope.oldAndNewExpDocWithoutDub.sort(sortDocumentsByNumber);
+
 //             angular.forEach(
 //               $scope.oldAndNewExpDocWithoutDub,
 //               function (value, key) {
-//                 $scope.expDocUrl =
-//                   $scope.expDocUrl +
-//                   '\n' +
-//                   (' \n' +
-//                     value.documentHolderName +
-//                     ': \n' +
-//                     value.documentDownloadUrl +
-//                     '\n');
+//                 // USE PROPER HTML TAGS
+//                 $scope.expDocUrl +=
+//                   '<strong>' +
+//                   value.documentHolderName +
+//                   ':</strong><br>' +
+//                   '<a href="' +
+//                   value.documentDownloadUrl +
+//                   '">' +
+//                   value.documentDownloadUrl +
+//                   '</a><br><br>';
 //               }
 //             );
-//             $state.reload();
+//             $scope.expDocUrlshare =
+//               $scope.expDocUrl +
+//               '<br><br>Note: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.';
+
 //             $('#sharepopup').modal('hide');
-//             $scope.url =
-//               'mailto:' +
-//               '?subject=' +
-//               $scope.libshipName +
-//               '%20Documents' +
-//               '&body=%0D%0A%0D%0ABelow are the list of document attached.%0D%0A%0D%0A' +
-//               encodeURIComponent($scope.expDocUrl) +
-//               '%0D%0A%0D%0A%0D%0A%0D%0A%0D%0ANote: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.  Check your e-mail security settings to determine how attachments are handled.';
-//             window.location.href = $scope.url;
+//             $('#shareMail').modal('show');
+
+//             $timeout(function () {
+//               if (CKEDITOR.instances.mailEditor) {
+//                 CKEDITOR.instances.mailEditor.setData(
+//                   $scope.expDocUrlshare || ''
+//                 );
+//               }
+//             }, 300);
 //           }
 //         } else {
 //           $scope.expDocUrl = '';
+
+//           // SORT BEFORE BUILDING HTML
+//           $scope.selctedcheckboxlst.sort(sortDocumentsByNumber);
+
 //           angular.forEach($scope.selctedcheckboxlst, function (value, key) {
-//             $scope.expDocUrl =
-//               $scope.expDocUrl +
-//               '\n' +
-//               ('\n' +
-//                 value.documentHolderName +
-//                 ': \n' +
-//                 value.documentDownloadUrl +
-//                 '\n');
+//             // USE PROPER HTML TAGS
+//             $scope.expDocUrl +=
+//               '<strong>' +
+//               value.documentHolderName +
+//               ':</strong><br>' +
+//               '<a href="' +
+//               value.documentDownloadUrl +
+//               '">' +
+//               value.documentDownloadUrl +
+//               '</a><br><br>';
 //           });
-//           var mailToLink = $scope.groupSearch;
-//           $scope.url =
-//             'mailto:' +
-//             '?subject=' +
-//             $scope.libshipName +
-//             '%20Documents' +
-//             '&body=%0D%0A%0D%0ABelow are the list of document attached.%0D%0A%0D%0A' +
-//             $window.encodeURI($scope.expDocUrl) +
-//             '%0D%0A%0D%0A%0D%0A%0D%0A%0D%0ANote: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.  Check your e-mail security settings to determine how attachments are handled.';
-//           location.href =
-//             'mailto:' +
-//             '?subject=' +
-//             $scope.libshipName +
-//             '%20Documents' +
-//             '&body=%0D%0A%0D%0ABelow are the list of document attached.%0D%0A%0D%0A' +
-//             $window.encodeURI($scope.expDocUrl) +
-//             '%0D%0A%0D%0A%0D%0A%0D%0A%0D%0ANote: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.  Check your e-mail security settings to determine how attachments are handled.';
+
 //           $scope.expDocUrlshare =
 //             $scope.expDocUrl +
-//             '\n\nNote: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.  Check your e-mail security settings to determine how attachments are handled.';
+//             '<br><br>Note: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments. Check your e-mail security settings to determine how attachments are handled.';
+
+//           $('#sharepopup').modal('hide');
+//           $('#shareMail').modal('show');
+
+//           $timeout(function () {
+//             if (CKEDITOR.instances.mailEditor) {
+//               CKEDITOR.instances.mailEditor.setData(
+//                 $scope.expDocUrlshare || ''
+//               );
+//             }
+//           }, 300);
 //         }
 //       } else {
+//         // CREATE GROUP FLOW - FIXED
 //         if ($scope.IsVisible == true) {
+//           $scope.updateInGroup = true;
+
+//           // Initialize shipIds to prevent errors
+//           $scope.shipIds = [];
 //           $scope.shipIds.push($scope.libShipId);
-//           //if($scope.shipIds!=undefined &&$scope.groupName!=undefined &&group.emailId!=undefined){
+
 //           if ($scope.sessionObject.roleId != 3) {
 //             angular.forEach(group.vesselSelectedList, function (infos) {
 //               if ($scope.libShipId != infos.id) {
@@ -929,7 +1264,17 @@
 //               }
 //             });
 //           }
-//           var groupData = {
+
+//           // Collect ONLY checked existing documents
+//           $scope.selectedDocumentHolderIds = [];
+//           angular.forEach($scope.groupExpiryDoclist, function (value) {
+//             if (value.Selected) {
+//               $scope.selectedDocumentHolderIds.push(value.documentHolderId);
+//             }
+//           });
+
+//           // Store group data for later use (when user clicks "Submit")
+//           $scope.pendingGroupData = {
 //             userProfileId: $scope.sessionObject.userId,
 //             groupName: $scope.groupName,
 //             shipIds: $scope.shipIds,
@@ -940,101 +1285,66 @@
 //             loginId: $scope.sessionObject.userId,
 //           };
 
-//           FunctionalityService.shareExpiryDoc(JSON.stringify(groupData)).then(
-//             function (response) {
-//               $scope.loader = false;
+//           // Prepare the email content FIRST
+//           $scope.expDocUrl = '';
 
-//               if (response.status == 200) {
-//                 $('#sharepopup').modal('hide');
-//                 $state.reload();
-//                 $timeout(function () {
-//                   toaster.clear();
-//                   toaster.success({ title: response.data.message });
-//                   $scope.expDocUrl = '';
-//                   angular.forEach(
-//                     $scope.selctedcheckboxlst,
-//                     function (value, key) {
-//                       $scope.expDocUrl =
-//                         $scope.expDocUrl +
-//                         '\n' +
-//                         ('\n' +
-//                           value.documentHolderName +
-//                           ': \n' +
-//                           value.documentDownloadUrl +
-//                           '\n');
-//                     }
-//                   );
-//                   var mailToLink = group.emailId;
-//                   $scope.url =
-//                     'mailto:' +
-//                     mailToLink +
-//                     '?subject=' +
-//                     $scope.libshipName +
-//                     '%20Documents' +
-//                     '&body=%0D%0A%0D%0A Below are the list of document attached.%0D%0A%0D%0A' +
-//                     $window.encodeURIComponent($scope.expDocUrl) +
-//                     '%0D%0A%0D%0A%0D%0A%0D%0A%0D%0ANote: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.  Check your e-mail security settings to determine how attachments are handled.';
-//                   window.location.href = $scope.url;
-//                   $scope.expDocUrlshare =
-//                     $scope.expDocUrl +
-//                     '\n\nNote: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.  Check your e-mail security settings to determine how attachments are handled.';
-//                 }, 1000);
-//               } else {
-//                 toaster.clear();
-//                 toaster.error({ title: response.data.message });
-//               }
-//             },
-//             function myError(err) {
-//               $scope.loader = false;
-//               console.log('Error response', err);
+//           // SORT BEFORE BUILDING HTML
+//           $scope.selctedcheckboxlst.sort(sortDocumentsByNumber);
+
+//           angular.forEach($scope.selctedcheckboxlst, function (value, key) {
+//             // USE PROPER HTML TAGS
+//             $scope.expDocUrl +=
+//               '<strong>' +
+//               value.documentHolderName +
+//               ':</strong><br>' +
+//               '<a href="' +
+//               value.documentDownloadUrl +
+//               '">' +
+//               value.documentDownloadUrl +
+//               '</a><br><br>';
+//           });
+
+//           // Format the email content
+//           $scope.expDocUrlshare =
+//             $scope.expDocUrl +
+//             '<br><br>Note: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments. Check your e-mail security settings to determine how attachments are handled.';
+//           // Hide the share popup
+//           $('#sharepopup').modal('hide');
+//           $('#shareMail').modal('show');
+
+//           // Show the email composition popup NOW
+//           $timeout(function () {
+//             if (CKEDITOR.instances.mailEditor) {
+//               CKEDITOR.instances.mailEditor.setData(
+//                 $scope.expDocUrlshare || ''
+//               );
 //             }
-//           );
-//           //  }
-//           //   else{
-//           //     $scope.expDocUrl = "";
-//           //     angular.forEach($scope.selctedcheckboxlst, function (value, key) {
-//           //         $scope.expDocUrl = $scope.expDocUrl + ("\n" + value.documentHolderName + ": \n" + value.documentDownloadUrl + "\n");
-//           //     });
-//           //     var mailToLink = $scope.groupSearch;
-//           //     $scope.url = 'mailto:' + mailToLink + '?subject=' + 'Share Expiry Document' + '&body=HI%20Dear/Madam,%20' + $window.encodeURIComponent($scope.expDocUrl)
-//           //     window.location.href = $scope.url;
-//           //   }
+//           }, 300);
 //         }
 //       }
 //       $scope.loader = false;
 //       $scope.shareExpDoc = [];
 //       $scope.oldAndNewExpDoc = [];
 //       $scope.documentHolderIds = [];
-//       //$scope.selctedcheckboxlst = [];
 //     };
-
 //     $scope.setPage = function (pageNo) {
 //       $scope.currentPage = pageNo;
 //     };
 
-//     $scope.pageChanged = function () {
-//       console.log('Page changed to: ' + $scope.currentPage);
-//     };
-
-//     $scope.setItemsPerPage = function (num) {
-//       $scope.itemsPerPage = num;
-//       $scope.currentPage = 1; //reset to first page
-//     };
 //     $scope.dateConversionForExpiry = function (day) {
 //       var stringDate1 = day;
 //       var splitDate1 = stringDate1.split('-');
 //       var day1 = splitDate1[0];
-
 //       var month1 = splitDate1[1];
 //       var year1 = splitDate1[2];
 //       this.dStartDate = month1 + '-' + day1 + '-' + year1;
 //       return this.dStartDate;
 //     };
+
 //     $rootScope.documentTypeFilter = function (status) {
 //       $scope.fielterFailure = 1;
 //       $scope.selectStatus = status;
 //       $scope.expiryDocumentHolderListFileter = [];
-//       console.log('status', status);
 //       var today = new Date();
 //       var renewalDate = new Date(new Date().setDate(today.getDate() + 31));
 //       var expiryDate;
@@ -1044,21 +1354,13 @@
 //             expiry.expiryDateString != undefined ||
 //             expiry.expiryDateString != ''
 //           ) {
-//             console.log('status1');
-
 //             expiryDate = new Date(
 //               $scope.dateConversionForExpiry(expiry.expiryDateString)
 //             );
-//             //expDate =  $scope.dateConversionForExpiry(expDate);
 //           }
 //           if (expiryDate > renewalDate || expiry.expiryDateString == '') {
-//             console.log('status2');
 //             $scope.expiryDocumentHolderListFileter.push(expiry);
 //           }
-//           console.info(
-//             '$scope.expiryDocumentHolderListFileter inside',
-//             $scope.expiryDocumentHolderListFileter
-//           );
 //         });
 //       } else if (status == 'Renewal') {
 //         angular.forEach($scope.expiryDocumentHolderList, function (expiry) {
@@ -1066,22 +1368,15 @@
 //             expiry.expiryDateString != undefined ||
 //             expiry.expiryDateString != ''
 //           ) {
-//             expDate = $scope.dateConversionForExpiry(expiry.expiryDateString);
-//             // console.log("renuven",expDate >= date2 && Renewal >= expDate,date2, Renewal,expDate)
-
 //             expiryDate = new Date(
 //               $scope.dateConversionForExpiry(expiry.expiryDateString)
 //             );
-
-//             console.log('date..>>>>>>...', today, renewalDate, expiryDate);
-//             // if (expDate >= date2 && Renewal >= expDate )
 //             if (today <= expiryDate && renewalDate >= expiryDate)
 //               $scope.expiryDocumentHolderListFileter.push(expiry);
 //           }
 //         });
 //       } else if (status == 'Expired') {
 //         angular.forEach($scope.expiryDocumentHolderList, function (expiry) {
-//           console.log(typeof expiry.expiryDateString);
 //           if (
 //             expiry.expiryDateString != undefined ||
 //             expiry.expiryDateString != ''
@@ -1110,22 +1405,29 @@
 //     $scope.$on('$viewContentLoaded', function () {
 //       FunctionalityService.getDashboardTopCountBasedOnVessel(
 //         $scope.libShipId
-//       ).then(
-//         function (response) {
-//           if (response.status == 200) {
-//             console.log('ship based count::' + JSON.stringify(response.data));
-//             $scope.headerDetails = response.data.usershipCount;
-//             console.log(
-//               'headerDetails in vessel3::' +
-//                 JSON.stringify($scope.headerDetails)
-//             );
-//           }
-//         },
-//         function (error) {
-//           console.log('message :: ' + error);
+//       ).then(function (response) {
+//         if (response.status == 200) {
+//           $scope.headerDetails = response.data.usershipCount;
 //         }
-//       );
+//       });
 //     });
+
+//     $timeout(function () {
+//       CKEDITOR.config.versionCheck = false;
+
+//       if (CKEDITOR.instances.mailEditor) {
+//         CKEDITOR.instances.mailEditor.destroy(true);
+//       }
+
+//       CKEDITOR.replace('mailEditor', {
+//         height: 150,
+//         removePlugins: 'elementspath',
+//         resize_enabled: false,
+//         allowedContent: true,
+//         extraAllowedContent: '*(*);*{*}',
+//       });
+//     }, 500);
+
 //     $scope.logout = function () {
 //       $window.localStorage.removeItem('sessionObject');
 //       $window.localStorage.removeItem('userRole');
@@ -1157,10 +1459,265 @@
 //       }, 2000);
 //       $window.location.reload();
 //     };
+
+//     $scope.confirmLogout = function () {
+//       Swal.fire({
+//         html: `<div class="logout-card">
+//                 <div class="logout-icon">
+//                     <i class="fa fa-sign-out"></i>
+//                 </div>
+//                 <h3>Logout</h3>
+//                 <p>Are you sure you want to logout?</p>
+//             </div>`,
+//         width: 480,
+//         showCancelButton: true,
+//         confirmButtonText: 'Logout',
+//         cancelButtonText: 'Cancel',
+//         confirmButtonColor: '#4a7be6',
+//       }).then(function (result) {
+//         if (result.isConfirmed) {
+//           $scope.logout();
+//         }
+//       });
+//     };
+
+//     // $scope.submitEmailRequest = function () {
+//     //   // Get latest CKEditor content before sending
+//     //   if (CKEDITOR.instances.mailEditor) {
+//     //     $scope.expDocUrlshare = CKEDITOR.instances.mailEditor.getData();
+//     //   }
+//     //   $scope.loader = true; // Start loader
+//     //   // Validate email address exists
+//     //   if (
+//     //     (!$scope.groupEmailForShare ||
+//     //       $scope.groupEmailForShare.trim() === '') &&
+//     //     (!$scope.pendingGroupData ||
+//     //       !$scope.pendingGroupData.emailId ||
+//     //       $scope.pendingGroupData.emailId.trim() === '')
+//     //   ) {
+//     //     toaster.pop('error', 'Error', 'Recipient email address is missing');
+//     //     $scope.loader = false;
+//     //     return;
+//     //   }
+
+//     //   // Validate email content exists
+//     //   if (!$scope.expDocUrlshare || $scope.expDocUrlshare.trim() === '') {
+//     //     toaster.pop('error', 'Error', 'Email content is missing');
+//     //     $scope.loader = false;
+//     //     return;
+//     //   }
+
+//     //   // Prepare email data
+//     //   var emailData = {
+//     //     to: ($scope.groupEmailForShare || $scope.pendingGroupData.emailId)
+//     //       .split(',')
+//     //       .map((e) => e.trim())
+//     //       .filter((e) => e.length > 0),
+//     //     subject: $scope.libshipNameDoc,
+//     //     body: $scope.expDocUrlshare,
+//     //   };
+
+//     //   // CREATE GROUP FLOW - Need to create group first, THEN send email
+//     //   if ($scope.pendingGroupData) {
+//     //     console.log('Creating new group and sending email...');
+
+//     //     // First create the group
+//     //     FunctionalityService.shareExpiryDoc(
+//     //       JSON.stringify($scope.pendingGroupData)
+//     //     )
+//     //       .then(function (groupResponse) {
+//     //         if (groupResponse.status === 200) {
+//     //           console.log('Group created successfully, now sending email...');
+
+//     //           // Now send the email
+//     //           return FunctionalityService.sendEmail(emailData);
+//     //         } else {
+//     //           throw new Error(
+//     //             'Failed to create group: ' +
+//     //               (groupResponse.data?.message || 'Unknown error')
+//     //           );
+//     //         }
+//     //       })
+//     //       .then(function (emailResponse) {
+//     //         if (emailResponse.status === 200) {
+//     //           toaster.pop('success', 'Success', 'Email sent successfully');
+//     //           $('#shareMail').modal('hide');
+//     //           // --- NEW: Reload the page after 1.5 seconds to clear checkboxes ---
+//     //           $timeout(function () {
+//     //             $window.reload(); // Cleanly reloads the Angular state
+//     //           }, 1500);
+//     //           $scope.pendingGroupData = null; // Clear pending data
+//     //         } else {
+//     //           throw new Error(
+//     //             'Email send failed: ' +
+//     //               (emailResponse.data?.message || 'Unknown error')
+//     //           );
+//     //         }
+//     //       })
+//     //       .catch(function (error) {
+//     //         console.error('Error in email flow:', error);
+//     //         toaster.pop(
+//     //           'error',
+//     //           'Error',
+//     //           error.message || 'Failed to send email'
+//     //         );
+//     //       })
+//     //       .finally(function () {
+//     //         $scope.loader = false;
+//     //       });
+//     //   }
+//     //   // EXISTING GROUP FLOW - Just send the email
+//     //   else {
+//     //     console.log('Sending email to existing group...');
+
+//     //     FunctionalityService.sendEmail(emailData)
+//     //       .then(function (response) {
+//     //         if (response.status === 200) {
+//     //           toaster.pop('success', 'Success', 'Email sent successfully');
+//     //           $('#shareMail').modal('hide');
+//     //         } else {
+//     //           throw new Error(
+//     //             'Email send failed: ' +
+//     //               (response.data?.message || 'Unknown error')
+//     //           );
+//     //         }
+//     //       })
+//     //       .catch(function (error) {
+//     //         console.error('Email send error:', error);
+//     //         toaster.pop(
+//     //           'error',
+//     //           'Error',
+//     //           error.message || 'Failed to send email'
+//     //         );
+//     //       })
+//     //       .finally(function () {
+//     //         $scope.loader = false;
+//     //       });
+//     //   }
+//     // };
+//     $scope.submitEmailRequest = function () {
+//       // Get latest CKEditor content before sending
+//       if (CKEDITOR.instances.mailEditor) {
+//         $scope.expDocUrlshare = CKEDITOR.instances.mailEditor.getData();
+//       }
+//       $scope.loader = true; // Start loader
+
+//       // Validate email address exists
+//       if (
+//         (!$scope.groupEmailForShare ||
+//           $scope.groupEmailForShare.trim() === '') &&
+//         (!$scope.pendingGroupData ||
+//           !$scope.pendingGroupData.emailId ||
+//           $scope.pendingGroupData.emailId.trim() === '')
+//       ) {
+//         toaster.pop('error', 'Error', 'Recipient email address is missing');
+//         $scope.loader = false;
+//         return;
+//       }
+
+//       // Validate email content exists
+//       if (!$scope.expDocUrlshare || $scope.expDocUrlshare.trim() === '') {
+//         toaster.pop('error', 'Error', 'Email content is missing');
+//         $scope.loader = false;
+//         return;
+//       }
+
+//       // Prepare email data
+//       var emailData = {
+//         to: ($scope.groupEmailForShare || $scope.pendingGroupData.emailId)
+//           .split(',')
+//           .map((e) => e.trim())
+//           .filter((e) => e.length > 0),
+//         subject: $scope.libshipNameDoc,
+//         body: $scope.expDocUrlshare,
+//       };
+
+//       // CREATE GROUP FLOW - Need to create group first, THEN send email
+//       if ($scope.pendingGroupData) {
+//         console.log('Creating new group and sending email...');
+
+//         // First create the group
+//         FunctionalityService.shareExpiryDoc(
+//           JSON.stringify($scope.pendingGroupData)
+//         )
+//           .then(function (groupResponse) {
+//             if (groupResponse.status === 200) {
+//               console.log('Group created successfully, now sending email...');
+//               // Now send the email
+//               return FunctionalityService.sendEmail(emailData);
+//             } else {
+//               throw new Error(
+//                 'Failed to create group: ' +
+//                   (groupResponse.data?.message || 'Unknown error')
+//               );
+//             }
+//           })
+//           .then(function (emailResponse) {
+//             if (emailResponse.status === 200) {
+//               toaster.pop('success', 'Success', 'Email sent successfully');
+//               $('#shareMail').modal('hide');
+//               $scope.pendingGroupData = null; // Clear pending data
+
+//               // --- NEW: Reload the page after 1.5 seconds to clear checkboxes ---
+//               $timeout(function () {
+//                 $state.reload(); // Cleanly reloads the Angular state
+//               }, 1500);
+//             } else {
+//               throw new Error(
+//                 'Email send failed: ' +
+//                   (emailResponse.data?.message || 'Unknown error')
+//               );
+//             }
+//           })
+//           .catch(function (error) {
+//             console.error('Error in email flow:', error);
+//             toaster.pop(
+//               'error',
+//               'Error',
+//               error.message || 'Failed to send email'
+//             );
+//           })
+//           .finally(function () {
+//             $scope.loader = false;
+//           });
+//       }
+//       // EXISTING GROUP FLOW - Just send the email
+//       else {
+//         console.log('Sending email to existing group...');
+
+//         FunctionalityService.sendEmail(emailData)
+//           .then(function (response) {
+//             if (response.status === 200) {
+//               toaster.pop('success', 'Success', 'Email sent successfully');
+//               $('#shareMail').modal('hide');
+
+//               // --- NEW: Reload the page after 1.5 seconds to clear checkboxes ---
+//               $timeout(function () {
+//                 $state.reload(); // Cleanly reloads the Angular state
+//               }, 1500);
+//             } else {
+//               throw new Error(
+//                 'Email send failed: ' +
+//                   (response.data?.message || 'Unknown error')
+//               );
+//             }
+//           })
+//           .catch(function (error) {
+//             console.error('Email send error:', error);
+//             toaster.pop(
+//               'error',
+//               'Error',
+//               error.message || 'Failed to send email'
+//             );
+//           })
+//           .finally(function () {
+//             $scope.loader = false;
+//           });
+//       }
+//     };
 //   },
 // ]);
 
-// //Directive for File Upload
 // userVesselDocEBD.directive('fileModel', [
 //   '$parse',
 //   function ($parse) {
@@ -1169,7 +1726,6 @@
 //       link: function (scope, element, attrs) {
 //         var model = $parse(attrs.fileModel);
 //         var modelSetter = model.assign;
-
 //         element.bind('change', function () {
 //           scope.$apply(function () {
 //             modelSetter(scope, element[0].files[0]);
@@ -1179,15 +1735,15 @@
 //     };
 //   },
 // ]);
+
 // userVesselDocEBD.directive('customFocus', [
 //   function () {
-//     var FOCUS_CLASS = 'custom-focused'; //Toggle a class and style that!
+//     var FOCUS_CLASS = 'custom-focused';
 //     return {
-//       restrict: 'A', //Angular will only match the directive against attribute names
+//       restrict: 'A',
 //       require: 'ngModel',
 //       link: function (scope, element, attrs, ctrl) {
 //         ctrl.$focused = false;
-
 //         element
 //           .bind('focus', function (evt) {
 //             element.addClass(FOCUS_CLASS);
@@ -1238,49 +1794,70 @@ userVesselDocEBD.controller('UserVesselDocumentEBDController', [
     $sce,
     FunctionalityService
   ) {
-    // --- INITIALIZATIONS (Prevents Blank Screen Crashes) ---
-    $scope.expiryDocumentHolderList = [];
-    $scope.expiryDocumentHolderListFilter = []; // Fixed Spelling
-    $scope.notificationList = []; // Added to prevent repeat crash
-    $scope.vesselList = [];
-    $scope.selctedExpiredDocumentList = [];
-    $scope.selectedDocumentHolderIds = [];
-    $scope.searchEBD = ''; // Initialize filter string
-    $scope.itemsPerPage = 10; // Default pagination size
-    $scope.currentPage = 1;
+    $scope.sessionObject = JSON.parse(
+      $window.localStorage.getItem('sessionObject')
+    );
+    $scope.libShipId;
+    $scope.libshipName;
     $scope.loader = false;
 
-    $scope.sessionObject = JSON.parse(
-      $window.localStorage.getItem('sessionObject') || '{}'
-    );
-    $scope.libShipId = '';
-    $scope.libshipName = '';
-    $scope.group = {};
-    $scope.vesselSelectedList = [];
+    $scope.group = {
+      vesselSelectedList: [],
+    };
+
     $scope.formattedIssueDate = '';
     $scope.formattedExpiryDate = '';
     $scope.formattedlastAnnual = '';
     $scope.formattednextAnnual = '';
     $scope.issuingAuthority = '';
     $scope.notfound = true;
+    $scope.currentPage = 1;
     $scope.viewby = 73;
     $scope.roleIdForView = $scope.sessionObject.roleId;
     $scope.itemsPerPageForHistory = $scope.viewby;
+    itemsPerPageHistory = $scope.viewby;
     $scope.activeText = 'Active';
 
     if ($scope.sessionObject.roleId != 3) {
       $scope.libShipId = $window.localStorage.getItem('libShipId');
       $scope.libshipName = $window.localStorage.getItem('libshipName');
       $scope.libshipNameDoc = $scope.libshipName + ' ' + 'Documents';
-    } else if (
-      $scope.sessionObject.shipProfileInfos &&
-      $scope.sessionObject.shipProfileInfos.length > 0
-    ) {
+    } else if ($scope.sessionObject.shipProfileInfos.length > 0) {
       $scope.libShipId = $scope.sessionObject.shipProfileInfos[0].id;
       $scope.libshipName = $scope.sessionObject.shipProfileInfos[0].shipName;
     }
 
-    // --- API DATA FETCHING ---
+    $scope.oldAndNewExpDocWithoutDub = [];
+    $scope.selctedcheckboxlst = [];
+    $scope.expiryDocumentHolderList = [];
+    $scope.expiryDocumentHolderListLen = $scope.expiryDocumentHolderList.length;
+
+    $scope.viewDocumentObjectInfo;
+    $scope.viewDocumentUrl;
+    $scope.historyEBDObject;
+
+    $rootScope.convertedFile = '';
+    $rootScope.uploadDocFile;
+    $scope.loader = false;
+    $rootScope.dcoumentHolderName;
+    $rootScope.docId;
+    $scope.documentHolderHistory = [];
+    $scope.documentHolderHistoryLength = $scope.documentHolderHistory.length;
+    $scope.groupTagExpiryDoc;
+    $scope.groupListExpiry;
+    $scope.shareExpDoc = [];
+    $scope.records = false;
+
+    $scope.selectedDocumentHolderIds = [];
+    $scope.oldAndNewExpDocWithoutDub = [];
+    $scope.vesselList = [];
+    $scope.expiryDocumentHolderListFileter = [];
+    $scope.VesselListLenEBD = $scope.vesselList.length;
+
+    $scope.userDetails = function () {
+      $state.go('dapp.userProfile');
+    };
+
     $scope.getAllExpiryList = function () {
       $scope.loader = true;
       var archivedStatus = 0;
@@ -1290,172 +1867,1272 @@ userVesselDocEBD.controller('UserVesselDocumentEBDController', [
       ).then(
         function (response) {
           if (response.status == 200 || response.status == 201) {
-            $scope.expiryDocumentHolderList =
-              response.data.expiryDocumentList || [];
-            // FIX: Using corrected spelling 'Filter'
-            $scope.expiryDocumentHolderListFilter =
+            $scope.expiryDocumentHolderList = response.data.expiryDocumentList;
+            $scope.expiryDocumentHolderListFileter =
               $scope.expiryDocumentHolderList;
             $scope.expiryDocumentHolderListLen =
               $scope.expiryDocumentHolderList.length;
+            $scope.loader = false;
+
+            // --- REDIRECTION FILTER LOGIC START ---
+            var savedStatus = $window.localStorage.getItem(
+              'redirectFilterStatus'
+            );
+            if (savedStatus) {
+              $scope.documentTypeFilter(savedStatus);
+              $scope.selectStatus = savedStatus;
+              $window.localStorage.removeItem('redirectFilterStatus');
+            }
+            // --- REDIRECTION FILTER LOGIC END ---
           }
-          $scope.loader = false;
         },
         function myError(err) {
           $scope.loader = false;
-          $scope.records = $scope.expiryDocumentHolderList.length == 0;
-          console.error('Error response', err);
+          if ($scope.expiryDocumentHolderList.length == 0) {
+            $scope.records = true;
+          } else {
+            $scope.records = false;
+          }
+          console.log('Error response', err);
         }
       );
-
       var data1 = {
         userId: $scope.sessionObject.userId,
         roleId: $scope.sessionObject.roleId,
       };
-      FunctionalityService.getVesselProfileList(data1).then(
+
+      FunctionalityService.getShipProfileList($scope.sessionObject.userId).then(
         function (response) {
           if (response.status == 200) {
-            angular.forEach(response.data.shipProfileList, function (val) {
-              if (val.id != $scope.libShipId) $scope.vesselList.push(val);
-            });
+            $scope.vesselList = response.data.shipProfileList;
           }
+        },
+        function myError(err) {
+          console.log('Error response', err);
         }
       );
     };
 
-    // --- DOCUMENT HANDLING ---
-    $scope.uploadFile = function () {
-      toaster.clear();
-      $rootScope.convertedFile = '';
-      if ($scope.myFile != undefined) {
-        $scope.loader = true;
-        if ($scope.myFile.size < 20971520) {
-          $rootScope.uploadDocFile = $scope.myFile;
-          // FIX: Trust local URL for preview
-          $rootScope.convertedFile = $sce.trustAsResourceUrl(
-            URL.createObjectURL($scope.myFile)
-          );
+    $scope.getAllGroupList = function () {
+      $scope.loader = true;
 
-          FunctionalityService.scanExpiryDocument(
-            $rootScope.uploadDocFile
-          ).then(function (response) {
-            $scope.loader = false;
-            if (response.status == 200 || response.status == 201) {
-              $('#fileupload').modal('hide');
-              if (response.data.expiryDocumentDTOs) {
-                $scope.libcreate = response.data.expiryDocumentDTOs;
-              }
-              $('#createEBD').modal('toggle');
-            }
-          });
-        } else {
-          toaster.info({ title: 'File too large (Max 20MB)' });
+      var groupdata = {
+        userProfileId: $scope.sessionObject.userId,
+        shipId: $scope.libShipId,
+      };
+
+      FunctionalityService.getGroupListShip(groupdata).then(
+        function (response) {
+          $scope.loader = false;
+
+          if (response.status == 200) {
+            $scope.message = JSON.stringify(response.data.groupList);
+            $scope.groupList = response.data.groupList;
+            $scope.groupListLength = $scope.groupList.length;
+          }
+        },
+        function myError(err) {
+          $scope.loader = false;
+          console.log('Error response', err);
         }
-      }
+      );
     };
+
+    $scope.faq = function () {};
+
+    $scope.saveAsDraft = function () {
+      $scope.loader = true;
+
+      var draftData = {
+        certificateNumber: $scope.libcreate.certificateNumber,
+        placeOfIssue: $scope.libcreate.placeOfIssue,
+        issueDate: $scope.dateConversion($scope.libcreate.dateOfIssue),
+        expiryDate: $scope.dateConversion($scope.libcreate.dateOfExpiry),
+        lastAnnual: $scope.dateConversion($scope.libcreate.lastAnnual),
+        nextAnnual: $scope.dateConversion($scope.libcreate.nextAnnual),
+        uploadedUserId: $scope.sessionObject.userId,
+        shipProfileId: $scope.libShipId,
+        documentHolderId: $rootScope.docId,
+        remarks: $scope.libcreate.remarks,
+        issuingAuthority: $scope.issuingAuthority,
+        draftId: $scope.currentDraftId || null,
+        documentDataId: $scope.currentDocumentDataId || null,
+        isDraft: true,
+      };
+
+      FunctionalityService.saveDraftDocument(
+        JSON.stringify(draftData),
+        $rootScope.uploadDocFile
+      ).then(
+        function (response) {
+          $scope.loader = false;
+          if (response.status == 200) {
+            $('#createEBD').modal('hide');
+            $scope.clearFields();
+            $scope.getAllExpiryList();
+            toaster.success({ title: 'Draft saved successfully' });
+          }
+        },
+        function (err) {
+          $scope.loader = false;
+          toaster.error({ title: 'Failed to save draft' });
+        }
+      );
+    };
+
+    $scope.uploadFile = function () {
+      if (!$scope.myFile) return;
+
+      $rootScope.convertedFile = $sce.trustAsResourceUrl(
+        URL.createObjectURL($scope.myFile)
+      );
+      $rootScope.uploadDocFile = $scope.myFile;
+
+      $scope.isScanning = true;
+      $scope.libcreate = {};
+      $scope.issuingAuthority = '';
+
+      $('#fileupload').modal('hide');
+      $('#createEBD').modal('show');
+
+      FunctionalityService.scanExpiryDocument($scope.myFile).then(
+        function (response) {
+          $timeout(function () {
+            $scope.isScanning = false;
+
+            if (response.status == 200 || response.status == 201) {
+              var scannedData = response.data.expiryDocumentDTOs;
+              if (scannedData != null) {
+                $scope.issuingAuthority = scannedData.issuingAuthority || '';
+                $scope.libcreate.certificateNumber =
+                  scannedData.certificateNumber || '';
+                $scope.libcreate.placeOfIssue = scannedData.placeOfIssue || '';
+                $scope.libcreate.remarks = scannedData.remarks || '';
+
+                if (scannedData.issueDateString) {
+                  $scope.libcreate.dateOfIssue = moment(
+                    scannedData.issueDateString,
+                    'DD-MM-YYYY'
+                  ).format('DD-MM-YYYY');
+                }
+                if (scannedData.expiryDateString) {
+                  $scope.libcreate.dateOfExpiry = moment(
+                    scannedData.expiryDateString,
+                    'DD-MM-YYYY'
+                  ).format('DD-MM-YYYY');
+                }
+
+                $scope.libcreate.lastAnnual = '';
+                $scope.libcreate.nextAnnual = '';
+              }
+            }
+          }, 500);
+        },
+        function (error) {
+          $scope.isScanning = false;
+          toaster.error({ title: 'Extraction failed, please fill manually.' });
+        }
+      );
+    };
+    $scope.clearFileField = function () {
+      $('#filename').val('');
+      $scope.loader = false;
+      $scope.isDisabled = false;
+    };
+
+    $scope.storeDocumentholder = function (obj) {
+      $rootScope.dcoumentHolderName = obj.documentHolderName;
+      $rootScope.docId = obj.documentHolderId;
+      $scope.clearFileField();
+    };
+
+    $scope.createDocument = function () {
+      $scope.loader = true;
+
+      $scope.formattedIssueDate = $scope.dateConversion(
+        $scope.libcreate.dateOfIssue
+      );
+      $scope.formattedExpiryDate = $scope.dateConversion(
+        $scope.libcreate.dateOfExpiry
+      );
+      $scope.formattedlastAnnual = $scope.dateConversion(
+        $scope.libcreate.lastAnnual
+      );
+      $scope.formattednextAnnual = $scope.dateConversion(
+        $scope.libcreate.nextAnnual
+      );
+
+      $scope.saveData = {
+        certificateNumber: $scope.libcreate.certificateNumber,
+        placeOfIssue: $scope.libcreate.placeOfIssue,
+        issueDate: $scope.formattedIssueDate,
+        expiryDate: $scope.formattedExpiryDate,
+        lastAnnual: $scope.formattedlastAnnual,
+        nextAnnual: $scope.formattednextAnnual,
+        uploadedUserId: $scope.sessionObject.userId,
+        loginId: $scope.sessionObject.userId,
+        shipProfileId: $scope.libShipId,
+        documentHolderId: $rootScope.docId,
+        remarks: $scope.libcreate.remarks,
+        issuingAuthority: $scope.issuingAuthority,
+        draftId: $scope.currentDraftId || null,
+        documentDataId: $scope.currentDocumentDataId || null,
+        isDraft: false,
+      };
+
+      FunctionalityService.saveExpiryDocument(
+        JSON.stringify($scope.saveData),
+        $rootScope.uploadDocFile
+      ).then(
+        function (response) {
+          $scope.loader = false;
+
+          if (response.status == 200 || response.status == 201) {
+            $('#createEBD').modal('hide');
+            $('#filename').val('');
+            $rootScope.uploadDocFile = '';
+            $scope.clearFields();
+            $scope.getAllExpiryList();
+            toaster.clear();
+            toaster.success({ title: response.data.message });
+          } else {
+            toaster.clear();
+            toaster.error({ title: response.data.message });
+          }
+        },
+        function myError(err) {
+          $scope.loader = false;
+          console.log('Error response', err);
+        }
+      );
+    };
+
+    $scope.dateConversion = function (day) {
+      if (!day || day == '') {
+        return null;
+      }
+      var stringDate1 = day;
+      var splitDate1 = stringDate1.split('-');
+      var day1 = splitDate1[0];
+      var month1 = splitDate1[1];
+      var year1 = splitDate1[2];
+      return year1 + '-' + month1 + '-' + day1;
+    };
+
+    $scope.cancelExpiry = function () {
+      $('#viewExpiryDocument').modal('hide');
+    };
+
+    $scope.updateExpiryDoc = function () {
+      $scope.loader = true;
+
+      if (
+        $scope.issueDateStringEdit != '' &&
+        $scope.issueDateStringEdit != undefined
+      ) {
+        $scope.formattedIssueDate = $scope.dateConversion(
+          $scope.issueDateStringEdit
+        );
+      }
+      if (
+        $scope.expiryDateStringEdit != '' &&
+        $scope.expiryDateStringEdit != undefined
+      ) {
+        $scope.formattedExpiryDate = $scope.dateConversion(
+          $scope.expiryDateStringEdit
+        );
+      }
+      if (
+        $scope.lastAnnualStringEdit != '' &&
+        $scope.lastAnnualStringEdit != undefined
+      ) {
+        $scope.formattedlastAnnual = $scope.dateConversion(
+          $scope.lastAnnualStringEdit
+        );
+      }
+      if (
+        $scope.nextAnnualStringEdit != '' &&
+        $scope.nextAnnualStringEdit != undefined
+      ) {
+        $scope.formattednextAnnual = $scope.dateConversion(
+          $scope.nextAnnualStringEdit
+        );
+      }
+
+      var data = {
+        id: $scope.docId,
+        certificateNumber: $scope.certificateNumberEdit,
+        placeOfIssue: $scope.placeOfIssueEdit,
+        issueDate: $scope.formattedIssueDate,
+        expiryDate: $scope.formattedExpiryDate,
+        lastAnnual: $scope.formattedlastAnnual,
+        nextAnnual: $scope.formattednextAnnual,
+        loginId: $scope.sessionObject.userId,
+        uploadedUserId: $scope.sessionObject.userId,
+        shipProfileId: $scope.libShipId,
+        documentHolderId: $scope.docHolderId,
+        remarks: $scope.remarksEdit,
+        issuingAuthority: $scope.issuingAuthorityEdit,
+      };
+
+      FunctionalityService.updateExpiryDocument(data).then(
+        function (response) {
+          $scope.loader = false;
+
+          if (response.status == 200 || response.status == 201) {
+            $('#viewExpiryDocument').modal('hide');
+            $scope.getAllExpiryList();
+            $timeout(function () {
+              toaster.clear();
+              toaster.success({ title: response.data.message });
+            }, 1000);
+          } else {
+            toaster.clear();
+            toaster.error({ title: response.data.message });
+          }
+        },
+        function myError(err) {
+          $scope.loader = false;
+          toaster.error({ title: 'Error updating document' });
+          console.log('Error response', err);
+        }
+      );
+    };
+
+    $scope.clearFields = function () {
+      $scope.libcreate.certificateNumber = '';
+      $scope.libcreate.placeOfIssue = '';
+      $scope.libcreate.dateOfIssue = '';
+      $scope.libcreate.dateOfExpiry = '';
+      $scope.libcreate.lastAnnual = '';
+      $scope.libcreate.nextAnnual = '';
+      $scope.libcreate.remarks = '';
+      $scope.issuingAuthority = '';
+      $('#filename').val('');
+      $scope.loader = false;
+      $scope.uploadDocFile = '';
+      $scope.currentDraftId = null;
+      $scope.currentDocumentDataId = null;
+    };
+
+    $scope.handleDraftClick = function (doc) {
+      Swal.fire({
+        html: `<div class="logout-card">
+                <div class="logout-icon">
+                    <i class="fa fa-file-text-o"></i>
+                </div>
+                <h3>Draft Available</h3>
+                <p>Do you want to resume your saved draft or upload a completely new document?</p>
+            </div>`,
+        width: 480,
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonColor: '#4a7be6',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Resume Draft',
+        cancelButtonText: 'Upload New',
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          $scope.$apply(function () {
+            $scope.resumeDraft(doc);
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          $scope.$apply(function () {
+            $scope.currentDraftId = doc.draftId;
+            $scope.currentDocumentDataId = null;
+            $scope.storeDocumentholder(doc);
+            $('#fileupload').modal('show');
+          });
+        }
+      });
+    };
+    $scope.closeViewPopup = function () {};
 
     $scope.viewExpiryDocumentInformation = function (documentObj) {
-      $timeout(function () {
-        $('#viewExpiryDocument').modal('show');
-        $scope.viewDocumentObjectInfo = documentObj;
-        $scope.docId = documentObj.id;
+      $scope.viewDocumentObjectInfo = documentObj;
+      $scope.docId = documentObj.id;
+      $scope.docHolderId = documentObj.documentHolderId;
 
-        // FIX: Securely trust the External URL
-        $scope.viewDocumentUrl = $sce.trustAsResourceUrl(
-          documentObj.documentPreviewUrl
-        );
+      $scope.viewDocumentUrl = $sce.trustAsResourceUrl(
+        documentObj.documentPreviewUrl
+      );
 
-        // Force iframe update
-        var pdfViewerEmbed = document.getElementById('embedContainer');
-        if (pdfViewerEmbed) {
-          pdfViewerEmbed.setAttribute('src', $scope.viewDocumentUrl);
-        }
+      $scope.certificateNumberEdit = documentObj.certificateNumber;
+      $scope.issuingAuthorityEdit = documentObj.issuingAuthority;
+      $scope.placeOfIssueEdit = documentObj.placeOfIssue;
+      $scope.issueDateStringEdit = documentObj.issueDateString;
+      $scope.expiryDateStringEdit = documentObj.expiryDateString;
+      $scope.lastAnnualStringEdit = documentObj.lastAnnualString;
+      $scope.nextAnnualStringEdit = documentObj.nextAnnualString;
+      $scope.remarksEdit = documentObj.remarks;
 
-        $scope.certificateNumberEdit = documentObj.certificateNumber;
-        $scope.issuingAuthorityEdit = documentObj.issuingAuthority;
-        $scope.placeOfIssueEdit = documentObj.placeOfIssue;
-        $scope.issueDateStringEdit = documentObj.issueDateString;
-        $scope.expiryDateStringEdit = documentObj.expiryDateString;
-        $scope.lastAnnualStringEdit = documentObj.lastAnnualString;
-        $scope.nextAnnualStringEdit = documentObj.nextAnnualString;
-        $scope.remarksEdit = documentObj.remarks;
-      }, 500);
+      $('#viewExpiryDocument').modal('show');
     };
 
-    // --- SELECTION LOGIC (Safe from undefined) ---
+    $scope.openHistoryPopup = function (documentObj) {
+      $scope.loader = true;
+
+      $('#historyEBD').modal('toggle');
+      $scope.historyEBDObject = documentObj;
+      var historyRequest = {
+        documentHolderId: documentObj.documentHolderId,
+        shipProfileId: $scope.libShipId,
+      };
+      FunctionalityService.getDocumentHolderHistory(historyRequest).then(
+        function (response) {
+          $scope.loader = false;
+
+          if (response.status == 200 || response.status == 201) {
+            $scope.documentHolderHistory = response.data.expiryDocumentList;
+            $scope.documentHolderHistoryLength =
+              $scope.documentHolderHistory.length;
+          }
+        },
+        function myError(err) {
+          $scope.loader = false;
+          console.log('Error response', err);
+        }
+      );
+    };
+
+    $scope.openGroupTagEBDPopup = function (expiryDataObj) {
+      if ($scope.selctedExpiredDocumentList.length > 0) {
+        $scope.groupTagExpiryDocList = angular.copy(
+          $scope.selctedExpiredDocumentList
+        );
+      } else if (expiryDataObj) {
+        $scope.groupTagExpiryDocList = [expiryDataObj];
+      } else {
+        toaster.clear();
+        toaster.info({
+          title: 'Please select the document before tagging',
+        });
+        return;
+      }
+      $scope.loader = true;
+
+      var groupdata = {
+        userProfileId: $scope.sessionObject.userId,
+        shipId: $scope.libShipId,
+      };
+      FunctionalityService.getGroupListShip(groupdata).then(
+        function (response) {
+          $scope.loader = false;
+          if (response.status == 200) {
+            $scope.groupListExpiry = response.data.groupList;
+            $('#tagGroupPopup').modal('show');
+          }
+        },
+        function (err) {
+          $scope.loader = false;
+          console.log('Error response', err);
+        }
+      );
+    };
+
+    $scope.resumeDraft = function (doc) {
+      $rootScope.dcoumentHolderName = doc.documentHolderName;
+      $rootScope.docId = doc.documentHolderId;
+
+      $scope.currentDraftId = doc.draftId;
+      $scope.currentDocumentDataId = doc.documentDataId;
+
+      $scope.libcreate = {
+        certificateNumber: doc.certificateNumber,
+        placeOfIssue: doc.placeOfIssue,
+        dateOfIssue: doc.issueDateString,
+        dateOfExpiry: doc.expiryDateString,
+        lastAnnual: doc.lastAnnualString,
+        nextAnnual: doc.nextAnnualString,
+        remarks: doc.remarks,
+      };
+      $scope.issuingAuthority = doc.issuingAuthority;
+
+      if (doc.documentPreviewUrl) {
+        $rootScope.convertedFile = $sce.trustAsResourceUrl(
+          doc.documentPreviewUrl
+        );
+      }
+      $rootScope.uploadDocFile = null;
+      $scope.isScanning = false;
+
+      $('#createEBD').modal('show');
+    };
+
+    $scope.tagExpiryDocumentToGRoup = function () {
+      if (
+        !$scope.groupTagExpiryDocList ||
+        $scope.groupTagExpiryDocList.length === 0
+      ) {
+        toaster.error({ title: 'No document selected' });
+        return;
+      }
+
+      $scope.loader = true;
+
+      var documentHolderIds = [];
+
+      angular.forEach($scope.groupTagExpiryDocList, function (doc) {
+        documentHolderIds.push(doc.documentHolderId);
+      });
+
+      var payload = {
+        groupId: $scope.gorupSelected,
+        userProfileId: $scope.sessionObject.userId,
+        documentHolderIds: documentHolderIds,
+        loginId: $scope.sessionObject.userId,
+      };
+
+      FunctionalityService.addMultipleExpiryDocToGroup(payload).then(
+        function (response) {
+          $scope.loader = false;
+
+          if (response.status == 200) {
+            $('#tagGroupPopup').modal('hide');
+
+            toaster.success({
+              title: 'Documents tagged successfully',
+            });
+
+            $scope.checkall = false;
+            $scope.selctedExpiredDocumentList = [];
+            $scope.groupTagExpiryDocList = [];
+          } else {
+            toaster.error({
+              title: response.data.message,
+            });
+          }
+        },
+        function (err) {
+          $scope.loader = false;
+          console.log(err);
+        }
+      );
+    };
+
+    $scope.clearTagDocumentFields = function () {
+      $scope.gorupSelected = '';
+    };
+
+    $scope.close = function () {};
+
+    $scope.selctedExpiredDocumentList = [];
+
     $scope.checkUncheckAll = function () {
       $scope.selctedExpiredDocumentList = [];
       $scope.selectedDocumentHolderIds = [];
+      if ($scope.checkall) {
+        $scope.checkall = true;
+        angular.forEach($scope.expiryDocumentHolderList, function (value) {
+          if (value.id != undefined) {
+            $scope.selctedExpiredDocumentList.push(value);
+            $scope.selectedDocumentHolderIds.push(value.documentHolderId);
+          }
+        });
+      } else {
+        $scope.checkall = false;
+      }
+      angular.forEach($scope.expiryDocumentHolderList, function (user) {
+        user.checked = $scope.checkall;
+      });
+    };
 
-      // Safety: Use (list || [])
-      var list = $scope.expiryDocumentHolderListFilter || [];
-
-      angular.forEach(list, function (item) {
-        item.checked = $scope.checkall;
-        if (item.checked && item.id != undefined) {
+    $scope.updateCheckall = function ($index, user) {
+      var userTotal = $scope.expiryDocumentHolderList.length;
+      var count = 0;
+      $scope.selctedExpiredDocumentList = [];
+      $scope.selectedDocumentHolderIds = [];
+      angular.forEach($scope.expiryDocumentHolderList, function (item) {
+        if (item.checked) {
+          count++;
           $scope.selctedExpiredDocumentList.push(item);
           $scope.selectedDocumentHolderIds.push(item.documentHolderId);
         }
       });
+      if (userTotal == count) {
+        $scope.checkall = true;
+      } else {
+        $scope.checkall = false;
+      }
     };
 
-    // --- FILTERING LOGIC (Fixed Typo Version) ---
+    $scope.groupExpiryDoclist = [];
+
+    $scope.viewGroup = function (group) {
+      $scope.loader = true;
+      $scope.groupExpiryDoclist = [];
+
+      $scope.groupEmailForShare = group.emailId;
+      $scope.groupIdForShare = group.id;
+
+      FunctionalityService.viewGroup(group.id).then(
+        function (response) {
+          $scope.loader = false;
+
+          var groupInfo = response.data.groupInfo || {};
+
+          $scope.groupExpiryDoclist = groupInfo.expiryDocumentDtos || [];
+
+          console.log('Loaded group docs:', $scope.groupExpiryDoclist);
+
+          $scope.showUpdateIngroupCheck = true;
+        },
+        function (err) {
+          $scope.loader = false;
+          console.log('Error response', err);
+        }
+      );
+    };
+
+    $scope.IsVisible = false;
+    $scope.ShowCreateGroup = function () {
+      $scope.IsVisible = true;
+      $scope.groupExpiryDoclist = [];
+      $scope.groupIdForShare = '';
+      $scope.showUpdateIngroupCheck = true;
+    };
+
+    $scope.$watch(
+      'group.vesselSelectedList',
+      function (newVal) {
+        if (newVal && newVal.length > 0) {
+          $scope.groupExpiryDoclist = [];
+          angular.forEach(newVal, function (vessel) {
+            FunctionalityService.getAllExpiryDocumentList(vessel.id, 0).then(
+              function (response) {
+                if (response.status === 200) {
+                  angular.forEach(
+                    response.data.expiryDocumentList,
+                    function (doc) {
+                      if (doc.id != null && doc.documentStatus === 'Approved') {
+                        var exists = $scope.groupExpiryDoclist.some(
+                          function (d) {
+                            return d.id === doc.id;
+                          }
+                        );
+                        if (!exists) {
+                          $scope.groupExpiryDoclist.push(doc);
+                        }
+                      }
+                    }
+                  );
+                }
+              },
+              function (err) {
+                console.log('Error loading ship documents', err);
+              }
+            );
+          });
+        }
+      },
+      true
+    );
+
+    $scope.showTable = function () {
+      if ($scope.groupSearch != undefined) {
+        if ($scope.groupSearch != '') {
+          $scope.showUpdateIngroupCheck = false;
+          $scope.showgroup = true;
+        }
+      }
+    };
+
+    $scope.$watch('groupSearch', function (query) {
+      $scope.groupSearchlength = $filter('filter')($scope.groupList, query);
+      if ($scope.groupSearchlength <= 0) {
+        $scope.createbutton = true;
+        $scope.groupExpiryDoclist = [];
+        $scope.showUpdateIngroupCheck = false;
+      } else {
+        $scope.createbutton = false;
+        $scope.IsVisible = false;
+        $scope.showUpdateIngroupCheck = false;
+        $scope.showgroup = false;
+        $scope.groupExpiryDoclist = [];
+      }
+    });
+
+    $scope.expirydata = [];
+    $scope.getExpiryDocument = function (ship) {
+      $scope.loader = true;
+
+      var archivedStatus = 0;
+      FunctionalityService.getAllExpiryDocumentList(ship, archivedStatus).then(
+        function (response) {
+          $scope.loader = false;
+
+          if (response.status == 200 || response.status == 201) {
+            $scope.expirydata = [];
+            angular.forEach(response.data.expiryDocumentList, function (value) {
+              if (value.id != null && value.documentStatus == 'Approved')
+                $scope.expirydata.push(value);
+            });
+            $scope.totalItems = $scope.expirydata.length;
+          } else {
+            toaster.clear();
+            toaster.error({ title: response.data.message });
+          }
+        },
+        function myError(err) {
+          $scope.loader = false;
+          console.log('Error response', err);
+        }
+      );
+    };
+
+    $scope.sharePopup = function () {
+      if ($scope.selctedExpiredDocumentList.length > 0) {
+        $('#sharepopup').modal('toggle');
+        $scope.selctedcheckboxlst = angular.copy(
+          $scope.selctedExpiredDocumentList
+        );
+
+        $scope.selecetedCheckBoxValue = function (
+          selctedExpiredDocumentList,
+          active
+        ) {
+          if (active) {
+            $scope.selctedcheckboxlst.push(selctedExpiredDocumentList);
+          } else {
+            $scope.selctedcheckboxlst.splice(
+              $scope.selctedcheckboxlst.indexOf(selctedExpiredDocumentList),
+              1
+            );
+          }
+        };
+      } else {
+        toaster.clear();
+        toaster.info({
+          title: 'Please select the document before click share',
+        });
+      }
+    };
+
+    $scope.shareexpirydocument = function (group) {
+      var sortDocumentsByNumber = function (a, b) {
+        var numA = parseInt(a.documentHolderName.match(/\d+/)) || 0;
+        var numB = parseInt(b.documentHolderName.match(/\d+/)) || 0;
+        return numA - numB;
+      };
+
+      if ($scope.groupIdForShare != '') {
+        if ($scope.groupIdForShare != undefined) {
+          $scope.checkedUsers = [];
+          angular.forEach($scope.groupExpiryDoclist, function (user) {
+            if (user.Selected) {
+              $scope.shareExpDoc.push(user);
+            }
+          });
+
+          $scope.oldAndNewExpDocWithoutDub = [];
+          $scope.oldAndNewExpDoc = $scope.selctedcheckboxlst.concat(
+            $scope.shareExpDoc
+          );
+          angular.forEach($scope.oldAndNewExpDoc, function (value, key) {
+            var exists = false;
+            angular.forEach(
+              $scope.oldAndNewExpDocWithoutDub,
+              function (val2, key) {
+                if (angular.equals(value.id, val2.id)) {
+                  exists = true;
+                }
+              }
+            );
+            if (exists == false && value.id != '') {
+              $scope.oldAndNewExpDocWithoutDub.push(value);
+            }
+          });
+
+          $scope.documentHolderIds = [];
+          angular.forEach($scope.oldAndNewExpDoc, function (value, key) {
+            $scope.documentHolderIds.push(value.documentHolderId);
+          });
+
+          if ($scope.updateInGroup == true) {
+            var addexdoctogroup = {
+              groupId: $scope.groupIdForShare,
+              userProfileId: $scope.sessionObject.userId,
+              documentHolderIds: $scope.documentHolderIds,
+              loginId: $scope.sessionObject.userId,
+            };
+
+            FunctionalityService.updateshareExpiryDoc(
+              JSON.stringify(addexdoctogroup)
+            ).then(
+              function (response) {
+                $scope.loader = false;
+
+                if (response.status == 200) {
+                  $scope.expDocUrl = '';
+                  var hasExistingSelection = false;
+
+                  $scope.groupExpiryDoclist.sort(sortDocumentsByNumber);
+                  $scope.selctedcheckboxlst.sort(sortDocumentsByNumber);
+
+                  angular.forEach($scope.groupExpiryDoclist, function (value) {
+                    if (value.Selected) {
+                      hasExistingSelection = true;
+                    }
+                  });
+
+                  if (hasExistingSelection) {
+                    angular.forEach(
+                      $scope.groupExpiryDoclist,
+                      function (value) {
+                        if (value.Selected) {
+                          $scope.expDocUrl +=
+                            '<strong>' +
+                            value.documentHolderName +
+                            ':</strong><br>' +
+                            '<a href="' +
+                            value.documentDownloadUrl +
+                            '">' +
+                            value.documentDownloadUrl +
+                            '</a><br><br>';
+                        }
+                      }
+                    );
+                  } else {
+                    angular.forEach(
+                      $scope.selctedcheckboxlst,
+                      function (value) {
+                        if (value) {
+                          $scope.expDocUrl +=
+                            '<strong>' +
+                            value.documentHolderName +
+                            ':</strong><br>' +
+                            '<a href="' +
+                            value.documentDownloadUrl +
+                            '">' +
+                            value.documentDownloadUrl +
+                            '</a><br><br>';
+                        }
+                      }
+                    );
+                  }
+
+                  $scope.expDocUrlshare =
+                    $scope.expDocUrl +
+                    '<br><br>Note: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.';
+                  $('#sharepopup').modal('hide');
+                  $('#shareMail').modal('show');
+
+                  $timeout(function () {
+                    if (CKEDITOR.instances.mailEditor) {
+                      CKEDITOR.instances.mailEditor.setData(
+                        $scope.expDocUrlshare || ''
+                      );
+                    }
+                  }, 300);
+                } else {
+                  toaster.error('Problem in sharing expiry document');
+                }
+              },
+              function myError(err) {
+                $scope.loader = false;
+                console.log('Error response', err);
+              }
+            );
+          } else {
+            $scope.expDocUrl = '';
+            $scope.oldAndNewExpDocWithoutDub.sort(sortDocumentsByNumber);
+
+            angular.forEach(
+              $scope.oldAndNewExpDocWithoutDub,
+              function (value, key) {
+                $scope.expDocUrl +=
+                  '<strong>' +
+                  value.documentHolderName +
+                  ':</strong><br>' +
+                  '<a href="' +
+                  value.documentDownloadUrl +
+                  '">' +
+                  value.documentDownloadUrl +
+                  '</a><br><br>';
+              }
+            );
+            $scope.expDocUrlshare =
+              $scope.expDocUrl +
+              '<br><br>Note: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments.';
+
+            $('#sharepopup').modal('hide');
+            $('#shareMail').modal('show');
+
+            $timeout(function () {
+              if (CKEDITOR.instances.mailEditor) {
+                CKEDITOR.instances.mailEditor.setData(
+                  $scope.expDocUrlshare || ''
+                );
+              }
+            }, 300);
+          }
+        } else {
+          $scope.expDocUrl = '';
+          $scope.selctedcheckboxlst.sort(sortDocumentsByNumber);
+
+          angular.forEach($scope.selctedcheckboxlst, function (value, key) {
+            $scope.expDocUrl +=
+              '<strong>' +
+              value.documentHolderName +
+              ':</strong><br>' +
+              '<a href="' +
+              value.documentDownloadUrl +
+              '">' +
+              value.documentDownloadUrl +
+              '</a><br><br>';
+          });
+
+          $scope.expDocUrlshare =
+            $scope.expDocUrl +
+            '<br><br>Note: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments. Check your e-mail security settings to determine how attachments are handled.';
+
+          $('#sharepopup').modal('hide');
+          $('#shareMail').modal('show');
+
+          $timeout(function () {
+            if (CKEDITOR.instances.mailEditor) {
+              CKEDITOR.instances.mailEditor.setData(
+                $scope.expDocUrlshare || ''
+              );
+            }
+          }, 300);
+        }
+      } else {
+        if ($scope.IsVisible == true) {
+          $scope.updateInGroup = true;
+
+          $scope.shipIds = [];
+          $scope.shipIds.push($scope.libShipId);
+
+          if ($scope.sessionObject.roleId != 3) {
+            angular.forEach(group.vesselSelectedList, function (infos) {
+              if ($scope.libShipId != infos.id) {
+                $scope.shipIds.push(infos.id);
+              }
+            });
+          }
+
+          $scope.selectedDocumentHolderIds = [];
+          angular.forEach($scope.groupExpiryDoclist, function (value) {
+            if (value.Selected) {
+              $scope.selectedDocumentHolderIds.push(value.documentHolderId);
+            }
+          });
+
+          $scope.pendingGroupData = {
+            userProfileId: $scope.sessionObject.userId,
+            groupName: $scope.groupName,
+            shipIds: $scope.shipIds,
+            emailId: group.emailId,
+            mode: 'Email',
+            keyword: $scope.keyword,
+            documentHolderIds: $scope.selectedDocumentHolderIds,
+            loginId: $scope.sessionObject.userId,
+          };
+
+          $scope.expDocUrl = '';
+          $scope.selctedcheckboxlst.sort(sortDocumentsByNumber);
+
+          angular.forEach($scope.selctedcheckboxlst, function (value, key) {
+            $scope.expDocUrl +=
+              '<strong>' +
+              value.documentHolderName +
+              ':</strong><br>' +
+              '<a href="' +
+              value.documentDownloadUrl +
+              '">' +
+              value.documentDownloadUrl +
+              '</a><br><br>';
+          });
+
+          $scope.expDocUrlshare =
+            $scope.expDocUrl +
+            '<br><br>Note: To protect against computer viruses, e-mail programs may prevent sending or receiving certain types of file attachments. Check your e-mail security settings to determine how attachments are handled.';
+          $('#sharepopup').modal('hide');
+          $('#shareMail').modal('show');
+
+          $timeout(function () {
+            if (CKEDITOR.instances.mailEditor) {
+              CKEDITOR.instances.mailEditor.setData(
+                $scope.expDocUrlshare || ''
+              );
+            }
+          }, 300);
+        }
+      }
+      $scope.loader = false;
+      $scope.shareExpDoc = [];
+      $scope.oldAndNewExpDoc = [];
+      $scope.documentHolderIds = [];
+    };
+    $scope.setPage = function (pageNo) {
+      $scope.currentPage = pageNo;
+    };
+
+    // ===============================================
+    // FIX: Add safety checks to avoid "split" crashes
+    // ===============================================
+    $scope.dateConversionForExpiry = function (day) {
+      if (!day || typeof day !== 'string') return null;
+      var stringDate1 = day;
+      var splitDate1 = stringDate1.split('-');
+      var day1 = splitDate1[0];
+      var month1 = splitDate1[1];
+      var year1 = splitDate1[2];
+      this.dStartDate = month1 + '-' + day1 + '-' + year1;
+      return this.dStartDate;
+    };
+
+    // ===============================================
+    // FIX: Change || to && to handle missing dates properly
+    // ===============================================
     $rootScope.documentTypeFilter = function (status) {
       $scope.fielterFailure = 1;
       $scope.selectStatus = status;
-      $scope.expiryDocumentHolderListFilter = []; // Fixed Spelling
-
+      $scope.expiryDocumentHolderListFileter = [];
       var today = new Date();
-      var renewalThreshold = new Date(new Date().setDate(today.getDate() + 31));
+      var renewalDate = new Date(new Date().setDate(today.getDate() + 31));
+      var expiryDate;
 
-      angular.forEach($scope.expiryDocumentHolderList, function (expiry) {
-        if (!expiry.expiryDateString) {
-          if (status == 'Missing' || status == 'All')
-            $scope.expiryDocumentHolderListFilter.push(expiry);
-          return;
-        }
+      if (status == 'Active') {
+        angular.forEach($scope.expiryDocumentHolderList, function (expiry) {
+          if (expiry.expiryDateString) {
+            expiryDate = new Date(
+              $scope.dateConversionForExpiry(expiry.expiryDateString)
+            );
+          } else {
+            expiryDate = null;
+          }
+          if (!expiryDate || expiryDate > renewalDate) {
+            $scope.expiryDocumentHolderListFileter.push(expiry);
+          }
+        });
+      } else if (status == 'Renewal') {
+        angular.forEach($scope.expiryDocumentHolderList, function (expiry) {
+          if (expiry.expiryDateString) {
+            expiryDate = new Date(
+              $scope.dateConversionForExpiry(expiry.expiryDateString)
+            );
+            if (today <= expiryDate && renewalDate >= expiryDate)
+              $scope.expiryDocumentHolderListFileter.push(expiry);
+          }
+        });
+      } else if (status == 'Expired') {
+        angular.forEach($scope.expiryDocumentHolderList, function (expiry) {
+          if (expiry.expiryDateString) {
+            expiryDate = new Date(
+              $scope.dateConversionForExpiry(expiry.expiryDateString)
+            );
+            if (expiryDate && expiryDate < today)
+              $scope.expiryDocumentHolderListFileter.push(expiry);
+          }
+        });
+      } else if (status == 'Missing') {
+        angular.forEach($scope.expiryDocumentHolderList, function (expiry) {
+          if (expiry.statusColor == undefined) {
+            $scope.expiryDocumentHolderListFileter.push(expiry);
+          }
+        });
+      } else {
+        $scope.expiryDocumentHolderListFileter =
+          $scope.expiryDocumentHolderList;
+      }
+      if ($scope.expiryDocumentHolderListFileter.length == 0) {
+        $scope.fielterFailure = 0;
+      }
+    };
 
-        var expiryDate = new Date(
-          $scope.dateConversionForExpiry(expiry.expiryDateString)
-        );
-
-        if (status == 'Active' && expiryDate > renewalThreshold) {
-          $scope.expiryDocumentHolderListFilter.push(expiry);
-        } else if (
-          status == 'Renewal' &&
-          today <= expiryDate &&
-          renewalThreshold >= expiryDate
-        ) {
-          $scope.expiryDocumentHolderListFilter.push(expiry);
-        } else if (status == 'Expired' && expiryDate < today) {
-          $scope.expiryDocumentHolderListFilter.push(expiry);
-        } else if (status == 'All') {
-          $scope.expiryDocumentHolderListFilter =
-            $scope.expiryDocumentHolderList;
+    $scope.$on('$viewContentLoaded', function () {
+      FunctionalityService.getDashboardTopCountBasedOnVessel(
+        $scope.libShipId
+      ).then(function (response) {
+        if (response.status == 200) {
+          $scope.headerDetails = response.data.usershipCount;
         }
       });
+    });
 
-      if ($scope.expiryDocumentHolderListFilter.length == 0)
-        $scope.fielterFailure = 0;
-    };
+    $timeout(function () {
+      CKEDITOR.config.versionCheck = false;
 
-    // --- HELPERS ---
-    $scope.dateConversionForExpiry = function (day) {
-      if (!day) return '';
-      var parts = day.split('-');
-      return parts[1] + '-' + parts[0] + '-' + parts[2]; // Converts DD-MM-YYYY to MM-DD-YYYY
-    };
+      if (CKEDITOR.instances.mailEditor) {
+        CKEDITOR.instances.mailEditor.destroy(true);
+      }
+
+      CKEDITOR.replace('mailEditor', {
+        height: 150,
+        removePlugins: 'elementspath',
+        resize_enabled: false,
+        allowedContent: true,
+        extraAllowedContent: '*(*);*{*}',
+      });
+    }, 500);
 
     $scope.logout = function () {
-      $window.localStorage.clear();
-      toaster.pop('success', 'Logout successfully');
-      $timeout(function () {
+      $window.localStorage.removeItem('sessionObject');
+      $window.localStorage.removeItem('userRole');
+      $window.localStorage.removeItem('userName');
+      $window.localStorage.removeItem('userEmail');
+      $window.localStorage.removeItem('userId');
+      $window.localStorage.removeItem('roleId');
+      $window.localStorage.removeItem('role');
+      $window.localStorage.removeItem('organizationId');
+      $window.localStorage.removeItem('organizationName');
+      $window.localStorage.removeItem('profilePicture');
+      $window.localStorage.removeItem('maxShipCount');
+      $window.localStorage.removeItem('maxUserCount');
+      $window.localStorage.removeItem('shipProfileInfos');
+      $window.localStorage.removeItem('groupShipId');
+      $window.localStorage.removeItem('groupShipName');
+      $window.localStorage.removeItem('editId');
+      $window.localStorage.removeItem('countryName');
+      $window.localStorage.removeItem('stateName');
+      $window.localStorage.removeItem('shipId');
+      $window.localStorage.removeItem('libShipId');
+      $window.localStorage.removeItem('libshipName');
+      localStorage.removeItem('logout-event');
+      $window.localStorage.removeItem('logoPicture');
+
+      toaster.pop('success', 'Logout succesfully');
+      setTimeout(function () {
         $location.path('/');
-      }, 1000);
+      }, 2000);
+      $window.location.reload();
+    };
+
+    $scope.confirmLogout = function () {
+      Swal.fire({
+        html: `<div class="logout-card">
+                <div class="logout-icon">
+                    <i class="fa fa-sign-out"></i>
+                </div>
+                <h3>Logout</h3>
+                <p>Are you sure you want to logout?</p>
+            </div>`,
+        width: 480,
+        showCancelButton: true,
+        confirmButtonText: 'Logout',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#4a7be6',
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          $scope.logout();
+        }
+      });
+    };
+
+    $scope.submitEmailRequest = function () {
+      if (CKEDITOR.instances.mailEditor) {
+        $scope.expDocUrlshare = CKEDITOR.instances.mailEditor.getData();
+      }
+      $scope.loader = true;
+
+      if (
+        (!$scope.groupEmailForShare ||
+          $scope.groupEmailForShare.trim() === '') &&
+        (!$scope.pendingGroupData ||
+          !$scope.pendingGroupData.emailId ||
+          $scope.pendingGroupData.emailId.trim() === '')
+      ) {
+        toaster.pop('error', 'Error', 'Recipient email address is missing');
+        $scope.loader = false;
+        return;
+      }
+
+      if (!$scope.expDocUrlshare || $scope.expDocUrlshare.trim() === '') {
+        toaster.pop('error', 'Error', 'Email content is missing');
+        $scope.loader = false;
+        return;
+      }
+
+      var emailData = {
+        to: ($scope.groupEmailForShare || $scope.pendingGroupData.emailId)
+          .split(',')
+          .map((e) => e.trim())
+          .filter((e) => e.length > 0),
+        subject: $scope.libshipNameDoc,
+        body: $scope.expDocUrlshare,
+      };
+
+      if ($scope.pendingGroupData) {
+        console.log('Creating new group and sending email...');
+
+        FunctionalityService.shareExpiryDoc(
+          JSON.stringify($scope.pendingGroupData)
+        )
+          .then(function (groupResponse) {
+            if (groupResponse.status === 200) {
+              console.log('Group created successfully, now sending email...');
+              return FunctionalityService.sendEmail(emailData);
+            } else {
+              throw new Error(
+                'Failed to create group: ' +
+                  (groupResponse.data?.message || 'Unknown error')
+              );
+            }
+          })
+          .then(function (emailResponse) {
+            if (emailResponse.status === 200) {
+              toaster.pop('success', 'Success', 'Email sent successfully');
+              $('#shareMail').modal('hide');
+              $scope.pendingGroupData = null;
+
+              $timeout(function () {
+                $state.reload();
+              }, 1500);
+            } else {
+              throw new Error(
+                'Email send failed: ' +
+                  (emailResponse.data?.message || 'Unknown error')
+              );
+            }
+          })
+          .catch(function (error) {
+            console.error('Error in email flow:', error);
+            toaster.pop(
+              'error',
+              'Error',
+              error.message || 'Failed to send email'
+            );
+          })
+          .finally(function () {
+            $scope.loader = false;
+          });
+      } else {
+        console.log('Sending email to existing group...');
+
+        FunctionalityService.sendEmail(emailData)
+          .then(function (response) {
+            if (response.status === 200) {
+              toaster.pop('success', 'Success', 'Email sent successfully');
+              $('#shareMail').modal('hide');
+
+              $timeout(function () {
+                $state.reload();
+              }, 1500);
+            } else {
+              throw new Error(
+                'Email send failed: ' +
+                  (response.data?.message || 'Unknown error')
+              );
+            }
+          })
+          .catch(function (error) {
+            console.error('Email send error:', error);
+            toaster.pop(
+              'error',
+              'Error',
+              error.message || 'Failed to send email'
+            );
+          })
+          .finally(function () {
+            $scope.loader = false;
+          });
+      }
     };
   },
 ]);
 
-// --- DIRECTIVES ---
 userVesselDocEBD.directive('fileModel', [
   '$parse',
   function ($parse) {
@@ -1469,6 +3146,32 @@ userVesselDocEBD.directive('fileModel', [
             modelSetter(scope, element[0].files[0]);
           });
         });
+      },
+    };
+  },
+]);
+
+userVesselDocEBD.directive('customFocus', [
+  function () {
+    var FOCUS_CLASS = 'custom-focused';
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function (scope, element, attrs, ctrl) {
+        ctrl.$focused = false;
+        element
+          .bind('focus', function (evt) {
+            element.addClass(FOCUS_CLASS);
+            scope.$apply(function () {
+              ctrl.$focused = true;
+            });
+          })
+          .bind('blur', function (evt) {
+            element.removeClass(FOCUS_CLASS);
+            scope.$apply(function () {
+              ctrl.$focused = false;
+            });
+          });
       },
     };
   },

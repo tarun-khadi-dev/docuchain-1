@@ -1,663 +1,1366 @@
-<section id="container" ng-app="dapp.AdminTasksController" ng-init="getUserProfileList();taskListInfoAssignedByUser();taskListInfoAssignedToUser();getShipProfileList()"
-    ng-controller="AdminTasksController">
-    <div class="app-content">
-        <div class="docubodyTitle">
-            <ul id="breadcrumb">
+<section
+  id="container"
+  ng-app="dapp.AdminTasksController"
+  ng-init="getUserProfileList();taskListInfoAssignedByUser();taskListInfoAssignedToUser();getShipProfileList()"
+  ng-controller="AdminTasksController"
+>
+  <div class="app-content">
+    <div class="docubodyTitle">
+      <ul id="breadcrumb">
+        <li>
+          <a href="javascript:void(0);">
+            <i style="color: #083b66"></i>
+            Tasks
+          </a>
+        </li>
+      </ul>
+      <div class="bttnGroup">
+        <button
+          type="button"
+          class="btn-modern submit-btn"
+          data-toggle="modal"
+          data-target="#createtask"
+          data-backdrop="static"
+        >
+          <span class="btn-text">CREATE TASK</span>
+        </button>
+      </div>
+    </div>
+    <div class="docuContent">
+      <div class="vesslesDocumentsTable">
+        <div class="tasksManagement">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="tab" role="tabpanel">
+                <ul class="nav nav-tabs" role="tablist">
+                  <li
+                    role="presentation"
+                    ng-class="{'active': myVar === 'tabOne'}"
+                  >
+                    <a
+                      aria-controls="home"
+                      role="tab"
+                      ng-click="change('tabOne')"
+                      >Task Assigned by you</a
+                    >
+                  </li>
+                  <li
+                    role="presentation"
+                    ng-class="{'active': myVar === 'tabTwo'}"
+                  >
+                    <a
+                      aria-controls="profile"
+                      role="tab"
+                      ng-click="change('tabTwo')"
+                      >Task Assigned to you</a
+                    >
+                  </li>
+                </ul>
+                <div class="tab-content tabs">
+                  <div>
+                    <div
+                      ng-show="myVar === 'tabOne'"
+                      role="tabpanel"
+                      class="tab-pane in active"
+                      id="Section1"
+                    >
+                      <div class="taskmanagementtable">
+                        <div class="row" style="margin-bottom: 5px">
+                          <div class="col-lg-6 col-md-6">
+                            <div class="datatableEntry">
+                              <label
+                                >Show
+                                <input
+                                  type="text"
+                                  ng-model="itemsPerPageForHistory"
+                                  style="width: 40px; height: 30px"
+                                />
+                                of
+                                <span>{{taskAssignedByUsers.length}}</span>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-lg-6 col-md-6">
+                            <div class="docuchainSearchbox">
+                              <div class="searchInput">
+                                <input
+                                  type="text"
+                                  placeholder="Search..."
+                                  ng-model="searchText"
+                                  style="height: 30px"
+                                />
+                                <button type="button" class="searchIcon">
+                                  <i
+                                    class="fa fa-search"
+                                    aria-hidden="true"
+                                  ></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
-                <li>
-                    <a href="javascript:void(0);" class="icon icon-beaker">Tasks</a>
-                </li>
-            </ul>
-            <div class="bttnGroup">
-                <button type="button" class="addNew" data-toggle="modal" data-target="#createtask" data-backdrop="static">
-                    <img src="image/add-user-button.png">Create Task</button>
+                        <div class="row">
+                          <div class="col-lg-12 col-xs-12">
+                            <div class="taskMangeTable table-responsive">
+                              <table
+                                class="table custom-modern-table"
+                                style="
+                                  table-layout: auto;
+                                  width: 100%;
+                                  margin-bottom: 0;
+                                "
+                              >
+                                <thead>
+                                  <tr>
+                                    <th
+                                      ng-click="orderByField='taskName'; reverseSort = !reverseSort"
+                                    >
+                                      <div class="th-content">
+                                        Task Name <i class="fa fa-sort"></i>
+                                      </div>
+                                    </th>
+                                    <th
+                                      ng-click="orderByField='taskDetails'; reverseSort = !reverseSort"
+                                    >
+                                      <div class="th-content">
+                                        Task Details <i class="fa fa-sort"></i>
+                                      </div>
+                                    </th>
+                                    <th
+                                      ng-click="orderByField='updateDStartDate'; reverseSort = !reverseSort"
+                                    >
+                                      <div class="th-content">
+                                        Start Date <i class="fa fa-sort"></i>
+                                      </div>
+                                    </th>
+                                    <th
+                                      ng-click="orderByField='updateEndDate'; reverseSort = !reverseSort"
+                                    >
+                                      <div class="th-content">
+                                        End Date <i class="fa fa-sort"></i>
+                                      </div>
+                                    </th>
+                                    <th
+                                      ng-click="orderByField='taskStatus'; reverseSort = !reverseSort"
+                                    >
+                                      <div class="th-content">
+                                        Status <i class="fa fa-sort"></i>
+                                      </div>
+                                    </th>
+                                    <th
+                                      class="text-center"
+                                      style="width: 140px"
+                                    >
+                                      <div class="th-content justify-center">
+                                        Actions
+                                      </div>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr
+                                    dir-paginate="adminTaskList in fData=(taskAssignedByUsers| filter:searchText) |itemsPerPage:itemsPerPageForHistory|orderBy:orderByField:reverseSort"
+                                    current-page="currentPage"
+                                  >
+                                    <td class="font-weight-medium">
+                                      {{adminTaskList.taskName}}
+                                    </td>
+                                    <td>{{adminTaskList.taskDetails}}</td>
+                                    <td>{{adminTaskList.updateDStartDate}}</td>
+                                    <td>{{adminTaskList.updateEndDate}}</td>
+                                    <td>{{adminTaskList.taskStatus}}</td>
+                                    <td
+                                      class="text-center"
+                                      style="white-space: nowrap"
+                                    >
+                                      <button
+                                        type="button"
+                                        ng-click="getUpdateTaskId(adminTaskList)"
+                                        class="modern-action-btn btn-edit"
+                                        data-toggle="modal"
+                                        data-target="#updatetask"
+                                        data-backdrop="static"
+                                        title="Edit"
+                                      >
+                                        <i
+                                          class="fa fa-pencil"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        ng-click="getViewTaskss(adminTaskList.taskId)"
+                                        class="modern-action-btn btn-view"
+                                        data-toggle="modal"
+                                        data-target="#viewtasks"
+                                        data-backdrop="static"
+                                        title="View"
+                                      >
+                                        <i
+                                          class="fa fa-eye"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        ng-click="confirmDeleteTask(adminTaskList.taskId)"
+                                        class="modern-action-btn btn-delete"
+                                        title="Delete"
+                                      >
+                                        <i
+                                          class="fa fa-trash"
+                                          aria-hidden="true"
+                                        ></i>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                  <tr ng-show="fData.length == 0">
+                                    <td
+                                      style="padding: 20px; text-align: center"
+                                      colspan="6"
+                                    >
+                                      No Records Found
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+
+                            <div class="pagination-footer">
+                              <div class="pagination-info text-muted">
+                                Showing {{taskAssignedByUsers.length > 0 ?
+                                (itemsPerPageForHistory * (currentPage - 1) + 1)
+                                : 0}} to {{itemsPerPageForHistory * currentPage
+                                > taskAssignedByUsers.length ?
+                                taskAssignedByUsers.length :
+                                itemsPerPageForHistory * currentPage}} of
+                                {{taskAssignedByUsers.length}} entries
+                              </div>
+                              <div class="pagination-controls">
+                                <dir-pagination-controls
+                                  max-size="5"
+                                  direction-links="true"
+                                  boundary-links="true"
+                                  ng-show="taskAssignedByUsers.length != 0"
+                                ></dir-pagination-controls>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div
+                    ng-show="myVar === 'tabTwo'"
+                    role="tabpanel"
+                    class="tab-pane in active"
+                    id="Section2"
+                  >
+                    <div class="taskmanagementtable">
+                      <div class="row" style="margin-bottom: 5px">
+                        <div class="col-lg-6 col-md-6">
+                          <div class="datatableEntry">
+                            <label
+                              >Show
+                              <input
+                                type="text"
+                                ng-model="itemsPerPageForHistory"
+                                style="width: 40px; height: 30px"
+                              />
+                              of
+                              <span>{{taskAssignedToUser.length}}</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                          <div class="docuchainSearchbox">
+                            <div class="searchInput">
+                              <input
+                                type="text"
+                                placeholder="Search..."
+                                ng-model="searchTexts"
+                                style="height: 30px"
+                              />
+                              <button type="button" class="searchIcon">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-lg-12 col-xs-12">
+                          <div class="taskMangeTable table-responsive">
+                            <table
+                              class="table custom-modern-table"
+                              style="
+                                table-layout: auto;
+                                width: 100%;
+                                margin-bottom: 0;
+                              "
+                            >
+                              <thead>
+                                <tr>
+                                  <th
+                                    ng-click="orderByField='taskName'; reverseSort = !reverseSort"
+                                  >
+                                    <div class="th-content">
+                                      Task Name <i class="fa fa-sort"></i>
+                                    </div>
+                                  </th>
+                                  <th
+                                    ng-click="orderByField='updateDStartDate'; reverseSort = !reverseSort"
+                                  >
+                                    <div class="th-content">
+                                      Start Date <i class="fa fa-sort"></i>
+                                    </div>
+                                  </th>
+                                  <th
+                                    ng-click="orderByField='updateEndDate'; reverseSort = !reverseSort"
+                                  >
+                                    <div class="th-content">
+                                      End Date <i class="fa fa-sort"></i>
+                                    </div>
+                                  </th>
+                                  <th
+                                    ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                                  >
+                                    <div class="th-content">
+                                      Assigned By <i class="fa fa-sort"></i>
+                                    </div>
+                                  </th>
+                                  <th
+                                    ng-click="orderByField='taskStatus'; reverseSort = !reverseSort"
+                                  >
+                                    <div class="th-content">
+                                      Status <i class="fa fa-sort"></i>
+                                    </div>
+                                  </th>
+                                  <th class="text-center" style="width: 80px">
+                                    <div class="th-content justify-center">
+                                      Actions
+                                    </div>
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr
+                                  dir-paginate="adminTaskListAssignedToYou in fData=(taskAssignedToUser | filter:searchTexts) |itemsPerPage:itemsPerPageForHistory|orderBy:orderByField:reverseSort"
+                                  current-page="currentPage"
+                                >
+                                  <td class="font-weight-medium">
+                                    {{adminTaskListAssignedToYou.taskName}}
+                                  </td>
+                                  <td>
+                                    {{adminTaskListAssignedToYou.updateDStartDate}}
+                                  </td>
+                                  <td>
+                                    {{adminTaskListAssignedToYou.updateEndDate}}
+                                  </td>
+                                  <td>
+                                    {{adminTaskListAssignedToYou.userName}}
+                                  </td>
+                                  <td>
+                                    {{adminTaskListAssignedToYou.taskStatus}}
+                                  </td>
+                                  <td class="text-center">
+                                    <button
+                                      type="button"
+                                      ng-click="getViewTaskById(adminTaskListAssignedToYou)"
+                                      class="modern-action-btn btn-view"
+                                      data-toggle="modal"
+                                      data-target="#viewtaskaty"
+                                      data-backdrop="static"
+                                      title="View"
+                                    >
+                                      <i
+                                        class="fa fa-eye"
+                                        aria-hidden="true"
+                                      ></i>
+                                    </button>
+                                  </td>
+                                </tr>
+                                <tr ng-show="fData.length == 0">
+                                  <td
+                                    style="padding: 20px; text-align: center"
+                                    colspan="6"
+                                  >
+                                    No Records Found
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+
+                          <div class="pagination-footer">
+                            <div class="pagination-info text-muted">
+                              Showing {{taskAssignedToUser.length > 0 ?
+                              (itemsPerPageForHistory * (currentPage - 1) + 1) :
+                              0}} to {{itemsPerPageForHistory * currentPage >
+                              taskAssignedToUser.length ?
+                              taskAssignedToUser.length : itemsPerPageForHistory
+                              * currentPage}} of {{taskAssignedToUser.length}}
+                              entries
+                            </div>
+                            <div class="pagination-controls">
+                              <dir-pagination-controls
+                                max-size="5"
+                                direction-links="true"
+                                boundary-links="true"
+                                ng-show="taskAssignedToUser.length != 0"
+                              ></dir-pagination-controls>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="subscriptionPopup">
+                  <div class="creatTasks">
+                    <div class="modal fade" id="createtask" role="dialog">
+                      <div class="modal-dialog" style="max-width: 700px">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Create Task</h4>
+                            <button
+                              type="button"
+                              class="close"
+                              data-dismiss="modal"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="createtaskbody">
+                              <div
+                                class="radio-bttn"
+                                style="margin-bottom: 20px"
+                              >
+                                <div class="inline-radio">
+                                  <input
+                                    type="radio"
+                                    name="somethign"
+                                    value="1"
+                                    id="radio-1"
+                                    ng-model="createTask.checkboxSelection"
+                                  />
+                                  <label for="radio-1" class="radio-label"
+                                    >Ship Related task</label
+                                  >
+                                </div>
+                                <div class="inline-radio">
+                                  <input
+                                    type="radio"
+                                    name="somethign"
+                                    value="2"
+                                    id="radio-2"
+                                    ng-model="createTask.checkboxSelection"
+                                  />
+                                  <label for="radio-2" class="radio-label"
+                                    >Others</label
+                                  >
+                                </div>
+                              </div>
+
+                              <form
+                                name="createTaskFormName"
+                                ng-show="createTask.checkboxSelection==1"
+                              >
+                                <h3
+                                  style="
+                                    color: #083b66;
+                                    font-size: 16px;
+                                    font-weight: 600;
+                                    border-bottom: 1px solid #eee;
+                                    padding-bottom: 8px;
+                                    margin-top: 0;
+                                    margin-bottom: 15px;
+                                  "
+                                >
+                                  Task Details
+                                </h3>
+
+                                <div class="row">
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Vessel</label>
+                                    <div class="tasksselect">
+                                      <ui-select
+                                        ng-model="createTask.shipId"
+                                        ng-change="createShipTaskId(createTask.shipId)"
+                                        theme="bootstrap"
+                                        close-on-select="true"
+                                        title="Select Vessel"
+                                        required
+                                        custom-focus
+                                        class="text-box"
+                                      >
+                                        <ui-select-match
+                                          placeholder="Select Vessel"
+                                          >{{$select.selected.shipName}}</ui-select-match
+                                        >
+                                        <ui-select-choices
+                                          repeat="ship in shipList | filter: $select.search | orderBy:'shipName'"
+                                        >
+                                          <div ng-bind="ship.shipName"></div>
+                                          <small>IMO: {{ship.imo}}</small>
+                                        </ui-select-choices>
+                                      </ui-select>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-lg-6 col-md-6 form-group selectUsersBox"
+                                  >
+                                    <div
+                                      class="label-action-row"
+                                      style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        margin-bottom: 5px;
+                                      "
+                                    >
+                                      <label style="margin: 0">Users</label>
+                                      <div class="multi-select-actions">
+                                        <button
+                                          type="button"
+                                          class="action-btn select-btn"
+                                          ng-click="selectAllCreateUsers()"
+                                        >
+                                          Select All
+                                        </button>
+                                        <button
+                                          type="button"
+                                          class="action-btn clear-btn"
+                                          ng-click="clearAllCreateUsers()"
+                                        >
+                                          Clear All
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <div class="tasksselect">
+                                      <ui-select
+                                        multiple
+                                        ng-model="createTask.selectedUsers"
+                                        theme="bootstrap"
+                                        close-on-select="true"
+                                        title="Choose User Type"
+                                        required
+                                      >
+                                        <ui-select-match
+                                          placeholder="Select Users..."
+                                          >{{$item.firstName}}
+                                          {{$item.lastName}}</ui-select-match
+                                        >
+                                        <ui-select-choices
+                                          repeat="user in userLists | filter: $select.search | orderBy:'firstName'"
+                                        >
+                                          <div
+                                            ng-bind="user.firstName | highlight: $select.search"
+                                          ></div>
+                                          <div
+                                            ng-bind="user.lastName | highlight: $select.search"
+                                          ></div>
+                                          <small>Email: {{user.mail}}</small>
+                                        </ui-select-choices>
+                                      </ui-select>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Task Name</label>
+                                    <input
+                                      type="text"
+                                      name="taskName"
+                                      ng-maxlength="50"
+                                      class="text-box form-control"
+                                      placeholder="Task Name"
+                                      ng-model="createTask.taskName"
+                                      required
+                                    />
+                                    <p
+                                      style="
+                                        color: red;
+                                        font-size: 11px;
+                                        margin-top: 4px;
+                                      "
+                                      ng-show="createTaskFormName.taskName.$error.maxlength"
+                                    >
+                                      Maximum 50 characters allowed
+                                    </p>
+                                  </div>
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Task Details</label>
+                                    <input
+                                      type="text"
+                                      name="taskDetails"
+                                      ng-maxlength="200"
+                                      class="text-box form-control"
+                                      placeholder="Task Details"
+                                      ng-model="createTask.taskDetails"
+                                      required
+                                    />
+                                    <p
+                                      style="
+                                        color: red;
+                                        font-size: 11px;
+                                        margin-top: 4px;
+                                      "
+                                      ng-show="createTaskFormName.taskDetails.$error.maxlength"
+                                    >
+                                      Maximum 200 characters allowed
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Start Date</label>
+                                    <div class="datepickerinput">
+                                      <input
+                                        class="text-box form-control"
+                                        placeholder="Start Date"
+                                        moment-picker="createTask.startDate"
+                                        format="DD-MM-YYYY HH:mm"
+                                        ng-model="createTask.startDate"
+                                        min-date="mindate"
+                                        required
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>End Date</label>
+                                    <div class="datepickerinput">
+                                      <input
+                                        class="text-box form-control"
+                                        placeholder="End Date"
+                                        moment-picker="createTask.endDate"
+                                        format="DD-MM-YYYY HH:mm"
+                                        ng-model="createTask.endDate"
+                                        min-date="createTask.startDate"
+                                        required
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+
+                              <form
+                                name="createTaskFormNames"
+                                ng-show="createTask.checkboxSelection==2"
+                              >
+                                <h3
+                                  style="
+                                    color: #083b66;
+                                    font-size: 16px;
+                                    font-weight: 600;
+                                    border-bottom: 1px solid #eee;
+                                    padding-bottom: 8px;
+                                    margin-top: 0;
+                                    margin-bottom: 15px;
+                                  "
+                                >
+                                  Task Details
+                                </h3>
+
+                                <div class="row">
+                                  <div
+                                    class="col-lg-12 form-group selectUsersBox"
+                                  >
+                                    <div
+                                      class="label-action-row"
+                                      style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        margin-bottom: 5px;
+                                      "
+                                    >
+                                      <label style="margin: 0">Users</label>
+                                      <div class="multi-select-actions">
+                                        <button
+                                          type="button"
+                                          class="action-btn select-btn"
+                                          ng-click="selectAllCreateUsers()"
+                                        >
+                                          Select All
+                                        </button>
+                                        <button
+                                          type="button"
+                                          class="action-btn clear-btn"
+                                          ng-click="clearAllCreateUsers()"
+                                        >
+                                          Clear All
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <div class="tasksselect">
+                                      <ui-select
+                                        multiple
+                                        ng-model="createTask.selectedUsers"
+                                        theme="bootstrap"
+                                        close-on-select="true"
+                                        title="Choose User Type"
+                                        required
+                                      >
+                                        <ui-select-match
+                                          placeholder="Select Users..."
+                                          >{{$item.firstName}}
+                                          {{$item.lastName}}</ui-select-match
+                                        >
+                                        <ui-select-choices
+                                          repeat="user in userLists | filter: $select.search | orderBy:'firstName'"
+                                        >
+                                          <div
+                                            ng-bind="user.firstName | highlight: $select.search"
+                                          ></div>
+                                          <div
+                                            ng-bind="user.lastName | highlight: $select.search"
+                                          ></div>
+                                          <small>Email: {{user.mail}}</small>
+                                        </ui-select-choices>
+                                      </ui-select>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Task Name</label>
+                                    <input
+                                      type="text"
+                                      ng-maxlength="50"
+                                      name="taskName"
+                                      class="text-box form-control"
+                                      placeholder="Task Name"
+                                      ng-model="createTask.taskName"
+                                      required
+                                    />
+                                    <p
+                                      style="
+                                        color: red;
+                                        font-size: 11px;
+                                        margin-top: 4px;
+                                      "
+                                      ng-show="createTaskFormNames.taskName.$error.maxlength"
+                                    >
+                                      Maximum 50 characters allowed
+                                    </p>
+                                  </div>
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Task Details</label>
+                                    <input
+                                      type="text"
+                                      name="taskDetails"
+                                      ng-maxlength="200"
+                                      class="text-box form-control"
+                                      placeholder="Task Details"
+                                      ng-model="createTask.taskDetails"
+                                      required
+                                    />
+                                    <p
+                                      style="
+                                        color: red;
+                                        font-size: 11px;
+                                        margin-top: 4px;
+                                      "
+                                      ng-show="createTaskFormNames.taskDetails.$error.maxlength"
+                                    >
+                                      Maximum 200 characters allowed
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Start Date</label>
+                                    <div class="datepickerinput">
+                                      <input
+                                        class="text-box form-control"
+                                        placeholder="Start Date"
+                                        moment-picker="createTask.startDate"
+                                        format="DD-MM-YYYY HH:mm"
+                                        ng-model="createTask.startDate"
+                                        min-date="mindate"
+                                        required
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>End Date</label>
+                                    <div class="datepickerinput">
+                                      <input
+                                        class="text-box form-control"
+                                        placeholder="End Date"
+                                        moment-picker="createTask.endDate"
+                                        format="DD-MM-YYYY HH:mm"
+                                        ng-model="createTask.endDate"
+                                        min-date="createTask.startDate"
+                                        required
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+
+                              <div
+                                class="modal-footer1 bttnGroup"
+                                style="
+                                  display: flex;
+                                  justify-content: flex-end;
+                                  gap: 15px;
+                                  padding: 20px 0 0 0;
+                                  border-top: 1px solid rgba(0, 0, 0, 0.05);
+                                  margin-top: 15px;
+                                "
+                              >
+                                <button
+                                  type="button"
+                                  class="btn-modern clear-btn"
+                                  ng-click="clearCreatetaskInputs(createTask)"
+                                  style="margin: 0 !important"
+                                >
+                                  <span class="btn-text">CLEAR</span>
+                                </button>
+                                <button
+                                  type="submit"
+                                  class="btn-modern submit-btn"
+                                  data-dismiss="modal"
+                                  ng-disabled="createTaskFormName.$invalid && createTaskFormNames.$invalid"
+                                  ng-click="createShipTask(createTask)"
+                                  style="margin: 0 !important"
+                                >
+                                  <span class="btn-text">SUBMIT</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="subscriptionPopup">
+                  <div class="updatedTasks">
+                    <div class="modal fade" id="updatetask" role="dialog">
+                      <div class="modal-dialog" style="max-width: 700px">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Update Task</h4>
+                            <button
+                              type="button"
+                              class="close"
+                              data-dismiss="modal"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="createtaskbody">
+                              <form name="updateTaskAdminForm">
+                                <h3
+                                  style="
+                                    color: #083b66;
+                                    font-size: 16px;
+                                    font-weight: 600;
+                                    border-bottom: 1px solid #eee;
+                                    padding-bottom: 8px;
+                                    margin-top: 0;
+                                    margin-bottom: 15px;
+                                  "
+                                >
+                                  Task Details
+                                </h3>
+
+                                <div class="row">
+                                  <div
+                                    class="col-lg-6 col-md-6 form-group"
+                                    ng-show="updatetask.shipName != null"
+                                  >
+                                    <label style="margin-top: 15px"
+                                      >Vessel</label
+                                    >
+                                    <div class="tasksselect">
+                                      <ui-select
+                                        ng-model="updatetask"
+                                        theme="bootstrap"
+                                        ng-disabled="isReadOnly"
+                                      >
+                                        <ui-select-match
+                                          placeholder="Select Vessel..."
+                                          >{{$select.selected.shipName}}</ui-select-match
+                                        >
+                                        <ui-select-choices
+                                          repeat="ship in shipList | filter: $select.search | orderBy:'shipName'"
+                                        >
+                                          <span
+                                            ng-bind-html="ship.shipName | highlight: $select.search"
+                                          ></span>
+                                          <small>IMO: {{ship.imo}}</small>
+                                        </ui-select-choices>
+                                      </ui-select>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-lg-6 col-md-6 form-group selectUsersBox"
+                                    ng-class="{'col-lg-12 col-md-12': updatetask.shipName == null}"
+                                  >
+                                    <div
+                                      class="label-action-row"
+                                      style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        margin-bottom: 5px;
+                                      "
+                                    >
+                                      <label style="margin: 0">User</label>
+                                      <div class="multi-select-actions">
+                                        <button
+                                          type="button"
+                                          class="action-btn select-btn"
+                                          ng-click="selectAllUpdateUsers()"
+                                        >
+                                          Select All
+                                        </button>
+                                        <button
+                                          type="button"
+                                          class="action-btn clear-btn"
+                                          ng-click="clearAllUpdateUsers()"
+                                        >
+                                          Clear All
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <div class="tasksselect">
+                                      <ui-select
+                                        multiple
+                                        ng-model="updatetask.userProfileInfos"
+                                        theme="bootstrap"
+                                        close-on-select="true"
+                                        title="Choose User Type"
+                                      >
+                                        <ui-select-match
+                                          placeholder="Select Users..."
+                                          >{{$item.firstName}}
+                                          {{$item.lastName}}</ui-select-match
+                                        >
+                                        <ui-select-choices
+                                          repeat="user in userLists | filter: $select.search | orderBy:'firstName'"
+                                        >
+                                          <div
+                                            ng-bind-html="user.firstName"
+                                          ></div>
+                                          <div
+                                            ng-bind-html="user.lastName"
+                                          ></div>
+                                          <small>Email: {{user.mail}}</small>
+                                        </ui-select-choices>
+                                      </ui-select>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Task Name</label>
+                                    <input
+                                      type="text"
+                                      class="text-box form-control"
+                                      placeholder="Task Name"
+                                      ng-model="updatetask.taskName"
+                                      readonly
+                                    />
+                                  </div>
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Task Details</label>
+                                    <input
+                                      type="text"
+                                      class="text-box form-control"
+                                      placeholder="Task Details"
+                                      ng-model="updatetask.taskDetails"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Start Date</label>
+                                    <div class="datepickerinput">
+                                      <input
+                                        custom-focus
+                                        class="text-box form-control"
+                                        placeholder="Start Date"
+                                        moment-picker="updatetask.startDate"
+                                        format="DD-MM-YYYY HH:mm"
+                                        ng-model="updatetask.startDate"
+                                        min-date="mindate"
+                                        required
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>End Date</label>
+                                    <div class="datepickerinput">
+                                      <input
+                                        custom-focus
+                                        class="text-box form-control"
+                                        placeholder="End date"
+                                        moment-picker="updatetask.endDate"
+                                        format="DD-MM-YYYY HH:mm"
+                                        ng-model="updatetask.endDate"
+                                        min-date="updatetask.startDate"
+                                        required
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col-lg-6 col-md-6 form-group">
+                                    <label>Status</label>
+                                    <input
+                                      type="text"
+                                      class="text-box form-control"
+                                      ng-model="updatetask.taskStatus"
+                                      ng-show="updatetask.taskStatus === 'Completed' || updatetask.taskStatus === 'Rejected'"
+                                      readonly
+                                    />
+                                    <select
+                                      name="taskStatus"
+                                      class="text-box form-control"
+                                      ng-model="updatetask.taskStatusId"
+                                      ng-show="updatetask.taskStatus != 'Completed' && updatetask.taskStatus != 'Rejected'"
+                                    >
+                                      <option
+                                        ng-repeat="status in statusAll"
+                                        ng-selected="updatetask.taskStatusId == status.taskStatusId"
+                                        value="{{status.taskStatusId}}"
+                                      >
+                                        {{status.taskStatus}}
+                                      </option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </form>
+
+                              <div
+                                class="modal-footer1 bttnGroup"
+                                style="
+                                  display: flex;
+                                  justify-content: flex-end;
+                                  gap: 15px;
+                                  padding: 20px 0 0 0;
+                                  border-top: 1px solid rgba(0, 0, 0, 0.05);
+                                  margin-top: 15px;
+                                "
+                              >
+                                <button
+                                  type="button"
+                                  class="btn-modern clear-btn"
+                                  data-dismiss="modal"
+                                  style="margin: 0 !important"
+                                >
+                                  <span class="btn-text">CANCEL</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  class="btn-modern submit-btn"
+                                  ng-disabled="updateTaskAdminForm.$invalid"
+                                  ng-click="updateShipTask(updatetask)"
+                                  style="margin: 0 !important"
+                                >
+                                  <span class="btn-text">UPDATE</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="preloader" ng-show="loader">
+                  <div id="cssload-loader">
+                    <div class="cssload-dot"></div>
+                    <div class="cssload-dot"></div>
+                    <div class="cssload-dot"></div>
+                    <div class="cssload-dot"></div>
+                    <div class="cssload-dot"></div>
+                    <div class="cssload-dot"></div>
+                    <div class="cssload-dot"></div>
+                    <div class="cssload-dot"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="subscriptionPopup">
+                <div class="viewtasks">
+                  <div class="modal fade" id="viewtasks" role="dialog">
+                    <div class="modal-dialog" style="max-width: 600px">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Assigned User Status</h4>
+                          <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="viewtasksbody table-responsive">
+                            <table
+                              class="table custom-modern-table"
+                              style="margin-bottom: 0"
+                            >
+                              <thead>
+                                <tr>
+                                  <th>User Name</th>
+                                  <th>Task Status</th>
+                                  <th>Comments</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-repeat="view in viewTaskUsers">
+                                  <td class="font-weight-medium">
+                                    {{view.userName}}
+                                  </td>
+                                  <td>
+                                    <span
+                                      class="status-badge"
+                                      ng-class="{'created': view.taskStatus=='Completed', 'deleted': view.taskStatus=='Rejected'}"
+                                      >{{view.taskStatus}}</span
+                                    >
+                                  </td>
+                                  <td>{{view.userRemarks}}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div
+                            class="modal-footer1 bttnGroup"
+                            style="
+                              display: flex;
+                              justify-content: flex-end;
+                              padding: 20px 0 0 0;
+                              border-top: 1px solid rgba(0, 0, 0, 0.05);
+                              margin-top: 15px;
+                            "
+                          >
+                            <button
+                              type="button"
+                              class="btn-modern clear-btn"
+                              data-dismiss="modal"
+                              style="margin: 0 !important"
+                            >
+                              <span class="btn-text">CLOSE</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="subscriptionPopup">
+                <div class="view-task-assigntoy">
+                  <div class="modal fade" id="viewtaskaty" role="dialog">
+                    <div class="modal-dialog" style="max-width: 700px">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">View Task Assigned to You</h4>
+                          <button
+                            type="button"
+                            class="close"
+                            ng-click="cancelInput(assignedTask)"
+                            data-dismiss="modal"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="view-assignty-body">
+                            <form name="assignedtoyouform">
+                              <h3
+                                style="
+                                  color: #083b66;
+                                  font-size: 16px;
+                                  font-weight: 600;
+                                  border-bottom: 1px solid #eee;
+                                  padding-bottom: 8px;
+                                  margin-top: 0;
+                                  margin-bottom: 15px;
+                                "
+                              >
+                                Task Details
+                              </h3>
+
+                              <div class="row">
+                                <div class="col-lg-6 col-md-6 form-group">
+                                  <label>Task Name</label>
+                                  <input
+                                    type="text"
+                                    class="text-box form-control"
+                                    ng-model="viewTaskByUsers.taskName"
+                                    readonly
+                                  />
+                                </div>
+                                <div class="col-lg-6 col-md-6 form-group">
+                                  <label>Assigned By</label>
+                                  <input
+                                    type="text"
+                                    class="text-box form-control"
+                                    ng-model="viewTaskByUsers.userName"
+                                    readonly
+                                  />
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="col-lg-6 col-md-6 form-group">
+                                  <label>Start Date</label>
+                                  <input
+                                    type="text"
+                                    class="text-box form-control"
+                                    ng-model="viewTaskByUsers.updateDStartDate"
+                                    readonly
+                                  />
+                                </div>
+                                <div class="col-lg-6 col-md-6 form-group">
+                                  <label>End Date</label>
+                                  <input
+                                    type="text"
+                                    class="text-box form-control"
+                                    ng-model="viewTaskByUsers.updateEndDate"
+                                    readonly
+                                  />
+                                </div>
+                              </div>
+
+                              <h3
+                                style="
+                                  color: #083b66;
+                                  font-size: 16px;
+                                  font-weight: 600;
+                                  border-bottom: 1px solid #eee;
+                                  padding-bottom: 8px;
+                                  margin-top: 15px;
+                                  margin-bottom: 15px;
+                                "
+                              >
+                                Update Status
+                              </h3>
+
+                              <div class="row">
+                                <div class="col-lg-6 col-md-6 form-group">
+                                  <label>Status</label>
+                                  <div class="tasksselect">
+                                    <input
+                                      type="text"
+                                      class="text-box form-control"
+                                      ng-model="viewTaskByUsers.taskStatus"
+                                      ng-show="viewTaskByUsers.taskStatus === 'Completed' || viewTaskByUsers.taskStatus === 'Rejected'"
+                                      readonly
+                                    />
+                                    <select
+                                      name="taskStatus"
+                                      ng-model="viewTaskByUsers.taskStatus"
+                                      class="text-box form-control drop-focus"
+                                      ng-show="viewTaskByUsers.taskStatus != 'Completed' && viewTaskByUsers.taskStatus != 'Rejected'"
+                                    >
+                                      <option
+                                        ng-repeat="status in statusAll"
+                                        ng-selected="viewTaskByUsers.taskStatus == status.taskStatus"
+                                        value="{{status}}"
+                                      >
+                                        {{status.taskStatus}}
+                                      </option>
+                                    </select>
+                                  </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 form-group">
+                                  <label>Remarks</label>
+                                  <input
+                                    name="remark"
+                                    type="text"
+                                    class="text-box form-control"
+                                    placeholder="Comments"
+                                    ng-maxlength="250"
+                                    ng-model="viewTaskByUsers.userRemarks"
+                                    ng-show="viewTaskByUsers.taskStatus === 'Completed' || viewTaskByUsers.taskStatus === 'Rejected'"
+                                    readonly
+                                  />
+                                  <input
+                                    name="remark"
+                                    type="text"
+                                    class="text-box form-control"
+                                    placeholder="Comments"
+                                    ng-maxlength="250"
+                                    ng-model="viewTaskByUsers.userRemarks"
+                                    ng-show="viewTaskByUsers.taskStatus != 'Completed' && viewTaskByUsers.taskStatus != 'Rejected'"
+                                  />
+                                </div>
+                              </div>
+                            </form>
+
+                            <div
+                              class="modal-footer1 bttnGroup"
+                              style="
+                                display: flex;
+                                justify-content: flex-end;
+                                gap: 15px;
+                                padding: 20px 0 0 0;
+                                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                                margin-top: 15px;
+                              "
+                            >
+                              <button
+                                type="button"
+                                class="btn-modern clear-btn"
+                                ng-click="cancelInput(assignedTask)"
+                                data-dismiss="modal"
+                                style="margin: 0 !important"
+                              >
+                                <span class="btn-text">CANCEL</span>
+                              </button>
+                              <button
+                                type="submit"
+                                class="btn-modern submit-btn"
+                                ng-disabled="assignedtoyouform.$pristine|| assignedtoyouform.$invalid || isDisabled"
+                                ng-click="updateStatusWithRemark(viewTaskByUsers)"
+                                style="margin: 0 !important"
+                              >
+                                <span class="btn-text">SUBMIT</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-        <div class="docuContent">
-            <div class="vesslesDocumentsTable">
-                <div class="tasksManagement">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="tab" role="tabpanel">
-                                <!-- Nav tabs -->
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li role="presentation" class="active">
-                                        <a aria-controls="home" role="tab" data-toggle="tab" ng-click="change('tabOne')">Task Assigned by you</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a aria-controls="profile" role="tab" data-toggle="tab" ng-click="change('tabTwo')">Task Assigned to you</a>
-                                    </li>
-                                </ul>
-                                <!-- Tab panes -->
-                                <div class="tab-content tabs">
-
-                                    <div ng-switch="myVar">
-
-                                        <div ng-switch-when="tabOne" role="tabpanel" class="tab-pane fade in active" id="Section1">
-                                            <div class="taskmanagementtable">
-                                                <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="datatableEntry">
-                                                            <label>Show
-                                                                <input type="text" ng-model="itemsPerPageForHistory">of
-                                                                <span>{{taskAssignedByUsers.length}}</span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <div class="docuchainSearchbox">
-                                                            <div class="searchInput">
-                                                                <input type="text" placeholder="Search" ng-model="searchText">
-                                                                <button type="button" class="searchIcon">
-                                                                    <i class="fa fa-search" aria-hidden="true"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-lg-12 col-xs-12">
-                                                        <div class="taskMangeTable table-responsive">
-                                                            <table>
-                                                                <thead>
-                                                                    <tr>
-
-                                                                        <!-- <th class="addwidth150">Id</th> -->
-                                                                        <th ng-click="orderByField='taskName'; reverseSort = !reverseSort">Task Name<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                        <th ng-click="orderByField='taskDetails'; reverseSort = !reverseSort">Task Details<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                        <th ng-click="orderByField='updateDStartDate'; reverseSort = !reverseSort">Start Date<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                        <th ng-click="orderByField='updateEndDate'; reverseSort = !reverseSort">End Date<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-                                                                        <th ng-click="orderByField='taskStatus'; reverseSort = !reverseSort">Status<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
-
-
-                                                                        <th class="text-center addwidth150">Actions</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr dir-paginate="adminTaskList in fData=(taskAssignedByUsers| filter:searchText) |itemsPerPage:itemsPerPageForHistory|orderBy:orderByField:reverseSort" current-page="currentPage">
-
-                                                                        <td>{{adminTaskList.taskName}}</td>
-                                                                        <td>{{adminTaskList.taskDetails}}</td>
-                                                                        <td>{{adminTaskList.updateDStartDate}}</td>
-                                                                        <td>{{adminTaskList.updateEndDate}}</td>
-                                                                        <td>{{adminTaskList.taskStatus}}</td>
-
-                                                                        <td class="text-center">
-                                                                            <button type="button" ng-click="getUpdateTaskId(adminTaskList)" class="btned editBtn" data-toggle="modal" data-target="#updatetask"
-                                                                                data-backdrop="static">
-                                                                                <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                                            </button>
-                                                                            <button type="button" ng-click="getViewTaskss(adminTaskList.taskId)" class="btned editBtn" data-toggle="modal"
-                                                                                data-target="#viewtasks" data-backdrop="static">
-                                                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                            </button>
-
-                                                                            <button type="button" ng-click="getDeleteTaskId(adminTaskList.taskId)" class="btned deleteBtn" data-toggle="modal" data-target="#delete"
-                                                                                data-backdrop="static">
-                                                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                                            </button>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr ng-show="fData.length == 0">
-                                                                        <td style="padding:20px;text-align: center;" colspan="10">
-                                                                            No Records Found
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-
-                                                        <dir-pagination-controls max-size="5" direction-links="true" boundary-links="true" ng-show="taskAssignedByUsers.length != 0">
-                                                        </dir-pagination-controls>
-
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div ng-switch="myVar">
-
-                                    <div ng-switch-when="tabTwo" role="tabpanel" class="tab-pane" id="Section2">
-                                        <div class="taskmanagementtable">
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="datatableEntry">
-                                                        <label>Show
-                                                            <input type="text" ng-model="itemsPerPageForHistory">of
-                                                            <span>{{taskAssignedToUser.length}}</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <div class="docuchainSearchbox">
-                                                        <div class="searchInput">
-                                                            <input type="text" placeholder="Search" ng-model="searchTexts">
-                                                            <button type="button" class="searchIcon">
-                                                                <i class="fa fa-search" aria-hidden="true"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12 col-xs-12">
-                                                    <div class="taskMangeTable ">
-
-                                                        <table>
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Task Name<i class="fa fa-sort float-right" aria-hidden="true" ng-click="orderByField='taskName'; reverseSort = !reverseSort"></i></th>
-                                                                    <th>Start Date<i class="fa fa-sort float-right" aria-hidden="true" ng-click="orderByField='updateDStartDate'; reverseSort = !reverseSort"></i</th>
-                                                                    <th>End Date<i class="fa fa-sort float-right" aria-hidden="true" ng-click="orderByField='updateEndDate'; reverseSort = !reverseSort"></i</th>
-                                                                    <th>Assigned By<i class="fa fa-sort float-right" aria-hidden="true" ng-click="orderByField='userName'; reverseSort = !reverseSort"></i</th>
-                                                                    <th>Status<i class="fa fa-sort float-right" aria-hidden="true" ng-click="orderByField='taskStatus'; reverseSort = !reverseSort"></i</th>
-                                                                    <th >Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr ng-show="taskAssignedToUser.length != 0" dir-paginate="adminTaskListAssignedToYou in fData= (taskAssignedToUser | filter:searchTexts) |itemsPerPage:itemsPerPageForHistory|orderBy:orderByField:reverseSort"
-                                                                    current-page="currentPage">
-
-                                                                    <td>{{adminTaskListAssignedToYou.taskName}}</td>
-                                                                    <td>{{adminTaskListAssignedToYou.updateDStartDate}}</td>
-                                                                    <td>{{adminTaskListAssignedToYou.updateEndDate}}</td>
-                                                                    <td>{{adminTaskListAssignedToYou.userName}}</td>
-                                                                    <td>{{adminTaskListAssignedToYou.taskStatus}}</td>
-
-
-                                                                    <td class="text-center">
-                                                                        <!-- <button type="button" class="btned editBtn" ng-click="getViewTaskById(adminTaskListAssignedToYou)">
-                                                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                        </button> -->
-                                                                        <button type="button" ng-click="getViewTaskById(adminTaskListAssignedToYou)" class="btned editBtn" data-toggle="modal" data-target="#viewtaskaty"
-                                                                            data-backdrop="static">
-                                                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                        </button>
-                                                                    </td>
-                                                                </tr>
-
-                                                                <tr ng-show="fData.length == 0">
-                                                                    <td style="padding:20px;text-align: center;" colspan="10">
-                                                                        No Records Found
-                                                                    </td>
-                                                                </tr>
-
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    <dir-pagination-controls max-size="5" direction-links="true" boundary-links="true" ng-show="taskAssignedToUser.length != 0">
-                                                    </dir-pagination-controls>
-
-                                                    <!-- <div class="vesselstablebottom" ng-if="taskAssignedToUser.length == 0">No Records Found.</div> -->
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <!-- Delete Popup -->
-                                <div class="deleteMessage">
-                                    <div class="modal fade" id="delete" role="dialog">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Task Delete</h4>
-                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="delete-group-body">
-                                                        <p>
-                                                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Are you sure you want to delete task?</p>
-
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" ng-click="deleteTaskById()" class="btnd buttn-delete">Yes</button>
-                                                    <button type="button" class="btnd buttn-no" data-dismiss="modal">No</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Create Task -->
-                                <div class="creatTasks">
-                                    <div class="modal fade" id="createtask" role="dialog">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Create Task</h4>
-                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="createtaskbody">
-                                                        <div class="radio-bttn">
-                                                            <div class="inline-radio">
-                                                                <input type="radio" name="somethign" value="1" ng-model="createTask.checkboxSelection" />
-                                                                <label for="radio-1" class="radio-label">Ship Related task</label>
-                                                            </div>
-                                                            <div class="inline-radio">
-                                                                <input type="radio" name="somethign" value="2" ng-model="createTask.checkboxSelection" />
-                                                                <label for="radio-2" class="radio-label">Others</label>
-                                                            </div>
-
-                                                        </div>
-
-                                                        <form name="createTaskFormName" ng-show="createTask.checkboxSelection==1">
-
-                                                            <div class="form" name="createtaskForm">
-                                                                <div class="form-group">
-                                                                    <label>Vessel</label>
-                                                                    <div class="tasksselect">
-                                                                        <ui-select ng-model="createTask.shipId" ng-change="createShipTaskId(createTask.shipId)" theme="bootstrap" close-on-select="true"
-                                                                            title="Select Vessel" remove-selected="false" custom-focus
-                                                                            class="text-box" required>
-                                                                            <ui-select-match placeholder="Select Vessel">{{$select.selected.shipName}}</ui-select-match>
-                                                                            <ui-select-choices repeat="ship in shipList | filter: $select.search | orderBy:'shipName'">
-                                                                                <div ng-bind="ship.shipName"></div>
-                                                                                <small>IMO: {{ship.imo}}</small>
-
-                                                                            </ui-select-choices>
-                                                                        </ui-select>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div class="form-group selectUsersBox">
-                                                                    <label>Users</label>
-                                                                    <div class="tasksselect">
-                                                                        <ui-select multiple ng-model="createTask.selectedUsers" theme="bootstrap" close-on-select="true" title="Choose  User Type"
-                                                                            remove-selected="false"
-                                                                            required>
-                                                                            <ui-select-match placeholder="Select Users...">{{$item.firstName}} {{$item.lastName}}</ui-select-match>
-                                                                            <ui-select-choices repeat="user in userLists | filter: $select.search | orderBy:'firstName'">
-                                                                                <div ng-bind="user.firstName | highlight: $select.search"></div>
-                                                                                <div ng-bind="user.lastName | highlight: $select.search"></div>
-                                                                                <small>Email: {{user.mail}}</small>
-                                                                            </ui-select-choices>
-                                                                        </ui-select>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label>Task Name</label>
-                                                                    <input type="text" name="taskName"  ng-maxlength="50" placeholder="Task Name" ng-model="createTask.taskName"
-                                                                        required>
-                                                                    <p style="color:red" ng-show="createTaskFormName.taskName.$error.maxlength">Maximum 50 characters are allowed</p>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Task Details</label>
-                                                                    <input type="text"  name="taskDetails" ng-maxlength="200" placeholder="Task Details" ng-model="createTask.taskDetails"
-                                                                        required>
-                                                                    <p style="color:red" ng-show="createTaskFormName.taskDetails.$error.maxlength">Maximum 200 characters are allowed</p>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Start Date</label>
-                                                                    <div class="datepickerinput">
-
-                                                                        <input class="form-control" custom-focus class="text-box" placeholder="Select Start Date" moment-picker="ctrl.startDate"
-                                                                            locale="en" format="DD-MM-YYYY HH mm" ng-model="createTask.startDate" min-date="mindate"
-                                                                            ng-model-options="{ updateOn: 'blur' }" required>
-
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>End Date</label>
-                                                                    <div class="datepickerinput">
-
-                                                                        <input class="form-control" custom-focus class="text-box" placeholder="Select End date" moment-picker="ctrl.endDate" locale="en"
-                                                                            format="DD-MM-YYYY HH mm" ng-model="createTask.endDate" min-date="mindate"
-                                                                            ng-model-options="{ updateOn: 'blur' }" required>
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-
-
-
-                                                        <form name="createTaskFormNames" ng-show="createTask.checkboxSelection==2">
-
-                                                            <div class="form" name="createtaskForm">
-
-                                                                <div class="form-group selectUsersBox">
-                                                                    <label>Users</label>
-                                                                    <div class="tasksselect">
-                                                                        <ui-select multiple ng-model="createTask.selectedUsers" theme="bootstrap" close-on-select="true" title="Choose  User Type"
-                                                                            remove-selected="false"
-                                                                            required>
-                                                                            <ui-select-match placeholder="Select Users...">{{$item.firstName}} {{$item.lastName}}</ui-select-match>
-                                                                            <ui-select-choices repeat="user in userLists | filter: $select.search | orderBy:'firstName'">
-                                                                                <div ng-bind="user.firstName | highlight: $select.search"></div>
-                                                                                <div ng-bind="user.lastName | highlight: $select.search"></div>
-                                                                                <small>Email: {{user.mail}}</small>
-                                                                            </ui-select-choices>
-                                                                        </ui-select>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label>Task Name</label>
-                                                                    <input type="text"  ng-maxlength="50" name="taskName" placeholder="Task Name" ng-model="createTask.taskName"
-                                                                        required>
-                                                                    <p style="color:red" ng-show="createTaskFormNames.taskName.$error.maxlength">Maximum 50 characters are allowed</p>
-
-
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Task Details</label>
-                                                                    <input type="text"  name="taskDetails" ng-maxlength="200" placeholder="Task Details" ng-model="createTask.taskDetails"
-                                                                        required>
-                                                                    <p style="color:red" ng-show="createTaskFormNames.taskDetails.$error.maxlength">Maximum 200 characters are allowed</p>
-
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Start Date</label>
-                                                                    <div class="datepickerinput">
-
-                                                                        <input class="form-control" custom-focus class="text-box" placeholder="Select Start Date" moment-picker="ctrl.startDate"
-                                                                            locale="en" format="DD-MM-YYYY HH mm" ng-model="createTask.startDate" min-date="mindate"
-                                                                            ng-model-options="{ updateOn: 'blur' }" required>
-
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>End Date</label>
-                                                                    <div class="datepickerinput">
-
-                                                                        <input class="form-control" custom-focus class="text-box" placeholder="Select End date" moment-picker="ctrl.endDate" locale="en"
-                                                                            format="DD-MM-YYYY HH mm" ng-model="createTask.endDate" min-date="mindate"
-                                                                            ng-model-options="{ updateOn: 'blur' }" required>
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer1">
-                                                    <button type="button" ng-click="clearCreatetaskInputs(createTask)" class="btngeo clearbtn">CLEAR</button>
-                                                    <button type="button" class="btngeo submitbtn clr448aff" data-dismiss="modal" ng-disabled="createTaskFormNames.$invalid"
-                                                        ng-click="createShipTask(createTask)">SUBMIT</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="preloader" ng-show="loader">
-                                        <div id="cssload-loader">
-                                            <div class="cssload-dot"></div>
-                                            <div class="cssload-dot"></div>
-                                            <div class="cssload-dot"></div>
-                                            <div class="cssload-dot"></div>
-                                            <div class="cssload-dot"></div>
-                                            <div class="cssload-dot"></div>
-                                            <div class="cssload-dot"></div>
-                                            <div class="cssload-dot"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Updated Task -->
-                                <div class="updatedTasks">
-                                    <div class="modal fade" id="updatetask" role="dialog">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Update Task</h4>
-                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="createtaskbody">
-                                                        <form name="updateTaskAdminForm">
-                                                            <div class="form-group" ng-show="updatetask.shipName != null">
-                                                                <label>Vessel</label>
-                                                                <div class="tasksselect">
-                                                                    <!-- <select name="taskStatus" ng-model="updatetask.shipName">
-                                                                        <option>Ship Name</option>
-                                                                        <option ng-selected="updatetask.shipName == ship.shipName" ng-repeat="ship in shipList" value="{{ship}}">{{ship.shipName}}</option>
-                                                                    </select> -->
-                                                                    <ui-select ng-model="updatetask" theme="bootstrap" ng-disabled="isReadOnly">
-                                                                        <ui-select-match placeholder="Select Vessel...">{{$select.selected.shipName}}</ui-select-match>
-                                                                        <ui-select-choices repeat="ship in shipList | filter: $select.search | orderBy:'shipName'">
-                                                                            <span ng-bind-html="ship.shipName | highlight: $select.search"></span>
-                                                                            <small>IMO: {{ship.imo}}</small>
-                                                                        </ui-select-choices>
-                                                                    </ui-select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group selectUsersBox">
-                                                                <label>User</label>
-                                                                <div class="tasksselect">
-                                                                    <ui-select multiple ng-model="updatetask.userProfileInfos" theme="bootstrap" close-on-select="true" title="Choose  User Type"
-                                                                        remove-selected="false">
-                                                                        <ui-select-match placeholder="Select Users...">{{$item.firstName}} {{$item.lastName}}</ui-select-match>
-                                                                        <ui-select-choices repeat="user in userLists |  filter: $select.search | orderBy:'firstName'">
-                                                                            <div ng-bind-html="user.firstName"></div>
-                                                                            <div ng-bind-html="user.lastName"></div>
-                                                                            <small>Email: {{user.mail}}</small>
-                                                                        </ui-select-choices>
-                                                                    </ui-select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label>Task Name</label>
-                                                                <input type="text" placeholder="Task Name" ng-model="updatetask.taskName" readonly>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label>Task Details</label>
-                                                                <input type="text" placeholder="Task Details" ng-model="updatetask.taskDetails">
-                                                            </div>
-
-                                                            <!-- <div class="form-group">
-                                                                <label>
-                                                                    Start Date
-                                                                </label>
-                                                                <div class="datepicicon" ng-model="updateSDate">
-                                                                    <i class="fas fa-calendar-alt"></i>
-                                                                    <input class="form-control" placeholder="{{updateStartDate}}" moment-picker="updatetask.updateStartDate" locale="en" format="DD-MM-YYYY HH"
-                                                                        ng-model="updatetask.startDate" min-date="mindate" ng-model-options="{ updateOn: 'blur' }">
-                                                                </div>
-
-
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label>
-                                                                    End Date
-                                                                </label>
-                                                                <div class="datepicicon" ng-model="updateEDate">
-                                                                    <i class="fas fa-calendar-alt"></i>
-                                                                    <input class="form-control" placeholder="{{updateEndDate}}" moment-picker="updatetask.updateEndDate" locale="en" format="DD-MM-YYYY HH"
-                                                                        ng-model="updatetask.endDate" min-date="mindate" ng-model-options="{ updateOn: 'blur' }">
-                                                                </div>
-
-                                                            </div> -->
-
-                                                            <div class="form-group">
-                                                                    <label>Start Date</label>
-                                                                        <div class="datepicicon">
-                                                                         <i class="fas fa-calendar-alt"></i>
-                                                                             <input class="form-control"
-                                                                                    placeholder="{{updateStartDate}}"
-                                                                                        moment-picker="updatetask.startDate"
-                                                                                        ng-model="updatetask.startDate"
-                                                                                        locale="en"
-                                                                                        format="DD-MM-YYYY HH"
-                                                                                        min-date="mindate"
-                                                                                        ng-model-options="{ updateOn: 'blur' }">
-                                                                                </div>
-                                                            </div>
-
-                                                                    <div class="form-group">
-                                                                        <label>End Date</label>
-                                                                        <div class="datepicicon">
-                                                                            <i class="fas fa-calendar-alt"></i>
-                                                                            <input class="form-control"
-                                                                                placeholder="{{updateEndDate}}"
-                                                                                moment-picker="updatetask.endDate"
-                                                                                ng-model="updatetask.endDate"
-                                                                                locale="en"
-                                                                                format="DD-MM-YYYY HH"
-                                                                                min-date="mindate"
-                                                                                ng-model-options="{ updateOn: 'blur' }">
-                                                                        </div>
-                                                                        </div>
-
-
-                                                            <div class="form-group">
-                                                                <label>
-                                                                       Status
-                                                                      </label>
-                                                                      <input type="text" ng-model="updatetask.taskStatus"  custom-focus class="text-box" ng-show="updatetask.taskStatus === 'Completed' || updatetask.taskStatus === 'Rejected' " readonly>
-                                                            <!-- <select name="taskStatus" ng-model="updatetask.taskStatusId"  custom-focus class="text-box" ng-show="updatetask.taskStatus === 'Completed' || updatetask.taskStatus === 'Rejected' " readonly>
-                                                                <option ng-repeat="status in statusAll" ng-selected="updatetask.taskStatusId==status.taskStatusId" value="{{status.taskStatusId}}" ng-disabled="true" ng-disabled="statusAll.selectable">{{status.taskStatus}}</option>
-                                                            </select> -->
-															 <select name="taskStatus" ng-model="updatetask.taskStatusId"  custom-focus class="text-box" ng-show="updatetask.taskStatus != 'Completed' && updatetask.taskStatus != 'Rejected' " >
-                                                                <option ng-repeat="status in statusAll" ng-selected="updatetask.taskStatusId==status.taskStatusId" value="{{status.taskStatusId}}" >{{status.taskStatus}}</option>
-                                                            </select>
-                                                        </div>
-
-                                                    </div>
-                                                    </form>
-                                                    <button type="button" ng-disabled="updateTaskAdminForm.$invalid" class="btngeo submitbtn clr448aff" ng-click="updateShipTask(updatetask)">UPDATE</button>
-
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer1">
-                                            </div>
-                                            <div class="preloader" ng-show="loader">
-                                                <div id="cssload-loader">
-                                                    <div class="cssload-dot"></div>
-                                                    <div class="cssload-dot"></div>
-                                                    <div class="cssload-dot"></div>
-                                                    <div class="cssload-dot"></div>
-                                                    <div class="cssload-dot"></div>
-                                                    <div class="cssload-dot"></div>
-                                                    <div class="cssload-dot"></div>
-                                                    <div class="cssload-dot"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- View Create Tasks by user -->
-                            <div class="viewtasks">
-                                <div class="modal fade" id="viewtasks" role="dialog">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Assigned User Status</h4>
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="viewtasksbody">
-                                                    <table>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>User Name</th>
-                                                                <th>Task Status</th>
-                                                                <th>Comments</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr ng-repeat="view in viewTaskUsers">
-                                                                <td>
-                                                                    {{view.userName}}
-                                                                </td>
-                                                                <td>
-                                                                    {{view.taskStatus}}
-                                                                </td>
-                                                                <td >
-                                                                    <p class=""> {{view.userRemarks}} </p>
-                                                                </td>
-
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <!-- View Task Details  To Users-->
-                            <div class="view-task-assigntoy">
-                                <div class="modal fade" id="viewtaskaty" role="dialog">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">View task assigned to you</h4>
-                                                <button type="button" class="close" ng-click="cancelInput(assignedTask)" data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="view-assignty-body">
-                                                    <form name="assignedtoyouform">
-                                                        <div class="form-group">
-                                                            <label>
-                                                                Task Name
-                                                            </label>
-                                                            <input type="text" ng-model="viewTaskByUsers.taskName" readonly>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>
-                                                                Start Date
-                                                            </label>
-                                                            <input type="text" ng-model="viewTaskByUsers.updateDStartDate
-                      " readonly>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>
-                                                                End Date
-                                                            </label>
-                                                            <input type="text" ng-model="viewTaskByUsers.updateEndDate"
-                      readonly>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>
-                                                                Assigned By
-                                                            </label>
-                                                            <input type="text" ng-model="viewTaskByUsers.userName" readonly>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>
-                                                                Remarks
-                                                            </label>
-                                                            <input name="remark" type="text" placeholder="comments" ng-maxlength="250" ng-model="viewTaskByUsers.userRemarks" ng-show="viewTaskByUsers.taskStatus === 'Completed' || viewTaskByUsers.taskStatus === 'Rejected' " readonly>
-                                                            <input name="remark" type="text" placeholder="comments" ng-maxlength="250" ng-model="viewTaskByUsers.userRemarks" ng-show="viewTaskByUsers.taskStatus != 'Completed' && viewTaskByUsers.taskStatus != 'Rejected' ">
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>
-                                                                Status
-                                                            </label>
-
-                                                            <div class="tasksselect">
-                                                                <input type="text" custom-focus class="text-box" ng-model="viewTaskByUsers.taskStatus" ng-show="viewTaskByUsers.taskStatus === 'Completed' || viewTaskByUsers.taskStatus === 'Rejected' " readonly>
-                                                                <!-- <select name="taskStatus" ng-model="viewTaskByUsers.taskStatus" ng-show="viewTaskByUsers.taskStatus === 'Completed' || viewTaskByUsers.taskStatus === 'Rejected' " readonly>
-                                                                    <option ng-repeat="status in statusAll" ng-selected="viewTaskByUsers.taskStatus == status.taskStatus" value="{{status}}" ng-disabled="true" ng-disabled="statusAll.selectable"> {{status.taskStatus}}</option>
-                                                                </select> -->
-                                                                <select name="taskStatus" ng-model="viewTaskByUsers.taskStatus" custom-focus class="text-box" ng-show="viewTaskByUsers.taskStatus != 'Completed' && viewTaskByUsers.taskStatus != 'Rejected' ">
-                                                                    <option ng-repeat="status in statusAll" ng-selected="viewTaskByUsers.taskStatus == status.taskStatus" value="{{status}}">{{status.taskStatus}}</option>
-                                                                </select>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group text-center">
-                                                            <button type="button" class="btngeo submitbtn clr448aff" ng-disabled="assignedtoyouform.$pristine|| assignedtoyouform.$invalid || isDisabled"
-                                                                ng-click="updateStatusWithRemark(viewTaskByUsers)">SUBMIT</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<toaster-container
+  toaster-options="{'position-class': 'toast-custom-right', 'close-button': true, 'time-out': 5000}"
+></toaster-container>

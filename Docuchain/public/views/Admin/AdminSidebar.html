@@ -4,132 +4,97 @@
   ng-controller="AdminDashboardController"
   ng-init="getPendingCount()"
 >
-  <div class="app-sidebar__user">
-    <div class="imgupload">
+  <div class="sidebar-logo-container">
+    <a href="javascript:void(0);" ui-sref="dapp.admindashboard">
       <img
-        class="app-sidebar__user-avatar"
-        ng-click="userDetails()"
-        ng-if="sessionObject.profilePicture"
-        ng-src="{{sessionObject.profilePicture || 'images/default-user.png'}}"
-        alt="Admin Image"
+        ng-src="{{logoPath || 'image/Sealedger- light.png'}}"
+        alt="Logo"
+        class="sidebar-main-logo"
       />
-      <img
-        class="app-sidebar__user-avatar"
-        ng-click="userDetails()"
-        ng-if="!sessionObject.profilePicture"
-        src="image/avatarimg.jpg"
-        alt="Admin Image"
-      />
-      <!-- <img ng-if="shipProfile.shipProfilePicPath" src="{{shipProfile.shipProfilePicPath}}">
-             <img ng-if="!shipProfile.shipProfilePicPath" src="image/ship-view.jpg"> -->
-    </div>
-    <div>
-      <p
-        class="app-sidebar__user-name"
-        style="cursor: pointer"
-        ng-click="userDetails()"
-      >
-        {{sessionObject.firstName}}&nbsp;{{sessionObject.lastName}}
-      </p>
-      <span
-        class="app-sidebar__user-designation"
-        style="cursor: pointer"
-        ng-click="userDetails()"
-        >{{sessionObject.role}}</span
-      >
-    </div>
+    </a>
   </div>
+
   <ul class="app-menu">
+    <!-- <div class="sidebar-menu-header">
+      <span>MAIN MENU</span>
+      <i class="fa fa-chevron-down"></i>
+    </div> -->
+
     <li ui-sref-active="active" ng-click="admindashboardClick()">
       <a class="app-menu__item" ui-sref="dapp.admindashboard">
-        <div class="imgclrs clr187e03">
-          <img src="image/dashboardIcon.png" alt="dashboardIcon" />
-        </div>
+        <i class="fa fa-home menu-icon"></i>
         <span class="app-menu__label">Dashboard</span>
       </a>
     </li>
-    <!-- <li>
-            <a class="app-menu__item" href="javascript:void(0);">
-                <div class="imgclrs clrff8830">
-                    <img src="image/vesselsIcon.png" alt="dashboardIcon">
-                </div>
-                <span class="app-menu__label">Vessels</span>
 
-            </a>
-        </li> -->
     <li ui-sref-active="active" ng-click="adminVesselsClick()">
       <a
         class="app-menu__item"
         ui-sref="{{active == 'Expired' ? 'dapp.expiredSubscription': 'dapp.adminVessels'}}"
       >
-        <div class="imgclrs clr448aff">
-          <img src="image/vesselsIcon.png" alt="dashboardIcon" />
-        </div>
-
+        <i class="fa fa-ship menu-icon"></i>
         <span class="app-menu__label">Vessels</span>
       </a>
     </li>
+
     <li ui-sref-active="active" ng-click="adminUsersClick()">
       <a
         class="app-menu__item"
         ui-sref="{{active == 'Expired' ? 'dapp.expiredSubscription': 'dapp.adminUsers'}}"
       >
-        <div class="imgclrs clr05957b">
-          <img src="image/users.png" alt="dashboardIcon" />
-        </div>
-
+        <i class="fa fa-users menu-icon"></i>
         <span class="app-menu__label">Users</span>
       </a>
     </li>
+
     <li ui-sref-active="active" ng-click="adminUserExtensionClick()">
       <a
         class="app-menu__item"
         ui-sref="{{active == 'Expired' ? 'dapp.expiredSubscription': 'dapp.adminUserExtension'}}"
       >
-        <div class="imgclrs clr005cf7">
-          <img src="image/userExtensionIcon.png" alt="dashboardIcon" />
-        </div>
+        <i class="fa fa-puzzle-piece menu-icon"></i>
         <span class="app-menu__label">Users Extensions</span>
-        <b class="badge pull-right">{{pendingArray.length}}</b>
+        <b class="badge pull-right" style="margin-left: auto"
+          >{{pendingArray.length}}</b
+        >
       </a>
     </li>
+
     <li ui-sref-active="active" ng-click="adminTasksClick()">
       <a
         class="app-menu__item"
         ui-sref="{{active == 'Expired' ? 'dapp.expiredSubscription': 'dapp.adminTasks'}}"
       >
-        <div class="imgclrs clr8b0ce8">
-          <img src="image/taskIcon.png" alt="dashboardIcon" />
-        </div>
+        <i class="fa fa-tasks menu-icon"></i>
         <span class="app-menu__label">Tasks</span>
-        <b class="badge pull-right">{{taskAssignedToUsernew.length}}</b>
+        <b class="badge pull-right" style="margin-left: auto"
+          >{{taskAssignedToUsernew.length}}</b
+        >
       </a>
     </li>
+
     <li ui-sref-active="active" ng-click="adminsuperAauditLogClick()">
       <a
         class="app-menu__item"
         ui-sref="{{active == 'Expired' ? 'dapp.expiredSubscription': 'dapp.adminsuperAauditLog'}}"
       >
-        <div class="imgclrs clr060d19">
-          <img src="image/auditlogIcon.png" alt="dashboardIcon" />
-        </div>
+        <i class="fa fa-history menu-icon"></i>
         <span class="app-menu__label">Audit Log</span>
       </a>
     </li>
+
     <li
       class="treeview"
       ng-class="{'is-expanded': subConfigMenuActive}"
-      ui-sref-active="active"
+      ui-sref-active="is-expanded"
     >
       <a
         class="app-menu__item"
-        ata-toggle="treeview"
+        data-toggle="treeview"
         href="javascript:void(0);"
         ng-click="expandConfigSubMenu()"
       >
-        <div class="imgclrs clr004283">
-          <img src="image/settingIcon.png" alt="dashboardIcon" />
-        </div>
+        <i class="fa fa-cog menu-icon"></i>
         <span class="app-menu__label">System Configuration</span>
         <i class="treeview-indicator fa fa-angle-right"></i>
       </a>
@@ -138,42 +103,36 @@
           ui-sref-active="active"
           ui-sref="{{active == 'Expired' ? 'dapp.expiredSubscription': 'dapp.superAconfCountry'}}"
         >
-          <a class="treeview-item">
-            <i class="fa fa-globe" aria-hidden="true"></i>Role Alias</a
-          >
+          <a class="treeview-item"><i class="fa fa-tags"></i>Role Alias</a>
         </li>
         <li
           ui-sref-active="active"
           ui-sref="{{active == 'Expired' ? 'dapp.expiredSubscription': 'dapp.superAconfState'}}"
         >
-          <a class="treeview-item">
-            <i class="icon fa fa-building"></i>Vessel Type</a
-          >
+          <a class="treeview-item"><i class="fa fa-anchor"></i>Vessel Type</a>
         </li>
         <li
           ui-sref-active="active"
           ui-sref="{{active == 'Expired' ? 'dapp.expiredSubscription': 'dapp.addLogo'}}"
         >
-          <a class="treeview-item">
-            <i class="icon fa fa-building"></i>Add Logo</a
-          >
+          <a class="treeview-item"><i class="fa fa-picture-o"></i>Add Logo</a>
         </li>
         <li ui-sref-active="active">
-          <a class="treeview-item" ui-sref="dapp.adminPlaceholder">
-            <i class="fa fa-user" aria-hidden="true"></i>Placeholder</a
+          <a class="treeview-item" ui-sref="dapp.adminPlaceholder"
+            ><i class="fa fa-cube"></i>Placeholder</a
           >
         </li>
       </ul>
     </li>
+
     <li ui-sref-active="active" ng-click="adminReportIssueClick()">
       <a class="app-menu__item" ui-sref="dapp.adminReportIssue">
-        <div class="imgclrs clr972323">
-          <img src="image/reportIssueIcon.png" alt="dashboardIcon" />
-        </div>
+        <i class="fa fa-exclamation-triangle menu-icon"></i>
         <span class="app-menu__label">Report an Issue</span>
       </a>
     </li>
   </ul>
+
   <ul class="appstore">
     <li>
       <a href="#" target="_blank"

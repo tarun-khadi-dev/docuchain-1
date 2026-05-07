@@ -1,24 +1,169 @@
 <div
-  class="app-content"
+  class="app-content user-dashboard"
   ng-app="dapp"
   ng-controller="UserDashboardController"
   ng-init="getAllVesselListAndCount()"
 >
   <div class="docuchainContent">
-    <div class="docuchain-admin-title">
-      <h1>Expiry Based Documents Statistics</h1>
+    <div class="dashboard-wrapper">
+      <div
+        class="dashboard-header-text"
+        style="margin-bottom: 25px; padding-left: 5px"
+      >
+        <h2 style="font-size: 24px; font-weight: 500; color: #2c2c2c">
+          User Dashboard
+        </h2>
+      </div>
+
+      <div class="row stats-row">
+        <div class="col-lg-3 col-md-6" ng-show="roleId == 3">
+          <div
+            class="stat-card-modern theme-blue vessel-name-card"
+            style="cursor: pointer"
+            ng-click="redirectToEBDWithFilter('')"
+          >
+            <div class="stat-icon-box">
+              <img src="image/topVesselscount.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Vessel Name</span>
+              <h2 class="stat-value">{{vesselsName}}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6" ng-show="roleId != 3">
+          <div
+            class="stat-card-modern theme-green vessel-name-card"
+            style="cursor: pointer"
+            ng-click="redirectToEBDWithFilter('')"
+          >
+            <div class="stat-icon-box">
+              <img src="image/topVesselscount.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Vessels Count</span>
+              <h3 class="stat-value">{{vesselsCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-green"
+            style="cursor: pointer"
+            ng-click="focusOnTable('Active')"
+          >
+            <div class="stat-icon-box">
+              <img src="image/active.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Active</span>
+              <h3 class="stat-value">{{activeCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-orange"
+            style="cursor: pointer"
+            ng-click="focusOnTable('Renewal')"
+          >
+            <div class="stat-icon-box">
+              <img src="image/renewal.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Renewal</span>
+              <h3 class="stat-value">{{renewalCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-red"
+            style="cursor: pointer"
+            ng-click="focusOnTable('Expired')"
+          >
+            <div class="stat-icon-box">
+              <img src="image/topExpired2.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Expired</span>
+              <h3 class="stat-value">{{expiredCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-gray"
+            style="cursor: pointer"
+            ng-click="focusOnTable('Missing')"
+          >
+            <div class="stat-icon-box">
+              <img src="image/missing6.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Missing</span>
+              <h3 class="stat-value">{{missingCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-purple"
+            style="cursor: pointer"
+            ng-click="goToTaskTab('tabOne')"
+          >
+            <div class="stat-icon-box">
+              <img src="image/task.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Assigned By You</span>
+              <h3 class="stat-value">{{taskAssignedByYouCount}}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div
+            class="stat-card-modern theme-purple"
+            style="cursor: pointer"
+            ng-click="goToTaskTab('tabTwo')"
+          >
+            <div class="stat-icon-box">
+              <img src="image/time.png" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-title">Assigned To You</span>
+              <h3 class="stat-value">{{taskAssignedToYouCount}}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="docuchain-admin-table">
+
+    <div class="docuchain-admin-title" id="vesselStatisticsTable">
+      <h1 style="text-transform: uppercase">
+        Expiry Based Documents Statistics
+      </h1>
+    </div>
+
+    <!-- <div class="docuchain-admin-table">
       <div class="row">
         <div class="col-lg-12 col-sm-12 col-xs-12">
           <div class="docuchainTable">
             <div class="searchadminbox">
               <div class="docuchainSearchbox">
-                <div class="searchInput" ng-show="{{sessionObject.roleId}}!=3">
+                <div class="searchInput">
                   <input
                     type="text"
                     ng-model="viewShipProfilesearch"
                     placeholder="Search"
+                    class="form-control"
                   />
                   <button type="button" class="searchIcon">
                     <i class="fa fa-search" aria-hidden="true"></i>
@@ -26,168 +171,606 @@
                 </div>
               </div>
             </div>
+
             <div class="docuadmin-table taskMangeTable table-responsive">
-              <table class="table">
+              <table class="table custom-modern-table">
                 <thead>
                   <tr>
-                    <th rowspan="4" class="text-center">Vessels</th>
                     <th
-                      rowspan="3"
-                      class="addwidth150"
+                      rowspan="2"
+                      class="text-center align-middle"
+                      style="width: 70px"
+                    >
+                      Vessels
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
                       ng-click="orderByField='vesselsName'; reverseSort = !reverseSort"
                     >
-                      Vessels Name
-                      <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                      <div class="">
+                        Vessels <br />
+                        Name <i class="fa fa-sort sort-icon"></i>
+                      </div>
                     </th>
                     <th
                       rowspan="2"
-                      class="addwidth150"
+                      class="text-left align-middle"
                       ng-click="orderByField='imo'; reverseSort = !reverseSort"
                     >
-                      IMO Number
-                      <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                      <div class="">
+                        IMO <br />
+                        Number <i class="fa fa-sort sort-icon"></i>
+                      </div>
                     </th>
                     <th
                       rowspan="2"
-                      class="addwidth150"
+                      class="text-left align-middle"
                       ng-click="orderByField='shipTypes'; reverseSort = !reverseSort"
                     >
-                      Type of Vessels
-                      <i class="fa fa-sort float-right" aria-hidden="true"></i>
+                      <div class="">
+                        Type of <br />
+                        Vessels <i class="fa fa-sort sort-icon"></i>
+                      </div>
                     </th>
-                    <th colspan="5" class="text-center">Vessel Documents</th>
                     <th
                       rowspan="2"
-                      class="text-center"
+                      class="text-left align-middle"
+                      ng-click="orderByField='portName'; reverseSort = !reverseSort"
+                    >
+                      <div class="">
+                        Port <br />
+                        Name <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+
+                    <th
+                      colspan="5"
+                      class="text-center subscription-header"
+                      style="border-bottom: 1px solid #dee2e6"
+                    >
+                      Vessel Documents
+                    </th>
+
+                    <th
+                      rowspan="2"
+                      class="text-center align-middle"
                       ng-click="orderByField='totalCount'; reverseSort = !reverseSort"
                     >
-                      Total Vessel Documents<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
+                      <div class="justify-center">
+                        Total <br />
+                        Documents <i class="fa fa-sort sort-icon"></i>
+                      </div>
                     </th>
                   </tr>
                   <tr>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='activeCount'; reverseSort = !reverseSort"
-                    >
-                      Active<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
+                    <th class="text-center" style="border-top: none">Active</th>
+                    <th class="text-center" style="border-top: none">
+                      Renewal
                     </th>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='renewelCount'; reverseSort = !reverseSort"
-                    >
-                      Renewal<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
+                    <th class="text-center" style="border-top: none">
+                      Expired
                     </th>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='expiryedCount'; reverseSort = !reverseSort"
-                    >
-                      Expired<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
+                    <th class="text-center" style="border-top: none">
+                      Pending
                     </th>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='pendingCount'; reverseSort = !reverseSort"
-                    >
-                      Pending<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
-                    </th>
-                    <th
-                      class="text-center"
-                      ng-click="orderByField='missingCount'; reverseSort = !reverseSort"
-                    >
-                      Missing<i
-                        class="fa fa-sort float-right"
-                        aria-hidden="true"
-                      ></i>
+                    <th class="text-center" style="border-top: none">
+                      Missing
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr
-                    dir-paginate="shipProfile in shipProfileList |filter:viewShipProfilesearch |itemsPerPage:itemsPerPage | orderBy:'vesselsName' | orderBy:orderByField:reverseSort"
+                    dir-paginate="shipProfile in shipProfileList | filter:viewShipProfilesearch | itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort"
                     current-page="currentPage"
+                    ng-class="{
+                      'highlight-vessel-row':
+                        (selectedDocFilter === 'Active' && shipProfile.activeCount > 0) ||
+                        (selectedDocFilter === 'Renewal' && shipProfile.renewelCount > 0) ||
+                        (selectedDocFilter === 'Expired' && shipProfile.expiryedCount > 0) ||
+                        (selectedDocFilter === 'Pending' && shipProfile.pendingCount > 0) ||
+                        (selectedDocFilter === 'Missing' && shipProfile.missingCount > 0)
+                    }"
                   >
-                    <td class="text-center">
-                      <img
-                        ng-if="shipProfile.shipProfilePicPath"
-                        ng-src="{{shipProfile.shipProfilePicPath}}"
-                      />
-                      <img
-                        ng-if="!shipProfile.shipProfilePicPath"
-                        ng-src="image/imageUpload.png"
-                      />
+                    <td class="text-center align-middle">
+                      <div
+                        style="
+                          width: 50px;
+                          height: 40px;
+                          margin: 0 auto;
+                          overflow: hidden;
+                          background: #f8fafc;
+                          border: 1px solid #e2e8f0;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                      >
+                        <img
+                          ng-if="shipProfile.shipProfilePicPath"
+                          ng-src="{{shipProfile.shipProfilePicPath}}"
+                          style="width: 100%; height: 100%; object-fit: cover"
+                        />
+                        <img
+                          ng-if="!shipProfile.shipProfilePicPath"
+                          src="image/imageUpload.png"
+                          style="width: 100%; height: 100%; object-fit: cover"
+                        />
+                      </div>
                     </td>
+
                     <td
+                      class="text-left align-middle font-weight-medium"
                       style="cursor: pointer"
                       ng-click="openEBDState(shipProfile)"
                     >
                       {{shipProfile.vesselsName}}
                     </td>
-                    <td ng-click="openEBDState(shipProfile)">
+                    <td
+                      class="text-left align-middle text-muted"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
                       {{shipProfile.imo}}
                     </td>
-                    <td ng-click="openEBDState(shipProfile)">
+                    <td
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
                       {{shipProfile.shipTypes}}
                     </td>
                     <td
-                      class="text-center"
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.portName ? shipProfile.portName : '-'}}
+                    </td>
+
+                    <td
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data text-success': selectedDocFilter === 'Active'}"
                       ng-click="openEBDState(shipProfile)"
                     >
                       {{shipProfile.activeCount}}
                     </td>
                     <td
-                      class="text-center"
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data text-warning': selectedDocFilter === 'Renewal'}"
                       ng-click="openEBDState(shipProfile)"
                     >
                       {{shipProfile.renewelCount}}
                     </td>
                     <td
-                      class="text-center"
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data text-danger': selectedDocFilter === 'Expired'}"
                       ng-click="openEBDState(shipProfile)"
                     >
                       {{shipProfile.expiryedCount}}
                     </td>
                     <td
-                      class="text-center"
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data text-info': selectedDocFilter === 'Pending'}"
                       ng-click="openEBDState(shipProfile)"
                     >
                       {{shipProfile.pendingCount}}
                     </td>
                     <td
-                      class="text-center"
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data grayclr font-weight-bold': selectedDocFilter === 'Missing'}"
                       ng-click="openEBDState(shipProfile)"
                     >
                       {{shipProfile.missingCount}}
                     </td>
                     <td
-                      class="text-center"
+                      class="text-center align-middle font-weight-medium"
                       ng-click="openEBDState(shipProfile)"
                     >
                       {{shipProfile.totalCount}}
                     </td>
                   </tr>
+
                   <tr
-                    ng-show="(shipProfileList|filter:viewShipProfilesearch).length==0"
+                    ng-show="(shipProfileList | filter:viewShipProfilesearch).length == 0"
                   >
-                    <td colspan="10" class="not-found-div">No records found</td>
+                    <td
+                      colspan="11"
+                      class="not-found-div text-muted"
+                      style="text-align: center; padding: 20px"
+                    >
+                      No records found
+                    </td>
                   </tr>
                 </tbody>
               </table>
-              <!-- <div class="not-found-div" ng-show="(shipProfileList|filter:viewShipProfilesearch).length==0">No records found</div> -->
             </div>
+
+            <dir-pagination-controls
+              direction-links="true"
+              boundary-links="true"
+            ></dir-pagination-controls>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <div class="docuchain-admin-table">
+      <div class="row">
+        <div class="col-lg-12 col-sm-12 col-xs-12">
+          <div class="docuchainTable">
+            <div class="searchadminbox">
+              <div class="docuchainSearchbox">
+                <div class="searchInput">
+                  <input
+                    type="text"
+                    ng-model="viewShipProfilesearch"
+                    placeholder="Search"
+                    class="form-control"
+                  />
+                  <button type="button" class="searchIcon">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="docuadmin-table taskMangeTable table-responsive">
+              <table class="table custom-modern-table">
+                <thead style="background-color: #f8f9fa">
+                  <tr>
+                    <th
+                      rowspan="2"
+                      class="text-center align-middle"
+                      style="width: 70px"
+                    >
+                      <div class="th-content">Vessels</div>
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="orderByField='vesselsName'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        Vessels <br />
+                        Name <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="orderByField='imo'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        IMO <br />
+                        Number <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="orderByField='shipTypes'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        Type of <br />
+                        Vessels <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+                    <th
+                      rowspan="2"
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="orderByField='portName'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        Port <br />
+                        Name <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+
+                    <th
+                      colspan="5"
+                      class="text-center align-middle subscription-header"
+                      style="border-bottom: 1px solid #dee2e6"
+                    >
+                      <div class="th-content">Vessel Documents</div>
+                    </th>
+
+                    <th
+                      rowspan="2"
+                      class="text-center align-middle"
+                      style="cursor: pointer"
+                      ng-click="orderByField='totalCount'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        Total <br />
+                        Documents <i class="fa fa-sort sort-icon"></i>
+                      </div>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th
+                      class="text-center align-middle"
+                      style="border-top: none"
+                    >
+                      <div class="th-content">Active</div>
+                    </th>
+                    <th
+                      class="text-center align-middle"
+                      style="border-top: none"
+                    >
+                      <div class="th-content">Renewal</div>
+                    </th>
+                    <th
+                      class="text-center align-middle"
+                      style="border-top: none"
+                    >
+                      <div class="th-content">Expired</div>
+                    </th>
+                    <th
+                      class="text-center align-middle"
+                      style="border-top: none"
+                    >
+                      <div class="th-content">Pending</div>
+                    </th>
+                    <th
+                      class="text-center align-middle"
+                      style="border-top: none"
+                    >
+                      <div class="th-content">Missing</div>
+                    </th>
+                  </tr>
+                </thead>
+                <!-- <tbody>
+                  <tr
+                    dir-paginate="shipProfile in shipProfileList | filter:viewShipProfilesearch | itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort"
+                    current-page="currentPage"
+                    ng-class="{
+                      'highlight-vessel-row':
+                        (selectedDocFilter === 'Active' && shipProfile.activeCount > 0) ||
+                        (selectedDocFilter === 'Renewal' && shipProfile.renewelCount > 0) ||
+                        (selectedDocFilter === 'Expired' && shipProfile.expiryedCount > 0) ||
+                        (selectedDocFilter === 'Pending' && shipProfile.pendingCount > 0) ||
+                        (selectedDocFilter === 'Missing' && shipProfile.missingCount > 0)
+                    }"
+                  >
+                    <td class="text-center align-middle">
+                      <div
+                        style="
+                          width: 50px;
+                          height: 40px;
+                          margin: 0 auto;
+                          overflow: hidden;
+                          background: #f8fafc;
+                          border: 1px solid #e2e8f0;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                      >
+                        <img
+                          ng-if="shipProfile.shipProfilePicPath"
+                          ng-src="{{shipProfile.shipProfilePicPath}}"
+                          style="width: 100%; height: 100%; object-fit: cover"
+                        />
+                        <img
+                          ng-if="!shipProfile.shipProfilePicPath"
+                          src="image/imageUpload.png"
+                          style="width: 100%; height: 100%; object-fit: cover"
+                        />
+                      </div>
+                    </td>
+
+                    <td
+                      class="text-left align-middle font-weight-medium"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.vesselsName}}
+                    </td>
+                    <td
+                      class="text-left align-middle text-muted"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.imo}}
+                    </td>
+                    <td
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.shipTypes}}
+                    </td>
+                    <td
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.portName ? shipProfile.portName : '-'}}
+                    </td>
+
+                    <td
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data text-success': selectedDocFilter === 'Active'}"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.activeCount}}
+                    </td>
+                    <td
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data text-warning': selectedDocFilter === 'Renewal'}"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.renewelCount}}
+                    </td>
+                    <td
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data text-danger': selectedDocFilter === 'Expired'}"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.expiryedCount}}
+                    </td>
+                    <td
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data text-info': selectedDocFilter === 'Pending'}"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.pendingCount}}
+                    </td>
+                    <td
+                      class="text-center align-middle"
+                      ng-class="{'highlight-col-data grayclr font-weight-bold': selectedDocFilter === 'Missing'}"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.missingCount}}
+                    </td>
+                    <td
+                      class="text-center align-middle font-weight-medium"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.totalCount}}
+                    </td>
+                  </tr>
+
+                  <tr
+                    ng-show="(shipProfileList | filter:viewShipProfilesearch).length == 0"
+                  >
+                    <td
+                      colspan="11"
+                      class="not-found-div text-muted"
+                      style="text-align: center; padding: 20px"
+                    >
+                      No records found
+                    </td>
+                  </tr>
+                </tbody> -->
+                <tbody>
+                  <tr
+                    dir-paginate="shipProfile in shipProfileList | filter:viewShipProfilesearch | itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort"
+                    current-page="currentPage"
+                    ng-class="{
+      'highlight-vessel-row':
+        (selectedDocFilter === 'Active' && shipProfile.activeCount > 0) ||
+        (selectedDocFilter === 'Renewal' && shipProfile.renewelCount > 0) ||
+        (selectedDocFilter === 'Expired' && shipProfile.expiryedCount > 0) ||
+        (selectedDocFilter === 'Pending' && shipProfile.pendingCount > 0) ||
+        (selectedDocFilter === 'Missing' && shipProfile.missingCount > 0)
+    }"
+                  >
+                    <td class="text-center align-middle">
+                      <div class="vessel-img-container">
+                        <img
+                          ng-if="shipProfile.shipProfilePicPath"
+                          ng-src="{{shipProfile.shipProfilePicPath}}"
+                        />
+                        <img
+                          ng-if="!shipProfile.shipProfilePicPath"
+                          src="image/imageUpload.png"
+                        />
+                      </div>
+                    </td>
+
+                    <td
+                      class="text-left align-middle font-weight-medium"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.vesselsName}}
+                    </td>
+                    <td
+                      class="text-left align-middle text-muted"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.imo}}
+                    </td>
+                    <td
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.shipTypes}}
+                    </td>
+                    <td
+                      class="text-left align-middle"
+                      style="cursor: pointer"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.portName ? shipProfile.portName : '-'}}
+                    </td>
+
+                    <td
+                      class="text-center align-middle"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      <span
+                        ng-class="{'highlight-col-data text-success': selectedDocFilter === 'Active'}"
+                        >{{shipProfile.activeCount}}</span
+                      >
+                    </td>
+                    <td
+                      class="text-center align-middle"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      <span
+                        ng-class="{'highlight-col-data text-warning': selectedDocFilter === 'Renewal'}"
+                        >{{shipProfile.renewelCount}}</span
+                      >
+                    </td>
+                    <td
+                      class="text-center align-middle"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      <span
+                        ng-class="{'highlight-col-data text-danger': selectedDocFilter === 'Expired'}"
+                        >{{shipProfile.expiryedCount}}</span
+                      >
+                    </td>
+                    <td
+                      class="text-center align-middle"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      <span
+                        ng-class="{'highlight-col-data text-info': selectedDocFilter === 'Pending'}"
+                        >{{shipProfile.pendingCount}}</span
+                      >
+                    </td>
+                    <td
+                      class="text-center align-middle"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      <span
+                        ng-class="{'highlight-col-data grayclr font-weight-bold': selectedDocFilter === 'Missing'}"
+                        >{{shipProfile.missingCount}}</span
+                      >
+                    </td>
+                    <td
+                      class="text-center align-middle font-weight-medium"
+                      ng-click="openEBDState(shipProfile)"
+                    >
+                      {{shipProfile.totalCount}}
+                    </td>
+                  </tr>
+
+                  <tr
+                    ng-show="(shipProfileList | filter:viewShipProfilesearch).length == 0"
+                  >
+                    <td
+                      colspan="11"
+                      class="not-found-div text-muted"
+                      style="text-align: center; padding: 20px"
+                    >
+                      No records found
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             <dir-pagination-controls
               direction-links="true"
               boundary-links="true"
@@ -219,9 +802,6 @@
         <div class="row">
           <div class="col-lg-12 col-sm-12 col-xs-12">
             <div class="docuchainMapVictor">
-              <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d27358568.189688053!2d81.91242051691525!3d-5.483777987299326!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1533741469415"
-                            width="100%" height="350" frameborder="0" style="border:0" allowfullscreen></iframe> -->
-              <!-- <ui-gmap-google-map center="map.center" zoom="map.zoom" options="options"></ui-gmap-google-map> -->
               <div ng-app="dogMap">
                 <ui-gmap-google-map
                   center="map.center"
@@ -260,6 +840,7 @@
       </div>
     </div>
   </div>
+
   <div class="preloader" ng-show="loader">
     <div id="cssload-loader">
       <div class="cssload-dot"></div>
@@ -273,16 +854,14 @@
     </div>
   </div>
 </div>
-<!-- Delete Popup -->
+
 <div class="geoLocationPopup">
   <div class="modal fade" id="geoLocation" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">Geo Location</h4>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
+          <button type="button" class="close" data-dismiss="modal">×</button>
         </div>
         <div class="modal-body">
           <form name="geoForm">

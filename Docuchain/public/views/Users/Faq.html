@@ -1,67 +1,94 @@
-<div class="app-content" ng-app="dapp" ng-controller="AdminAddPlaceHolderController" ng-init="placeHolderList()">
-        <div class="docubodyTitle">
-            <ul id="breadcrumb">
-         
-                <li>
-                    <a href="javascript:void(0);">
-                        <span class="icon icon-beaker"> </span>Frequently Asked Questions</a>
-                </li>
-            </ul>           
+<div
+  class="app-content"
+  ng-app="dapp"
+  ng-controller="AdminAddPlaceHolderController"
+  ng-init="placeHolderList()"
+>
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a href="javascript:void(0);">
+          <span class="icon icon-beaker"> </span>Frequently Asked Questions
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="docuContent">
+    <div class="manageOrganization vesslesDocumentsTable">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="datatableEntry">
+            <label
+              >Show <input type="text" ng-model="itemsPerPage" />of
+              <span>{{getQuestionAndAnswer.length}}</span>
+            </label>
+          </div>
         </div>
-        <div class="docuContent">
-            <div class="manageOrganization vesslesDocumentsTable">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="datatableEntry">
-                            <label>Show
-                                <input type="text" ng-model="itemsPerPage">of
-                                <span>{{getQuestionAndAnswer.length}}</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="docuchainSearchbox">
-                            <div class="searchInput">
-                                <input type="text" placeholder="Search" ng-model="placeholdersearch">
-                                <button type="button" class="searchIcon">
-                                    <i class="fa fa-search" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 col-sm-12 col-xs-12">
-                        <div class="docuchainmanageOrganization">
-                            <div class="systemConfig table-responsive">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th  width="10%">S.No</th>
-                                            <!-- <th>Organization Name</th> -->
-                                            <th  width="45%" ng-click="orderByField='documentHolderName'; reverseSort = !reverseSort">Question</th>                                        
-                                            <th  width="45%">Answer</th>                                        
-                                           
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr dir-paginate="question in getQuestionAndAnswer|orderBy:'question' |filter:placeholdersearch |itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort" current-page="currentPage">
-                                            
-                                            <td>{{itemsPerPage *(currentPage-1)+$index+1}}</td>
-                                            <!-- <td>{{placeholder.organizationName}}</td> -->
-                                            <td>{{question.question}}</td>                                        
-                                            <td>{{question.answer}}</td>                                        
-                                           
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <dir-pagination-controls  direction-links="true" boundary-links="true">
-                            </dir-pagination-controls>
-                        </div>
-                    </div>
-                </div>
+        <div class="col-lg-6">
+          <div class="docuchainSearchbox">
+            <div class="searchInput">
+              <input
+                type="text"
+                placeholder="Search"
+                ng-model="placeholdersearch"
+              />
+              <button type="button" class="searchIcon">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
             </div>
+          </div>
         </div>
-      
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-sm-12 col-xs-12">
+          <div class="docuchainmanageOrganization">
+            <div class="systemConfig table-responsive">
+              <table class="table custom-modern-table">
+                <thead>
+                  <tr>
+                    <th width="10%" class="text-center">
+                      <div class="th-content">S.No</div>
+                    </th>
+                    <th
+                      width="45%"
+                      ng-click="orderByField='documentHolderName'; reverseSort = !reverseSort"
+                    >
+                      <div class="th-content">
+                        Question <i class="fa fa-sort"></i>
+                      </div>
+                    </th>
+                    <th width="45%">
+                      <div class="th-content">Answer</div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    dir-paginate="question in getQuestionAndAnswer | orderBy:'question' | filter:placeholdersearch | itemsPerPage:itemsPerPage | orderBy:orderByField:reverseSort"
+                    current-page="currentPage"
+                  >
+                    <td class="text-center">
+                      {{itemsPerPage *(currentPage-1)+$index+1}}
+                    </td>
+                    <td>{{question.question}}</td>
+                    <td>{{question.answer}}</td>
+                  </tr>
+                  <tr ng-show="getQuestionAndAnswer.length == 0">
+                    <td colspan="3" class="text-center p-3">
+                      No records found.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <dir-pagination-controls
+              direction-links="true"
+              boundary-links="true"
+            >
+            </dir-pagination-controls>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
