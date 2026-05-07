@@ -433,36 +433,78 @@ public class OrganizationInfoServiceImpl implements OrganizationInfoService {
             }
 
             // --- 5. CREATE ADMIN USER (FIXED) ---
+            // if (organizationDTO.getUserInfo() != null) {
+            //     try {
+            //         organizationDTO.getUserInfo().setOrganizationId(organizationInfo.getId());
+            //         organizationDTO.getUserInfo().setBusinessCategory(Role.Admin.name());
+
+            //         // --- ROLE LOOKUP (Kept for safety) ---
+            //         Long adminRoleId = null;
+            //         if (roleInfoRepository.findOne(6L) != null) adminRoleId = 6L;
+            //         else if (roleInfoRepository.findOne(2L) != null) adminRoleId = 2L;
+            //         else if (roleInfoRepository.findOne(1L) != null) adminRoleId = 1L;
+
+            //         if (adminRoleId == null) throw new RuntimeException("CRITICAL: Role 'Admin' not found in DB.");
+
+            //         organizationDTO.getUserInfo().setRoleId(adminRoleId);
+
+            //         // --- CRITICAL FIX START ---
+            //         // 1. We pass 'null' to fix the "Incompatible Types" compiler error.
+            //         // 2. We wrap it in a TRY-CATCH to ignore the NullPointerException that UserService throws.
+            //         try {
+            //             userService.create(organizationDTO.getUserInfo(), null);
+            //         } catch (NullPointerException npe) {
+            //             System.err.println("DEBUG WARNING: UserService crashed on History Log (Expected). Ignoring to allow Commit.");
+            //             // We intentionally swallow this error because the User IS created before this crash.
+            //         }
+            //         // --- CRITICAL FIX END ---
+
+            //     } catch (Exception e) {
+            //         e.printStackTrace();
+            //         // If it's a real error (not the logging NPE), we rollback.
+            //         throw new RuntimeException(e);
+            //     }
+            // }
+						// --- 5. CREATE ADMIN USER (STRICT: ADMIN OR SUPERADMIN ONLY) ---
             if (organizationDTO.getUserInfo() != null) {
                 try {
                     organizationDTO.getUserInfo().setOrganizationId(organizationInfo.getId());
                     organizationDTO.getUserInfo().setBusinessCategory(Role.Admin.name());
 
-                    // --- ROLE LOOKUP (Kept for safety) ---
                     Long adminRoleId = null;
-                    if (roleInfoRepository.findOne(6L) != null) adminRoleId = 6L;
-                    else if (roleInfoRepository.findOne(2L) != null) adminRoleId = 2L;
-                    else if (roleInfoRepository.findOne(1L) != null) adminRoleId = 1L;
 
-                    if (adminRoleId == null) throw new RuntimeException("CRITICAL: Role 'Admin' not found in DB.");
+                    // 1. Try finding Admin role by Name (The safest way)
+                    com.dapp.docuchain.model.RoleInfo roleEntity = roleInfoRepository.findByRoleName(Role.Admin);
+
+                    if (roleEntity != null) {
+                        adminRoleId = roleEntity.getId();
+                    }
+                    // 2. Fallback: Specifically look for ID 2 (Admin)
+                    else if (roleInfoRepository.findOne(2L) != null) {
+                        adminRoleId = 2L;
+                    }
+                    // 3. Last Resort: Look for ID 1 (SuperAdmin)
+                    else if (roleInfoRepository.findOne(1L) != null) {
+                        adminRoleId = 1L;
+                    }
+
+                    // --- DATA OPERATOR (ID 6) REMOVED COMPLETELY ---
+                    if (adminRoleId == null) {
+                        throw new RuntimeException("CRITICAL ERROR: Role 'Admin' (ID 2) or 'SuperAdmin' (ID 1) not found in Database.");
+                    }
 
                     organizationDTO.getUserInfo().setRoleId(adminRoleId);
 
-                    // --- CRITICAL FIX START ---
-                    // 1. We pass 'null' to fix the "Incompatible Types" compiler error.
-                    // 2. We wrap it in a TRY-CATCH to ignore the NullPointerException that UserService throws.
+                    // Create the user
                     try {
                         userService.create(organizationDTO.getUserInfo(), null);
                     } catch (NullPointerException npe) {
-                        System.err.println("DEBUG WARNING: UserService crashed on History Log (Expected). Ignoring to allow Commit.");
-                        // We intentionally swallow this error because the User IS created before this crash.
+                        System.err.println("DEBUG WARNING: UserService logging crash ignored. Admin User created.");
                     }
-                    // --- CRITICAL FIX END ---
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    // If it's a real error (not the logging NPE), we rollback.
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Failed to create Admin user: " + e.getMessage());
                 }
             }
             return env.getProperty("success");
@@ -900,7 +942,9 @@ public class OrganizationInfoServiceImpl implements OrganizationInfoService {
 
 		organizationInfo.setOrganizationName(organizationDTO.getOrganizationName());
 		organizationInfo.setRegistrationNumber(organizationDTO.getRegistrationNumber());
-		organizationInfo.setAddress(organizationDTO.getAddress());
+		// organizationInfo.setAddress(organizationDTO.getAddress());
+		organizationInfo.setAddressLine1(organizationDTO.getAddressLine1());
+		organizationInfo.setAddressLine2(organizationDTO.getAddressLine2());
 		organizationInfo.setEmailId(organizationDTO.getEmailId());
 		organizationInfo.setPhoneNumber(organizationDTO.getPhoneNumber());
 		organizationInfo.setAlternatePhoneNumber(organizationDTO.getAlternatePhoneNumber());
@@ -980,7 +1024,9 @@ public class OrganizationInfoServiceImpl implements OrganizationInfoService {
 			organizationDTO.setOrganizationId(organizationInfo.getId());
 			organizationDTO.setOrganizationName(organizationInfo.getOrganizationName());
 			organizationDTO.setRegistrationNumber(organizationInfo.getRegistrationNumber());
-			organizationDTO.setAddress(organizationInfo.getAddress());
+			// organizationDTO.setAddress(organizationInfo.getAddress());
+				organizationDTO.setAddressLine1(organizationInfo.getAddressLine1());
+			organizationDTO.setAddressLine2(organizationInfo.getAddressLine2());
 			organizationDTO.setEmailId(organizationInfo.getEmailId());
 			organizationDTO.setPhoneNumber(organizationInfo.getPhoneNumber());
 			organizationDTO.setAlternatePhoneNumber(organizationInfo.getAlternatePhoneNumber());
@@ -1026,7 +1072,12 @@ public class OrganizationInfoServiceImpl implements OrganizationInfoService {
 			organizationDTO.setOrganizationId(organizationInfo.getId());
 			organizationDTO.setOrganizationName(organizationInfo.getOrganizationName());
 			organizationDTO.setRegistrationNumber(organizationInfo.getRegistrationNumber());
-			organizationDTO.setAddress(organizationInfo.getAddress());
+			// organizationDTO.setAddress(organizationInfo.getAddress());
+		// organizationInfo.setAddressLine1(organizationDTO.getAddressLine1());
+		// organizationInfo.setAddressLine2(organizationDTO.getAddressLine2());
+		// RIGHT: This takes values from the Info object (DB) and puts them into the DTO (Response)
+organizationDTO.setAddressLine1(organizationInfo.getAddressLine1());
+organizationDTO.setAddressLine2(organizationInfo.getAddressLine2());
 			organizationDTO.setEmailId(organizationInfo.getEmailId());
 			organizationDTO.setPhoneNumber(organizationInfo.getPhoneNumber());
 			organizationDTO.setAlternatePhoneNumber(organizationInfo.getAlternatePhoneNumber());

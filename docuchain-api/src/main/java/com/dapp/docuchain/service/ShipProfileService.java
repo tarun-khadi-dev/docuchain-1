@@ -52,7 +52,7 @@ public interface ShipProfileService {
     public List<ShipProfileDTO> getLastSeen(Long userId);
 
     Boolean statusChangeUserLists(Long officialNum);
-    
+
     public Boolean scanImageFile(String userName,MultipartFile scanFile);
 
 	public byte[] getByteDataForUserProfile(String userName);
@@ -70,7 +70,7 @@ public interface ShipProfileService {
 	public Boolean updateShipStatus(ShipProfileDTO shipProfileDTO);
 
 	public Boolean updateShipStatusAll(ShipProfileDTO shipProfileDTO);
-	
+
 	public List<ShipProfileDTO> viewShipProfile(Long userId);
 
 	public List<ShipProfileDTO> getDashboardTopCount(Long userId);
@@ -90,5 +90,6 @@ public interface ShipProfileService {
 	public String deleteShipMasterFromShipProfileInfoBasedOrganization(ShipProfileDTO shipProfileDTO);
 
 	public ShipProfileDTO getDashboardTopCountBasedOnVessel(Long vesselId);
+    public Long getPortCountByOrganization(Long organizationId);
 
 }

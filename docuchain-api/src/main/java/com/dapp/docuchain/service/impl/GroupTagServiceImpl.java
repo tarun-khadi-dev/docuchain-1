@@ -748,7 +748,9 @@ public class GroupTagServiceImpl implements GroupTagService {
 				for (int i = 0; i < groupTagDTO.getDocumentHolderIds().length; i++) {
 					DocumentHolderInfo documentHolderInfo = documentHolderRepository
 							.findOne(groupTagDTO.getDocumentHolderIds()[i]);
-					boolean exist = documentHolderInfosExist.contains(documentHolderInfo);
+
+// boolean exist = documentHolderInfosExist.contains(documentHolderInfo);
+boolean exist = documentHolderInfosExist.stream().anyMatch(d -> d.getId().equals(documentHolderInfo.getId()));
 					if (!exist) {
 						documentHolderInfos.add(documentHolderInfo);
 						System.out.println("documentHolderInfo" + documentHolderInfo.getId());

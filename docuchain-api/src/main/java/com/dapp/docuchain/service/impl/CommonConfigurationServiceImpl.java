@@ -1112,73 +1112,152 @@ public class CommonConfigurationServiceImpl implements CommonConfigurationServic
 		}
 	}
 
-	@Override
-	public String addDocumentHolderInformationBasedSuperAdmin(DocumentHolderDTO documentHolderDTO) {
-		OrganizationInfo organizationInfo = null ;
-		if (documentHolderDTO.getUserId() == null)
-			return env.getProperty("user.id.null");
+	// @Override
+	// public String addDocumentHolderInformationBasedSuperAdmin(DocumentHolderDTO documentHolderDTO) {
+	// 	OrganizationInfo organizationInfo = null ;
+	// 	if (documentHolderDTO.getUserId() == null)
+	// 		return env.getProperty("user.id.null");
 
-		if (documentHolderDTO.getDocumentHolderName() == null
-				&& StringUtils.isEmpty(documentHolderDTO.getDocumentHolderName())
-				&& StringUtils.isNotBlank(documentHolderDTO.getDocumentHolderName()))
-			return env.getProperty("document.holder.file.name.empty");
+	// 	if (documentHolderDTO.getDocumentHolderName() == null
+	// 			&& StringUtils.isEmpty(documentHolderDTO.getDocumentHolderName())
+	// 			&& StringUtils.isNotBlank(documentHolderDTO.getDocumentHolderName()))
+	// 		return env.getProperty("document.holder.file.name.empty");
 
-		UserProfileInfo profileInfo = userProfileRepository.findOne(documentHolderDTO.getUserId());
-		if (profileInfo == null) {
-			return env.getProperty("user.not.found");
-		}
-		if (documentHolderRepository.findByDocumentHolderName(documentHolderDTO.getDocumentHolderName()) != null)
-			return env.getProperty("document.holder.name.already.exist");
-		if (documentHolderDTO.getOrganizationName() != null){
-			 organizationInfo = organizationInfoRepository.findByOrganizationName(documentHolderDTO.getOrganizationName());
-		}
-		DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
-		 if (documentHolderDTO.getPlaceholderBy() != null && documentHolderDTO.getPlaceholderBy().equalsIgnoreCase("InVesselPart")) {
-			 for (Long id : documentHolderDTO.getVesselIds()) {
-					 documentHolderInfo = documentHolderRepository.findOne(id);
-					 DocumentHolderInfo documentHolderInf = new DocumentHolderInfo();
-					 documentHolderInf.setOrganizationId(documentHolderInfo.getOrganizationId());
-					 documentHolderInf.setDocumentHolderName(documentHolderInfo.getDocumentHolderName());
-					 documentHolderInf.setDocumentHolderDescription(documentHolderInfo.getDocumentHolderDescription());
-					 documentHolderInf.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
-					 documentHolderInf.setType(documentHolderInfo.getType());
-					 documentHolderInf.setUpdatedDate(new Date());
-					 documentHolderInf.setVesselId(id);
-					 documentHolderInf = documentHolderRepository.saveAndFlush(documentHolderInf);
+	// 	UserProfileInfo profileInfo = userProfileRepository.findOne(documentHolderDTO.getUserId());
+	// 	if (profileInfo == null) {
+	// 		return env.getProperty("user.not.found");
+	// 	}
+	// 	if (documentHolderRepository.findByDocumentHolderName(documentHolderDTO.getDocumentHolderName()) != null)
+	// 		return env.getProperty("document.holder.name.already.exist");
+	// 	if (documentHolderDTO.getOrganizationName() != null){
+	// 		 organizationInfo = organizationInfoRepository.findByOrganizationName(documentHolderDTO.getOrganizationName());
+	// 	}
+	// 	DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
+	// 	 if (documentHolderDTO.getPlaceholderBy() != null && documentHolderDTO.getPlaceholderBy().equalsIgnoreCase("InVesselPart")) {
+	// 		 for (Long id : documentHolderDTO.getVesselIds()) {
+	// 				 documentHolderInfo = documentHolderRepository.findOne(id);
+	// 				 DocumentHolderInfo documentHolderInf = new DocumentHolderInfo();
+	// 				 documentHolderInf.setOrganizationId(documentHolderInfo.getOrganizationId());
+	// 				 documentHolderInf.setDocumentHolderName(documentHolderInfo.getDocumentHolderName());
+	// 				 documentHolderInf.setDocumentHolderDescription(documentHolderInfo.getDocumentHolderDescription());
+	// 				 documentHolderInf.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
+	// 				 documentHolderInf.setType(documentHolderInfo.getType());
+	// 				 documentHolderInf.setUpdatedDate(new Date());
+	// 				 documentHolderInf.setVesselId(id);
+	// 				 documentHolderInf = documentHolderRepository.saveAndFlush(documentHolderInf);
 
-			 }
-		 }else {
-		if (organizationInfo != null)
-		documentHolderInfo.setOrganizationId(organizationInfo.getId());
-		documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
-		documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
-		documentHolderInfo.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
-		documentHolderInfo.setType(documentHolderDTO.getType());
-		documentHolderInfo.setUpdatedDate(new Date());
-		 documentHolderInfo=documentHolderRepository.save(documentHolderInfo);
+	// 		 }
+	// 	 }else {
+	// 	if (organizationInfo != null)
+	// 	documentHolderInfo.setOrganizationId(organizationInfo.getId());
+	// 	documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+	// 	documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+	// 	documentHolderInfo.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
+	// 	documentHolderInfo.setType(documentHolderDTO.getType());
+	// 	documentHolderInfo.setUpdatedDate(new Date());
+	// 	 documentHolderInfo=documentHolderRepository.save(documentHolderInfo);
 
-		if (documentHolderInfo != null && documentHolderDTO.getVesselIds() != null) {
-			for (Long id : documentHolderDTO.getVesselIds()) {
-				DocumentHolderInfo documentHolderInf = new DocumentHolderInfo();
-				documentHolderInf.setOrganizationId(organizationInfo.getId());
-				documentHolderInf.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
-				documentHolderInf.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
-				documentHolderInf.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
-				documentHolderInf.setType(documentHolderDTO.getType());
-				documentHolderInf.setUpdatedDate(new Date());
-				documentHolderInf.setVesselId(id);
-				documentHolderInf.setParantId(documentHolderInfo.getId());
-				documentHolderInf = documentHolderRepository.saveAndFlush(documentHolderInf);
-			}
-		}
-		 }
-		if (documentHolderInfo != null){
-			commonMethodsUtility.maintainHistory(documentHolderInfo.getId(),documentHolderInfo.getDocumentHolderName(),"DocumentHolder", env.getProperty("history.created"), documentHolderDTO.getUserId());
-			return env.getProperty("success");
-		}
+	// 	if (documentHolderInfo != null && documentHolderDTO.getVesselIds() != null) {
+	// 		for (Long id : documentHolderDTO.getVesselIds()) {
+	// 			DocumentHolderInfo documentHolderInf = new DocumentHolderInfo();
+	// 			documentHolderInf.setOrganizationId(organizationInfo.getId());
+	// 			documentHolderInf.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+	// 			documentHolderInf.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+	// 			documentHolderInf.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
+	// 			documentHolderInf.setType(documentHolderDTO.getType());
+	// 			documentHolderInf.setUpdatedDate(new Date());
+	// 			documentHolderInf.setVesselId(id);
+	// 			documentHolderInf.setParantId(documentHolderInfo.getId());
+	// 			documentHolderInf = documentHolderRepository.saveAndFlush(documentHolderInf);
+	// 		}
+	// 	}
+	// 	 }
+	// 	if (documentHolderInfo != null){
+	// 		commonMethodsUtility.maintainHistory(documentHolderInfo.getId(),documentHolderInfo.getDocumentHolderName(),"DocumentHolder", env.getProperty("history.created"), documentHolderDTO.getUserId());
+	// 		return env.getProperty("success");
+	// 	}
 
-		return null;
-	}
+	// 	return null;
+	// }
+	// CommonConfigurationServiceImpl.java (Snippet)
+
+@Override
+public String addDocumentHolderInformationBasedSuperAdmin(DocumentHolderDTO documentHolderDTO) {
+    OrganizationInfo organizationInfo = null ;
+    if (documentHolderDTO.getUserId() == null)
+        return env.getProperty("user.id.null");
+
+    // 🔥 BONUS FIX: Use OR (||) instead of AND (&&) so the validation actually works
+    if (documentHolderDTO.getDocumentHolderName() == null || documentHolderDTO.getDocumentHolderName().trim().isEmpty()) {
+        return env.getProperty("document.holder.file.name.empty");
+    }
+
+    UserProfileInfo profileInfo = userProfileRepository.findOne(documentHolderDTO.getUserId());
+    if (profileInfo == null) {
+        return env.getProperty("user.not.found");
+    }
+
+    // 🔥 MAIN FIX: Check if the list is empty rather than checking for a single null object
+    List<DocumentHolderInfo> existingDocs = documentHolderRepository.findByDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+    if (existingDocs != null && !existingDocs.isEmpty()) {
+        return env.getProperty("document.holder.name.already.exist");
+    }
+
+    if (documentHolderDTO.getOrganizationName() != null){
+        organizationInfo = organizationInfoRepository.findByOrganizationName(documentHolderDTO.getOrganizationName());
+    }
+
+    DocumentHolderInfo documentHolderInfo = new DocumentHolderInfo();
+
+    if (documentHolderDTO.getPlaceholderBy() != null && documentHolderDTO.getPlaceholderBy().equalsIgnoreCase("InVesselPart")) {
+        for (Long id : documentHolderDTO.getVesselIds()) {
+            documentHolderInfo = documentHolderRepository.findOne(id);
+            DocumentHolderInfo documentHolderInf = new DocumentHolderInfo();
+            documentHolderInf.setOrganizationId(documentHolderInfo.getOrganizationId());
+            documentHolderInf.setDocumentHolderName(documentHolderInfo.getDocumentHolderName());
+            documentHolderInf.setDocumentHolderDescription(documentHolderInfo.getDocumentHolderDescription());
+            documentHolderInf.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
+            documentHolderInf.setType(documentHolderInfo.getType());
+            documentHolderInf.setUpdatedDate(new Date());
+            documentHolderInf.setVesselId(id);
+            documentHolderInf = documentHolderRepository.saveAndFlush(documentHolderInf);
+        }
+    } else {
+        if (organizationInfo != null)
+            documentHolderInfo.setOrganizationId(organizationInfo.getId());
+
+        documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+        documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+        documentHolderInfo.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
+        documentHolderInfo.setType(documentHolderDTO.getType());
+        documentHolderInfo.setUpdatedDate(new Date());
+        documentHolderInfo = documentHolderRepository.save(documentHolderInfo);
+
+        if (documentHolderInfo != null && documentHolderDTO.getVesselIds() != null) {
+            for (Long id : documentHolderDTO.getVesselIds()) {
+                DocumentHolderInfo documentHolderInf = new DocumentHolderInfo();
+                documentHolderInf.setOrganizationId(organizationInfo.getId());
+
+                // Note: This is where duplicates are being created in your database!
+                documentHolderInf.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+                documentHolderInf.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+                documentHolderInf.setDocumentHolderType(DocumentHolderType.EXPIRY_TYPE.name());
+                documentHolderInf.setType(documentHolderDTO.getType());
+                documentHolderInf.setUpdatedDate(new Date());
+                documentHolderInf.setVesselId(id);
+                documentHolderInf.setParantId(documentHolderInfo.getId());
+                documentHolderInf = documentHolderRepository.saveAndFlush(documentHolderInf);
+            }
+        }
+    }
+
+    if (documentHolderInfo != null){
+        commonMethodsUtility.maintainHistory(documentHolderInfo.getId(), documentHolderInfo.getDocumentHolderName(), "DocumentHolder", env.getProperty("history.created"), documentHolderDTO.getUserId());
+        return env.getProperty("success"); // Make sure this matches your expected "Success" mapping for the frontend
+    }
+
+    return null;
+}
 
 	@Override
 	public List<PortDTO> findAllPortInformationWithCountryDetails() {
@@ -1206,134 +1285,298 @@ public class CommonConfigurationServiceImpl implements CommonConfigurationServic
 		return convertDocumentHolderInfosToDocumentHolderDTOs(documentHolderRepository.findByTypeOrTypeIsNullAndVesselIdIsNull("Standard"));
 	}
 
+	// private List<DocumentHolderDTO> convertDocumentHolderInfosToDocumentHolderDTOs(
+	// 		List<DocumentHolderInfo> documentHolderInfos) {
+	// 	OrganizationInfo organizationInfo = null;
+	// 	List<DocumentHolderDTO> documentHolderDTOs = new ArrayList<>();
+	// 	for (DocumentHolderInfo documentHolderInfo : documentHolderInfos) {
+	// 		DocumentHolderDTO documentHolderDTO = new DocumentHolderDTO();
+	// 		documentHolderDTO.setDocumentHolderId(documentHolderInfo.getId());
+	// 		documentHolderDTO.setDocumentHolderName(documentHolderInfo.getDocumentHolderName());
+	// 		documentHolderDTO.setDocumentHolderDescription(documentHolderInfo.getDocumentHolderDescription());
+	// 		documentHolderDTO.setDocumentHolderType(documentHolderInfo.getDocumentHolderType());
+	// 		//documentHolderDTO.setDocumentFileNumber(documentHolderInfo.getDocumentFileNumber());
+	// 		documentHolderDTO.setType(documentHolderInfo.getType());
+	// 		documentHolderDTO.setUpdatedDate(documentHolderInfo.getUpdatedDate());
+	// 		if (documentHolderInfo.getOrganizationId() != null)
+	// 			organizationInfo = organizationInfoRepository.findOne(documentHolderInfo.getOrganizationId());
+	// 		if (organizationInfo != null)
+	// 			documentHolderDTO.setOrganizationName(organizationInfo.getOrganizationName());
+	// 		documentHolderDTOs.add(documentHolderDTO);
+	// 	}
+	// 	return documentHolderDTOs;
+	// }
 	private List<DocumentHolderDTO> convertDocumentHolderInfosToDocumentHolderDTOs(
-			List<DocumentHolderInfo> documentHolderInfos) {
-		OrganizationInfo organizationInfo = null;
-		List<DocumentHolderDTO> documentHolderDTOs = new ArrayList<>();
-		for (DocumentHolderInfo documentHolderInfo : documentHolderInfos) {
-			DocumentHolderDTO documentHolderDTO = new DocumentHolderDTO();
-			documentHolderDTO.setDocumentHolderId(documentHolderInfo.getId());
-			documentHolderDTO.setDocumentHolderName(documentHolderInfo.getDocumentHolderName());
-			documentHolderDTO.setDocumentHolderDescription(documentHolderInfo.getDocumentHolderDescription());
-			documentHolderDTO.setDocumentHolderType(documentHolderInfo.getDocumentHolderType());
-			//documentHolderDTO.setDocumentFileNumber(documentHolderInfo.getDocumentFileNumber());
-			documentHolderDTO.setType(documentHolderInfo.getType());
-			documentHolderDTO.setUpdatedDate(documentHolderInfo.getUpdatedDate());
-			if (documentHolderInfo.getOrganizationId() != null)
-				organizationInfo = organizationInfoRepository.findOne(documentHolderInfo.getOrganizationId());
-			if (organizationInfo != null)
-				documentHolderDTO.setOrganizationName(organizationInfo.getOrganizationName());
-			documentHolderDTOs.add(documentHolderDTO);
-		}
-		return documentHolderDTOs;
-	}
+        List<DocumentHolderInfo> documentHolderInfos) {
 
-	@Override
-	public String updateDocumentHolderInformation(DocumentHolderDTO documentHolderDTO) {
-		if (documentHolderDTO.getUserId() == null)
-			return env.getProperty("user.id.null");
+    OrganizationInfo organizationInfo = null;
+    List<DocumentHolderDTO> documentHolderDTOs = new ArrayList<>();
 
-		if (documentHolderDTO.getDocumentHolderId() == null)
-			return env.getProperty("document.holder.id.null");
+    for (DocumentHolderInfo documentHolderInfo : documentHolderInfos) {
 
-		if (documentHolderDTO.getDocumentHolderName() == null
-				&& StringUtils.isEmpty(documentHolderDTO.getDocumentHolderName())
-				&& StringUtils.isNotBlank(documentHolderDTO.getDocumentHolderName()))
-			return env.getProperty("document.holder.file.name.empty");
+        DocumentHolderDTO documentHolderDTO = new DocumentHolderDTO();
 
-		UserProfileInfo profileInfo = userProfileRepository.findOne(documentHolderDTO.getUserId());
-		if (profileInfo == null) {
-			return env.getProperty("user.not.found");
-		}
+        documentHolderDTO.setDocumentHolderId(documentHolderInfo.getId());
+        documentHolderDTO.setDocumentHolderName(documentHolderInfo.getDocumentHolderName());
+        documentHolderDTO.setDocumentHolderDescription(documentHolderInfo.getDocumentHolderDescription());
+        documentHolderDTO.setDocumentHolderType(documentHolderInfo.getDocumentHolderType());
+        documentHolderDTO.setType(documentHolderInfo.getType());
+        documentHolderDTO.setUpdatedDate(documentHolderInfo.getUpdatedDate());
 
-//		if (!profileInfo.getRoleId().getRoleName().equals(Role.SuperAdmin)) {
-//			return env.getProperty("document.holder.super.admin.only.update");
-//		}
+        // ✅ Set Organization Name
+        if (documentHolderInfo.getOrganizationId() != null) {
+            organizationInfo =
+                    organizationInfoRepository.findOne(documentHolderInfo.getOrganizationId());
 
-		DocumentHolderInfo documentHolderInfo = documentHolderRepository
-				.findOne(documentHolderDTO.getDocumentHolderId());
-		if (documentHolderInfo == null)
-			return env.getProperty("document.holder.not.found");
+            if (organizationInfo != null) {
+                documentHolderDTO.setOrganizationName(
+                        organizationInfo.getOrganizationName());
+            }
+        }
 
-		DocumentHolderInfo documentHolderInfoExist = documentHolderRepository
-				.findByDocumentHolderName(documentHolderDTO.getDocumentHolderName());
-		if (documentHolderInfoExist != null) {
-			if (!documentHolderInfo.equals(documentHolderInfoExist))
-				return env.getProperty("document.holder.name.already.exist");
-		}
-		if (documentHolderDTO.getOrganizationName() != null){
-			OrganizationInfo organizationInfo = organizationInfoRepository.findByOrganizationName(documentHolderDTO.getOrganizationName());
-			documentHolderInfo.setOrganizationId(organizationInfo.getId());
-		}
+        // ✅🔥 Set Vessel Name
+        if (documentHolderInfo.getVesselId() != null) {
 
-		//documentHolderInfo.setDocumentFileNumber(documentHolderDTO.getDocumentFileNumber());
-		documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
-		documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
-		documentHolderInfo.setUpdatedDate(new Date());
-		DocumentHolderInfo documentHolderInf=documentHolderRepository.save(documentHolderInfo);
-		if (documentHolderInf != null){
-			commonMethodsUtility.maintainHistory(documentHolderInf.getId(),documentHolderInf.getDocumentHolderName(),"DocumentHolder", env.getProperty("history.updated"), documentHolderDTO.getUserId());
-			return env.getProperty("success");
-			}
+            ShipProfileInfo ship =
+                    shipProfileRepository.findOne(documentHolderInfo.getVesselId());
 
-		return null;
-	}
+            if (ship != null) {
+                documentHolderDTO.setVesselName(ship.getShipName());
+            }
+        }
 
-	@Override
-	public String deleteDocumentHolderInformation(Long userId, Long documentHolderId) {
-		if (userId == null)
-			return env.getProperty("user.id.null");
+        documentHolderDTOs.add(documentHolderDTO);
+    }
 
-		if (documentHolderId == null)
-			return env.getProperty("document.holder.id.null");
+    return documentHolderDTOs;
+}
 
-		UserProfileInfo profileInfo = userProfileRepository.findOne(userId);
-		if (profileInfo == null) {
-			return env.getProperty("user.not.found");
-		}
 
-//		if (!profileInfo.getRoleId().getRoleName().equals(Role.SuperAdmin)) {
-//			return env.getProperty("document.holder.super.admin.only.delete");
-//		}return env.getProperty("vessel.exit");
+// 	@Override
+// 	public String updateDocumentHolderInformation(DocumentHolderDTO documentHolderDTO) {
+// 		if (documentHolderDTO.getUserId() == null)
+// 			return env.getProperty("user.id.null");
 
-		DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderId);
-		if (documentHolderInfo == null)
-			return env.getProperty("document.holder.not.found");
+// 		if (documentHolderDTO.getDocumentHolderId() == null)
+// 			return env.getProperty("document.holder.id.null");
 
-		if (profileInfo.getRoleId().getRoleName().equals(Role.Admin)) {
-			List<ShipProfileInfo> shipProfileList = new ArrayList<>();
-			List<ShipProfileInfo> allShipList = shipProfileRepository.findAll();
+// 		if (documentHolderDTO.getDocumentHolderName() == null
+// 				&& StringUtils.isEmpty(documentHolderDTO.getDocumentHolderName())
+// 				&& StringUtils.isNotBlank(documentHolderDTO.getDocumentHolderName()))
+// 			return env.getProperty("document.holder.file.name.empty");
 
-			for (ShipProfileInfo shipProfileInfo : allShipList) {
-				Set<DocumentHolderInfo> documentHolderList = shipProfileInfo.getCustomDocumentHolders();
-				if (documentHolderList != null && !documentHolderList.isEmpty()) {
-					for (DocumentHolderInfo docInfo : documentHolderList) {
-						if (docInfo.getId().equals(documentHolderInfo.getId())) {
-							shipProfileList.add(shipProfileInfo);
-						}
-					}
+// 		UserProfileInfo profileInfo = userProfileRepository.findOne(documentHolderDTO.getUserId());
+// 		if (profileInfo == null) {
+// 			return env.getProperty("user.not.found");
+// 		}
 
-					for (ShipProfileInfo shipProfileInfo5 : shipProfileList) {
-						shipProfileInfo.getCustomDocumentHolders().remove(documentHolderInfo);
-						shipProfileInfo5 = shipProfileRepository.saveAndFlush(shipProfileInfo5);
-					}
-				}
-			}
-		}
+// //		if (!profileInfo.getRoleId().getRoleName().equals(Role.SuperAdmin)) {
+// //			return env.getProperty("document.holder.super.admin.only.update");
+// //		}
 
-		if (documentHolderInfo != null){
-		DeletedHistoryDTO deletedHistoryDTO=new DeletedHistoryDTO();
-        deletedHistoryDTO.setObjectId(documentHolderInfo.getId());
-        deletedHistoryDTO.setObjectOne(documentHolderInfo.getDocumentHolderName());
-        deletedHistoryDTO.setObjectTwo(documentHolderInfo.getDocumentHolderType());
-        DataDeletedHistoryInfo dataDeletedHistoryInfo=commonMethodsUtility.maintainDeletedHistory(deletedHistoryDTO);
-        documentHolderRepository.delete(documentHolderInfo);
-        if(dataDeletedHistoryInfo!=null)
-        commonMethodsUtility.maintainHistory(dataDeletedHistoryInfo.getId(),documentHolderInfo.getDocumentHolderName(),"DocumentHolder", env.getProperty("history.deleted"), userId);
+// 		DocumentHolderInfo documentHolderInfo = documentHolderRepository
+// 				.findOne(documentHolderDTO.getDocumentHolderId());
+// 		if (documentHolderInfo == null)
+// 			return env.getProperty("document.holder.not.found");
 
-		}
-		return env.getProperty("success");
-	}
+// 		DocumentHolderInfo documentHolderInfoExist = documentHolderRepository
+// 				.findByDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+// 		if (documentHolderInfoExist != null) {
+// 			if (!documentHolderInfo.equals(documentHolderInfoExist))
+// 				return env.getProperty("document.holder.name.already.exist");
+// 		}
+// 		if (documentHolderDTO.getOrganizationName() != null){
+// 			OrganizationInfo organizationInfo = organizationInfoRepository.findByOrganizationName(documentHolderDTO.getOrganizationName());
+// 			documentHolderInfo.setOrganizationId(organizationInfo.getId());
+// 		}
+
+// 		//documentHolderInfo.setDocumentFileNumber(documentHolderDTO.getDocumentFileNumber());
+// 		documentHolderInfo.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+// 		documentHolderInfo.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+// 		documentHolderInfo.setUpdatedDate(new Date());
+// 		DocumentHolderInfo documentHolderInf=documentHolderRepository.save(documentHolderInfo);
+// 		if (documentHolderInf != null){
+// 			commonMethodsUtility.maintainHistory(documentHolderInf.getId(),documentHolderInf.getDocumentHolderName(),"DocumentHolder", env.getProperty("history.updated"), documentHolderDTO.getUserId());
+// 			return env.getProperty("success");
+// 			}
+
+// 		return null;
+// 	}
+
+
+@Override
+public String updateDocumentHolderInformation(
+        DocumentHolderDTO documentHolderDTO) {
+
+    if (documentHolderDTO.getUserId() == null)
+        return env.getProperty("user.id.null");
+
+    if (documentHolderDTO.getDocumentHolderId() == null)
+        return env.getProperty("document.holder.id.null");
+
+    DocumentHolderInfo current =
+            documentHolderRepository
+                    .findOne(documentHolderDTO.getDocumentHolderId());
+
+    if (current == null)
+        return env.getProperty("document.holder.not.found");
+
+    // 🔥 Step 1: Determine Parent ID
+    Long parentId;
+
+    if (current.getParantId() == null) {
+        // This is parent
+        parentId = current.getId();
+    } else {
+        // This is child
+        parentId = current.getParantId();
+    }
+
+    // 🔥 Step 2: Update Parent
+    DocumentHolderInfo parent =
+            documentHolderRepository.findOne(parentId);
+
+    parent.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+    parent.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+    parent.setUpdatedDate(new Date());
+
+    documentHolderRepository.save(parent);
+
+    // 🔥 Step 3: Update All Children
+    List<DocumentHolderInfo> children =
+            documentHolderRepository.findByParantId(parentId);
+
+    if (children != null && !children.isEmpty()) {
+        for (DocumentHolderInfo child : children) {
+            child.setDocumentHolderName(documentHolderDTO.getDocumentHolderName());
+            child.setDocumentHolderDescription(documentHolderDTO.getDocumentHolderDescription());
+            child.setUpdatedDate(new Date());
+
+            documentHolderRepository.save(child);
+        }
+    }
+
+    return env.getProperty("success");
+}
+// 	@Override
+// 	public String deleteDocumentHolderInformation(Long userId, Long documentHolderId) {
+// 		if (userId == null)
+// 			return env.getProperty("user.id.null");
+
+// 		if (documentHolderId == null)
+// 			return env.getProperty("document.holder.id.null");
+
+// 		UserProfileInfo profileInfo = userProfileRepository.findOne(userId);
+// 		if (profileInfo == null) {
+// 			return env.getProperty("user.not.found");
+// 		}
+
+// //		if (!profileInfo.getRoleId().getRoleName().equals(Role.SuperAdmin)) {
+// //			return env.getProperty("document.holder.super.admin.only.delete");
+// //		}return env.getProperty("vessel.exit");
+
+// 		DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(documentHolderId);
+// 		if (documentHolderInfo == null)
+// 			return env.getProperty("document.holder.not.found");
+
+// 		if (profileInfo.getRoleId().getRoleName().equals(Role.Admin)) {
+// 			List<ShipProfileInfo> shipProfileList = new ArrayList<>();
+// 			List<ShipProfileInfo> allShipList = shipProfileRepository.findAll();
+
+// 			for (ShipProfileInfo shipProfileInfo : allShipList) {
+// 				Set<DocumentHolderInfo> documentHolderList = shipProfileInfo.getCustomDocumentHolders();
+// 				if (documentHolderList != null && !documentHolderList.isEmpty()) {
+// 					for (DocumentHolderInfo docInfo : documentHolderList) {
+// 						if (docInfo.getId().equals(documentHolderInfo.getId())) {
+// 							shipProfileList.add(shipProfileInfo);
+// 						}
+// 					}
+
+// 					for (ShipProfileInfo shipProfileInfo5 : shipProfileList) {
+// 						shipProfileInfo.getCustomDocumentHolders().remove(documentHolderInfo);
+// 						shipProfileInfo5 = shipProfileRepository.saveAndFlush(shipProfileInfo5);
+// 					}
+// 				}
+// 			}
+// 		}
+
+// 		if (documentHolderInfo != null){
+// 		DeletedHistoryDTO deletedHistoryDTO=new DeletedHistoryDTO();
+//         deletedHistoryDTO.setObjectId(documentHolderInfo.getId());
+//         deletedHistoryDTO.setObjectOne(documentHolderInfo.getDocumentHolderName());
+//         deletedHistoryDTO.setObjectTwo(documentHolderInfo.getDocumentHolderType());
+//         DataDeletedHistoryInfo dataDeletedHistoryInfo=commonMethodsUtility.maintainDeletedHistory(deletedHistoryDTO);
+//         documentHolderRepository.delete(documentHolderInfo);
+//         if(dataDeletedHistoryInfo!=null)
+//         commonMethodsUtility.maintainHistory(dataDeletedHistoryInfo.getId(),documentHolderInfo.getDocumentHolderName(),"DocumentHolder", env.getProperty("history.deleted"), userId);
+
+// 		}
+// 		return env.getProperty("success");
+// 	}
+@Override
+public String deleteDocumentHolderInformation(Long userId,
+                                              Long documentHolderId) {
+
+    if (userId == null)
+        return env.getProperty("user.id.null");
+
+    if (documentHolderId == null)
+        return env.getProperty("document.holder.id.null");
+
+    DocumentHolderInfo current =
+            documentHolderRepository.findOne(documentHolderId);
+
+    if (current == null)
+        return env.getProperty("document.holder.not.found");
+
+    // 🔥 Step 1: Determine parentId
+    Long parentId;
+
+    if (current.getParantId() == null) {
+        parentId = current.getId(); // parent
+    } else {
+        parentId = current.getParantId(); // child
+    }
+
+    // 🔥 Step 2: Get parent
+    DocumentHolderInfo parent =
+            documentHolderRepository.findOne(parentId);
+
+    // 🔥 Step 3: Get all children
+    List<DocumentHolderInfo> children =
+            documentHolderRepository.findByParantId(parentId);
+
+    // 🔥 Step 4: Check if any uploaded documents exist
+
+    // Check parent
+    if (parent.getExpiryDocumentInfos() != null
+            && !parent.getExpiryDocumentInfos().isEmpty()) {
+        return "Cannot delete. Document already uploaded.";
+    }
+
+    // Check children
+    if (children != null) {
+        for (DocumentHolderInfo child : children) {
+            if (child.getExpiryDocumentInfos() != null
+                    && !child.getExpiryDocumentInfos().isEmpty()) {
+                return "Cannot delete. Document already uploaded.";
+            }
+        }
+    }
+
+    // 🔥 Step 5: Safe to delete
+
+    // Delete children first
+    if (children != null && !children.isEmpty()) {
+        documentHolderRepository.delete(children);
+    }
+
+    // Delete parent
+    documentHolderRepository.delete(parent);
+
+    return env.getProperty("success");
+}
+
 
 	// @Override
 	// public String saveUserReportAnIssueInformation(UserReportAnIssueDTO userReportAnIssueDTO) {

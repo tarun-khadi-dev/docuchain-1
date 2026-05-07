@@ -25,29 +25,29 @@ public class UserNotificationInfo {
 
     @Column(name = "notification_desc")
     private String description;
-    
+
     @Temporal(TemporalType.DATE)
     @Column(name = "notification_time")
     private Date notificationTime;
 
     @Column(name = "notification_read_status")
     private Integer readStatus;
-    
+
     @Column (name = "notification_type")
     private String notificationType;
-    
+
     @Column (name = "color")
     private String color;
-    
+
     @Column (name = "snooze")
     private String snooze;
-    
+
     @Column (name = "organizationId")
     private Long organizationId;
-    
+
     @Column (name = "vesselId")
     private Long vesselId;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notified_user_id", referencedColumnName = "id", nullable = false)
     private UserProfileInfo notifiedTo;
@@ -63,5 +63,5 @@ public class UserNotificationInfo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", referencedColumnName = "id")
     private TaskDetailsInfo taskDetailsInfo;
-    
+
 }

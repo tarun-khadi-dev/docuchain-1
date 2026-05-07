@@ -46,46 +46,51 @@ public class OrganizationInfo {
 
 	@Column(name = "organization_name", nullable = false)
 	private String organizationName;
-	
+
 	@Column(name = "registration_number", nullable = false)
 	private String registrationNumber;
 
-	@Column(name = "address")
-	private String address;
+	// @Column(name = "address")
+	// private String address;
+	@Column(name="address_line1")
+	private String addressLine1;
+
+	@Column(name="address_line2")
+	private String addressLine2;
 
 	@Column(name = "contact")
 	private String contact;
 
 	@Column(name = "email_id")
 	private String emailId;
-	
+
 	@Column(name = "phone_number")
 	private String phoneNumber;
-	
+
 	@Column(name = "alternate_phone_number")
 	private String alternatePhoneNumber;
-	
+
 	@Column(name = "bank_account_number")
 	private String bankAccountNumber;
-	
+
 	@Column(name = "contact_person_name")
 	private String contactPersonName;
-	
+
 	@Column(name = "contact_person_email")
 	private String contactPersonEmail;
-	
+
 	@Column(name = "contact_person_phoneNo")
 	private String contactPersonPhoneNo;
-	
+
 	@Column(name = "contact_person_alternate_phone_no")
 	private String contactPersonAlternatePhoneNo;
-	
+
 	@Column(name = "is_active")
-	private Long isActive; 
-	
+	private Long isActive;
+
 	@Column(name = "companyLogo")
 	private String companyLogo;
-	
+
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "create_date")
@@ -105,16 +110,16 @@ public class OrganizationInfo {
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "subscription_id", referencedColumnName = "id")
 	private SubscriptionInfo subscriptionInfo;
-	
+
 	@OneToOne(mappedBy = "organizationInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private SaveInBlockhainInfo saveInBlockhainInfo;
-	
+
 	@OneToOne(mappedBy = "organizationInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private DualApprovalInfo dualApprovalInfo;
-	
+
 	@OneToMany(mappedBy = "organizationInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<RoleAliasInfo> roleAliasInfos;
-	
+
 	@OneToMany(mappedBy = "organizationInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ShipTypesInfo> shipTypesInfos;
 

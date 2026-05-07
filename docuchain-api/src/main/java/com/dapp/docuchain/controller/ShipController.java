@@ -40,22 +40,22 @@ import io.swagger.annotations.ApiParam;
 @CrossOrigin
 public class ShipController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-	
+
 	@Autowired
 	UserUtils userUtils;
-	
+
 	@Autowired
 	ShipProfileUtility shipProfileUtility;
-	
+
 	@Autowired
 	private FileService fileService;
-	
+
 	@Autowired
 	private ShipProfileService shipProfileService;
-	
+
 	@Autowired
 	private Environment env;
-	
+
 	@Autowired
 	private CommonMethodsUtility commonMethodsUtility;
 
@@ -93,7 +93,7 @@ public class ShipController {
 					statusResponseDTO.setStatus(env.getProperty("success"));
 					statusResponseDTO.setMessage(env.getProperty("organization.id.not.exist"));
 					return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
-				}				
+				}
 				shipProfilePicPath = fileService.shipProfileUpload(shipProfileDTO, shipPic);
 				if (shipProfilePicPath == null) {
 					statusResponseDTO.setStatus(env.getProperty("failure"));
@@ -162,7 +162,7 @@ public class ShipController {
 				statusResponseDTO.setMessage(env.getProperty("ship.delete.failure"));
 				return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 			}
-			
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			statusResponseDTO.setStatus(env.getProperty("failure"));
@@ -185,7 +185,7 @@ public class ShipController {
 				statusResponseDTO.setMessage(env.getProperty("incorrectDetails"));
 				return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 			}
-			
+
 			UserProfileInfo profileInfo = userService.isUserProfileInfoExists(shipProfileDTO.getUserId());
 			if (profileInfo == null) {
 				statusResponseDTO.setStatus(env.getProperty("failure"));
@@ -457,7 +457,7 @@ public class ShipController {
 		}
 
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "ACTIVE ALL VESSELS",notes ="This API is used to activate all vessles based organization")
 	@PostMapping(value = "/active/all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -485,9 +485,9 @@ public class ShipController {
 			statusResponseDTO.setMessage(env.getProperty("server.problem"));
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DEACTIVE ALL VESSELS",notes ="This API is used to deactivate all vessles based organization")
 	@PostMapping(value = "/deactive/all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -515,9 +515,9 @@ public class ShipController {
 			statusResponseDTO.setMessage(env.getProperty("server.problem"));
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE SHIPMASTER FROM SHIP", notes = "Admin only reomve ship master from ship profile ")
 	@PostMapping(value = "/shipmaster/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -546,7 +546,7 @@ public class ShipController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE TECHMANAGER FROM SHIP", notes = "Admin only reomve technical manager from ship profile ")
 	@PostMapping(value = "/techmanager/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -575,7 +575,7 @@ public class ShipController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE COMMERCIAL MANAGER FROM SHIP", notes = "Admin only reomve Commercial manager from ship profile")
 	@PostMapping(value = "/commercialmanager/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -604,14 +604,14 @@ public class ShipController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "LIST SHIP BASED ORGANIZATION", notes = "Ship profile list are shown based on organization")
 	@GetMapping(value = "/list/organization/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> listShipProfileInfoBasedOrganization(@ApiParam(value = "User ID required")@PathVariable(required = true)Long userId){
 		StatusResponseDTO statusResponseDTO = new StatusResponseDTO();
 		try{
-			
+
 			UserProfileInfo profileInfo = userService.isUserProfileInfoExists(userId);
 			if (profileInfo == null) {
 				statusResponseDTO.setStatus(env.getProperty("failure"));

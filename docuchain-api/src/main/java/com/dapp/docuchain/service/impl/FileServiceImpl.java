@@ -1,4 +1,8 @@
 package com.dapp.docuchain.service.impl;
+import com.dapp.docuchain.repository.PortInfoRepository; // Add this line
+// Add these to your existing imports in FileServiceImpl.java
+import java.util.Optional;
+import com.dapp.docuchain.model.PortInfo;
 
 import com.dapp.docuchain.dto.ExpiryDocumentDTO;
 import com.dapp.docuchain.dto.ShipProfileDTO;
@@ -40,7 +44,18 @@ import java.util.Date;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.dapp.docuchain.dto.VesselDocumentDTO;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+
+
+import java.util.List;
+import java.util.ArrayList;
 @Service
 public class FileServiceImpl implements FileService {
 
@@ -54,48 +69,221 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
 	ConfigInfoRepository configInfoRepository;
-    public static Date parseDate(String inputDate) {
+    @Autowired
+private PortInfoRepository portInfoRepository;
+public static Date parseDate(String inputDate) {
+    if (inputDate == null || inputDate.trim().isEmpty()) {
+        return null;
+    }
 
-        Date outputDate = null;
-        String[] possibleDateFormats = {
-                "yyyy.MM.dd G 'at' HH:mm:ss z",
-                "EEE, MMM d, ''yy",
-                "h:mm a",
-                "hh 'o''clock' a, zzzz",
-                "K:mm a, z",
-                "yyyyy.MMMMM.dd GGG hh:mm aaa",
-                "EEE, d MMM yyyy HH:mm:ss Z",
-                "yyMMddHHmmssZ",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
-                "YYYY-'W'ww-u",
-                "EEE, dd MMM yyyy HH:mm:ss z",
-                "EEE, dd MMM yyyy HH:mm zzzz",
-                "yyyy-MM-dd'T'HH:mm:ssZ",
-                "yyyy-MM-dd'T'HH:mm:ss.SSSzzzz",
-                "yyyy-MM-dd'T'HH:mm:sszzzz",
-                "yyyy-MM-dd'T'HH:mm:ss z",
-                "yyyy-MM-dd'T'HH:mm:ssz",
-                "yyyy-MM-dd'T'HH:mm:ss",
-                "yyyy-MM-dd'T'HHmmss.SSSz",
-                "yyyyMMdd",
-                "dd/MM/yy",
-                "dd/MM/yyyy",
-                "dd MMM yyyy",
-                "dd-MM-yyyy"
-        };
+    Date outputDate = null;
+    String cleanedDate = inputDate;
 
-        try {
+    // 1. REGEX EXTRACTION: Added pattern to match "Month d, yyyy"
+    Matcher m = Pattern.compile("(\\d{1,2}(?:st|nd|rd|th|sth)?\\s+(?:day\\s+of\\s+)?[a-zA-Z]{3,}\\s+\\d{4}|[a-zA-Z]{3,}\\s+\\d{1,2},?\\s+\\d{4}|\\d{2}[-/]\\d{2}[-/]\\d{4})", Pattern.CASE_INSENSITIVE).matcher(inputDate);
 
-            outputDate = DateUtils.parseDate(inputDate, possibleDateFormats);
-            LOGGER.info("inputDate ==> " + inputDate + ", outputDate ==> " + outputDate);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
+    if (m.find()) {
+        String rawMatch = m.group(1).trim();
+        cleanedDate = rawMatch
+                .replaceAll(",", "") // Removes comma from "January 16, 2008" -> "January 16 2008" [cite: 11]
+                .replaceAll("(?i)day of", "")
+                .replaceAll("(?i)(?<=\\d)(st|nd|rd|th|sth)", "")
+                .replaceAll("\\s+", " ")
+                .trim();
+    } else {
+        if (!inputDate.matches(".*\\d.*")) {
+            return null;
         }
 
-        return outputDate;
+        cleanedDate = inputDate
+                .replaceAll("(?i)noon gmt", "")
+                .replaceAll("(?i)day of", "")
+                .replaceAll("(?i)(?<=\\d)(st|nd|rd|th|sth)", "")
+                .replaceAll("(?i)sth", "8")
+                .replaceAll(",", "")
+                .replaceAll("\\?", "")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
+
+    // 2. Updated formats to include Month-first patterns [cite: 11]
+    // String[] possibleDateFormats = {
+    //     "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",  // <--- FIX: Added for React/Angular frontend dates
+    //         "yyyy-MM-dd'T'HH:mm:ss.SSSZ",    // <--- FIX: Backup timezone format
+    //         "yyyy-MM-dd'T'HH:mm:ss.SSS",     // <--- FIX: Backup for dates without timezone
+    //         "yyyy-MM-dd",                    // <--- FIX: Standard HTML5 date format
+    //         "MMMM d yyyy",    // January 16 2008
+    //         "MMMM dd yyyy",   // November 15 2007
+    //         "dd MMMM yyyy",
+    //         "d MMMM yyyy",
+    //         "dd MMM yyyy",
+    //         "dd-MMM-yyyy",
+    //         "dd/MM/yyyy",
+    //         "dd-MM-yyyy",
+    //         "yyyyMMdd"
+    // };
+
+    // 2. Combined formats for API requests and OCR document scanning
+    String[] possibleDateFormats = {
+            // --- API & System Formats (From your friend) ---
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", // <- Added to fix your specific frontend error
+            "yyyy.MM.dd G 'at' HH:mm:ss z",
+            "EEE, MMM d, ''yy",
+            "h:mm a",
+            "hh 'o''clock' a, zzzz",
+            "K:mm a, z",
+            "yyyyy.MMMMM.dd GGG hh:mm aaa",
+            "EEE, d MMM yyyy HH:mm:ss Z",
+            "yyMMddHHmmssZ",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+            "YYYY-'W'ww-u",
+            "EEE, dd MMM yyyy HH:mm:ss z",
+            "EEE, dd MMM yyyy HH:mm zzzz",
+            "yyyy-MM-dd'T'HH:mm:ssZ",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSzzzz",
+            "yyyy-MM-dd'T'HH:mm:sszzzz",
+            "yyyy-MM-dd'T'HH:mm:ss z",
+            "yyyy-MM-dd'T'HH:mm:ssz",
+            "yyyy-MM-dd'T'HH:mm:ss",
+            "yyyy-MM-dd'T'HHmmss.SSSz",
+            "dd/MM/yy",
+
+            // --- OCR Document Formats (From your original code) ---
+            "MMMM d yyyy",
+            "MMMM dd yyyy",
+            "dd MMMM yyyy",
+            "d MMMM yyyy",
+            "dd-MMM-yyyy",
+
+            // --- Common formats shared by both ---
+            "yyyyMMdd",
+            "dd/MM/yyyy",
+            "dd MMM yyyy",
+            "dd-MM-yyyy"
+    };
+
+    try {
+        outputDate = org.apache.commons.lang.time.DateUtils.parseDate(cleanedDate, possibleDateFormats);
+        LOGGER.info("Successfully parsed: [" + cleanedDate + "]");
+    } catch (ParseException e) {
+        try {
+            outputDate = org.apache.commons.lang.time.DateUtils.parseDate(cleanedDate.toLowerCase(), possibleDateFormats);
+        } catch (ParseException e2) {
+            LOGGER.error("Date Parsing Failed for input: " + inputDate + " (Cleaned: " + cleanedDate + ")");
+        }
+    }
+    return outputDate;
+}
+    // 1. Add this public method to handle the file upload and Tesseract init
+@Override
+public VesselDocumentDTO scanVesselImageFile(MultipartFile file) {
+    VesselDocumentDTO vesselDTO = new VesselDocumentDTO();
+
+    try (PDDocument document = PDDocument.load(file.getInputStream())) {
+        PDFTextStripper stripper = new PDFTextStripper();
+        String fullText = stripper.getText(document);
+          System.out.println("===== CLEAN PDF TEXT START =====");
+        System.out.println(fullText);
+        System.out.println("===== CLEAN PDF TEXT END =====");
+        LOGGER.info("===== CLEAN PDF TEXT START =====");
+        LOGGER.info(fullText);
+        LOGGER.info("===== CLEAN PDF TEXT END =====");
+
+        if (fullText != null && !fullText.trim().isEmpty()) {
+            // Step 1: Extract basic data from PDF (IMO, Port Name, etc.)
+            vesselDTO = scanVesselDocInfo(fullText);
+
+            // Step 2: Database Lookup for Nationality
+            if (vesselDTO.getPort() != null) {
+                String extractedPort = vesselDTO.getPort().trim();
+
+                // Search database for the Port Name
+                Optional<PortInfo> portEntity = portInfoRepository.findByPortNameIgnoreCase(extractedPort);
+
+                if (portEntity.isPresent()) {
+                    // Get the Nationality (Country Name) from the linked CountryInfo entity
+                    String countryName = portEntity.get().getCountryInfo().getCountryName();
+                    vesselDTO.setNationality(countryName);
+
+                    // Optional: Update the Port name to match your DB's official spelling
+                    vesselDTO.setPort(portEntity.get().getPortName());
+                }
+            }
+        }
+    } catch (Exception e) {
+        LOGGER.error("Error in scanVesselImageFile: ", e);
+    }
+    return vesselDTO;
+}
+
+private VesselDocumentDTO scanVesselDocInfo(String cleanText) {
+    VesselDocumentDTO dto = new VesselDocumentDTO();
+    DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+    // 1. Vessel Name: Extracts text inside quotes after M. V.
+    Matcher mVessel = Pattern.compile("M\\.\\s*V\\.\\s*[\"“]([^\"”]+)[\"”]", Pattern.CASE_INSENSITIVE).matcher(cleanText);
+    if (mVessel.find()) {
+        dto.setVesselName(mVessel.group(1).trim());
+    }
+
+    // 2. Dynamic Builder / Yard: Captures names ending in CO., LTD. or SHIPYARD
+    // Uses a negative lookahead to ignore the "PROPERTY OF" legal disclaimer
+    Matcher mBuilder = Pattern.compile("(?m)^(?!.*(?:PROPERTY|CAUTION|DRAWING))([A-Z\\s,.]+?(?:CO\\.,\\s+LTD\\.|SHIPYARD|SHIPBUILDING))", Pattern.CASE_INSENSITIVE).matcher(cleanText);
+    if (mBuilder.find()) {
+        dto.setBuilderYard(mBuilder.group(1).trim());
+    }
+
+    // 3. Dynamic Port & IMO Number Extraction
+    Matcher mPortImo = Pattern.compile("REGISTRATI\\s*ON\\s+([A-Z\\s]+?)\\s+(\\d{7})", Pattern.CASE_INSENSITIVE).matcher(cleanText);
+    if (mPortImo.find()) {
+        dto.setPort(mPortImo.group(1).trim());
+        dto.setImoNumber(mPortImo.group(2));
+    }
+
+    // 4. Dates (Keel Laid & Delivery)
+    // List sequence: [0] Cover Date, [1] Keel Laid, [2] Launching, [3] Delivery
+    Matcher mDates = Pattern.compile("[A-Z][a-z]+\\s+\\d{1,2},\\s+\\d{4}").matcher(cleanText);
+    List<String> foundDates = new ArrayList<>();
+    while (mDates.find()) {
+        foundDates.add(mDates.group());
+    }
+
+    if (foundDates.size() >= 2) {
+        Date dKeel = parseDate(foundDates.get(1));
+        dto.setKeelLaidDate(dKeel);
+        if(dKeel != null) dto.setKeelLaidDateString(dateFormat.format(dKeel));
+    }
+    if (foundDates.size() >= 4) {
+        Date dDel = parseDate(foundDates.get(3));
+        dto.setDeliveryDate(dDel);
+        if(dDel != null) dto.setDeliveryDateString(dateFormat.format(dDel));
+    }
+
+    // 5. Length O.A & Breadth (Clean Numeric)
+    Matcher mLen = Pattern.compile("LENGTH 0\\.\\s*A\\.\\s*([\\d.\\s]+)\\s*m", Pattern.CASE_INSENSITIVE).matcher(cleanText);
+    if (mLen.find()) dto.setLengthOA(mLen.group(1).replaceAll("\\s", ""));
+
+    Matcher mBreadth = Pattern.compile("BREADTH MLD\\.\\s*([\\d.\\s]+)\\s*m", Pattern.CASE_INSENSITIVE).matcher(cleanText);
+    if (mBreadth.find()) dto.setBreadth(mBreadth.group(1).replaceAll("\\s", ""));
+
+    // 6. Gross Tonnage Suez (Clean Numeric - No Commas)
+    Matcher mTonnage = Pattern.compile("GROSS TONNAGE[\\s\\d,.]+m3\\s+([\\d,.\\s]+)").matcher(cleanText);
+    if (mTonnage.find()) {
+        String tonnageVal = mTonnage.group(1).trim();
+        dto.setGrossTonnageSuez(tonnageVal.replaceAll(",", "").replaceAll("\\s", ""));
+    }
+
+    // 7. DWT Summer (Clean Numeric - No Commas)
+    Matcher mDwt = Pattern.compile("SUMMER\\s+s\\s+[\\d,\\s]+\\s+[\\d.\\s]+\\s+([\\d,\\s]{5,})", Pattern.CASE_INSENSITIVE).matcher(cleanText);
+    if (mDwt.find()) {
+        String mtValue = mDwt.group(1).trim();
+        String firstBlock = mtValue.split("\\s+")[0] + (mtValue.contains(" ") ? mtValue.split("\\s+")[1] : "");
+        dto.setDwtSummer(firstBlock.replaceAll(",", "").replaceAll("\\s", ""));
+    }
+
+    return dto;
+}
 
     @Override
     public String fileRetriveFromStorej(String fileName, String fileHashCode) {
@@ -131,39 +319,69 @@ public class FileServiceImpl implements FileService {
 
     }
 
-    @Override
-    public ExpiryDocumentDTO scanImageFile(MultipartFile file) {
-        ITesseract instance = new Tesseract();
-        ExpiryDocumentDTO expiryDocumentDTO = null;
-        //instance.setLanguage("eng");
-        //instance.setDatapath("D://Tessdata");
-        //In case you don't have your own tessdata, let it also be extracted for you
-        File tessDataFolder = LoadLibs.extractTessResources("tessdata");
-        //Set the tessdata path
-        instance.setDatapath(tessDataFolder.getAbsolutePath());
-        File convFile = null;
+		@Override
+public ExpiryDocumentDTO scanImageFile(MultipartFile file) {
+	 System.out.println("🔥🔥🔥 SCAN API HIT 🔥🔥🔥");
+     LOGGER.info("🔥🔥🔥 SCAN API HIT 🔥🔥🔥");
 
-        try {
-            convFile = new File(file.getOriginalFilename());
-            convFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(convFile);
-            fos.write(file.getBytes());
-            fos.close();
-            //File convFile = multipartToFile(file);
-            String result = instance.doOCR(convFile);
-            LOGGER.info("Result ::" + result);
-            expiryDocumentDTO = scanDocInfo(result);
-            return expiryDocumentDTO;
-        } catch (TesseractException | IOException e) {
-            System.err.println(e.getMessage());
-            return expiryDocumentDTO;
-        } finally {
-            if (convFile.exists()) {
-                convFile.delete();
-            }
+    ITesseract instance = new Tesseract();
+    ExpiryDocumentDTO expiryDocumentDTO = new ExpiryDocumentDTO();
+
+    File tessDataFolder = LoadLibs.extractTessResources("tessdata");
+    instance.setDatapath(tessDataFolder.getAbsolutePath());
+    instance.setLanguage("eng");
+
+    File convFile = null;
+
+    try {
+
+        convFile = File.createTempFile("upload_", ".pdf");
+        // if it not work then use below code and set the path where you want to save the file temporarily
+//         convFile = File.createTempFile(
+//     "upload_",
+//     ".pdf",
+//     new File("D:/xampp/htdocs/docuchain/docuchain-api/docuchain-temp")
+// );
+
+        file.transferTo(convFile);
+
+        System.out.println("===== FILE SAVED =====");
+        System.out.println("File Path: " + convFile.getAbsolutePath());
+        LOGGER.info("===== FILE SAVED =====");
+        LOGGER.info("File Path: {}", convFile.getAbsolutePath());
+
+        String result = instance.doOCR(convFile);
+
+        System.out.println("===== OCR RAW TEXT START =====");
+        System.out.println(result);
+        System.out.println("===== OCR RAW TEXT END =====");
+        LOGGER.info("===== OCR RAW TEXT START =====");
+        LOGGER.info(result);
+        LOGGER.info("===== OCR RAW TEXT END =====");
+
+        if(result == null || result.trim().isEmpty()){
+            System.out.println("🚨 OCR RETURNED EMPTY TEXT");
+            LOGGER.warn("🚨 OCR RETURNED EMPTY TEXT"); // Changed to warn so it stands out in logs
+        } else {
+            System.out.println("✅ OCR RETURNED TEXT SUCCESSFULLY");
+            LOGGER.info("✅ OCR RETURNED TEXT SUCCESSFULLY");
         }
 
+        // return new ExpiryDocumentDTO();
+				ExpiryDocumentDTO dto = scanDocInfo(result);
+return dto;
+
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return expiryDocumentDTO;
+    } finally {
+        if (convFile != null && convFile.exists()) {
+            convFile.delete();
+        }
     }
+}
+
 
     private File multipartToFile(MultipartFile multipart) throws IllegalStateException, IOException {
         File convFile = new File(multipart.getOriginalFilename());
@@ -194,6 +412,7 @@ public class FileServiceImpl implements FileService {
                 LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
                 map.add("file", fileAsResource);
 						System.out.println("Map Content: " + map);
+                        LOGGER.info("Map Content: {}", map);
 
                 map.add("saveInBlockchain", saveInBlockchain);
                 HttpHeaders headers = new HttpHeaders();
@@ -219,9 +438,7 @@ public class FileServiceImpl implements FileService {
         return env.getProperty("failure");
     }
 
-
-
-    private ExpiryDocumentDTO scanDocInfo(String scannedText) {
+		private ExpiryDocumentDTO scanDocInfo(String scannedText) {
         ExpiryDocumentDTO expiryDocumentDTO = new ExpiryDocumentDTO();
         ScanFieldType scanFieldTypes[] = ScanFieldType.values();
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -235,6 +452,15 @@ public class FileServiceImpl implements FileService {
                 Matcher m = Pattern.compile(Pattern.quote(scanDelimiterInfo.getStartingPattern()) + "(.*?)" + Pattern.quote(scanDelimiterInfo.getEndingPattern()),Pattern.CASE_INSENSITIVE).matcher(scannedText); //certificate no
                 while (m.find()) {
                     match = m.group(1);
+                    // --- ADD THESE LINES TO PRINT TO CMD ---
+                    System.out.println("-----------------------------------------");
+                    System.out.println("FIELD TYPE: " + scanFieldType.name());
+                    System.out.println("EXTRACTED VALUE: >" + match + "<");
+                    System.out.println("-----------------------------------------");
+                    LOGGER.info("-----------------------------------------");
+                    LOGGER.info("FIELD TYPE: {}", scanFieldType.name());
+                    LOGGER.info("EXTRACTED VALUE: >{}<", match);
+                    LOGGER.info("-----------------------------------------");
                     LOGGER.info(">" + match.trim() + "<");
                     break;
                 }
@@ -260,7 +486,7 @@ public class FileServiceImpl implements FileService {
                 }
                 expiryDocumentDTO.setIssueDate(date);
                 if(date!=null) {
-                	expiryDocumentDTO.setIssueDateString(dateFormat.format(date));
+                  expiryDocumentDTO.setIssueDateString(dateFormat.format(date));
                 }
             } else if (scanFieldType.equals(ScanFieldType.EXPIRY_DATE)) {
                 LOGGER.info("Expiry Date = [" + match + "]");
@@ -269,7 +495,13 @@ public class FileServiceImpl implements FileService {
                     date = parseDate(match.trim());
                 }
                 if(date!=null) {
-                	expiryDocumentDTO.setExpiryDateString(dateFormat.format(date));
+                  expiryDocumentDTO.setExpiryDateString(dateFormat.format(date));
+                }
+            } else if (scanFieldType.name().equals("ISSUING_AUTHORITY")) {
+                // ADDED THIS BLOCK FOR ISSUING AUTHORITY
+                LOGGER.info("Issuing Authority = [" + match + "]");
+                if (match != null && !match.isEmpty()) {
+                    expiryDocumentDTO.setIssuingAuthority(match.trim());
                 }
             }
         }
@@ -521,3 +753,4 @@ public class FileServiceImpl implements FileService {
 		return dbPath;
 	}
 }
+

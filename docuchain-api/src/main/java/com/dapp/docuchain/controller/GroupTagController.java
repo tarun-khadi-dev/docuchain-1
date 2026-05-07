@@ -28,19 +28,19 @@ import java.util.List;
 @CrossOrigin
 public class GroupTagController {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupTagController.class);
-    
+
     @Autowired
     ExpiryDocumentService expiryDocumentService;
 
     @Autowired
     ExpiryDocumentUtility expiryDocumentUtility;
-    
+
     @Autowired
     GroupTagUtils groupTagUtils;
-    
+
     @Autowired
     GroupTagService groupTagService;
-    
+
     @Autowired
     private Environment env;
 
@@ -169,7 +169,7 @@ public class GroupTagController {
         }
     }
 
-    
+
     @CrossOrigin
     @RequestMapping(value = "/update", method = RequestMethod.POST, produces = {"application/json"})
     @ApiOperation(value = "update group tag", notes = "This Mehtord is used to add new CustomerGroup ")
@@ -241,7 +241,7 @@ public class GroupTagController {
             return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
         }
     }
-    
+
 //    @CrossOrigin
 //    @RequestMapping(value = "/shipgrouplist", method = RequestMethod.GET, produces = {"application/json"})
 //    @ApiOperation(value = "get All  Group Details", notes = "This Mehtord is used to get All  Group Details based on user profile id")
@@ -312,6 +312,31 @@ public class GroupTagController {
             return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
         }
     }
+   @PostMapping("/add-multiple")
+    public ResponseEntity<String> addMultipleExpiryDocsToGroup(@RequestBody GroupTagDTO groupTagDTO) {
+        StatusResponseDTO statusResponseDTO = new StatusResponseDTO();
+        try {
+
+            boolean updated = groupTagService.updateGroupTagwithExp(groupTagDTO);
+
+            if (updated) {
+                statusResponseDTO.setStatus("Success");
+                statusResponseDTO.setMessage("Documents added to group successfully");
+                return new ResponseEntity<>(new Gson().toJson(statusResponseDTO), HttpStatus.OK);
+            }
+
+            statusResponseDTO.setStatus("Failure");
+            statusResponseDTO.setMessage("Failed to add documents");
+            return new ResponseEntity<>(new Gson().toJson(statusResponseDTO), HttpStatus.BAD_REQUEST);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusResponseDTO.setStatus("Failure");
+            statusResponseDTO.setMessage("Server error");
+            return new ResponseEntity<>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @CrossOrigin
     @PostMapping(value = "/delete", produces = {"application/json"})
@@ -461,8 +486,8 @@ public class GroupTagController {
             return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
         }
     }
-    
-    
+
+
     @CrossOrigin
     @RequestMapping(value = "sentitems/{groupid}", method = RequestMethod.GET, produces = {"application/json"})
     @ApiOperation(value = "get All  Group Details", notes = "This Mehtord is used to get All  Group Details based on user profile id")
@@ -682,7 +707,7 @@ public class GroupTagController {
         statusResponseDTO.setMessage(" Group Details Not Available");
         return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
     }
-    
+
     @CrossOrigin
     @PostMapping(value = "/check/share", produces = {"application/json"})
     @ApiOperation(value = "check Group Exists While Sharing", notes = "check Group Exists While Sharing expiry document")
@@ -715,7 +740,7 @@ public class GroupTagController {
             statusResponseDTO.setMessage(env.getProperty("server.problem"));
             return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.CONFLICT);
         }
-		
+
     }
     @CrossOrigin
     @GetMapping(value = "/remainingdocument/{groupid}", produces = {"application/json"})

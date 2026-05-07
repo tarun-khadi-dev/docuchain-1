@@ -12,29 +12,29 @@ import com.dapp.docuchain.dto.VesselsTypeDTO;
 import com.dapp.docuchain.model.OrganizationInfo;
 
 public interface CommonConfigurationService {
-	
+
 	//public CountryDTO addCountryInformation(CountryDTO countryDTO);
-	
+
 	public String addCountryInformationBySuperAdmin(CountryDTO countryDTO);
-	
+
 	public List<CountryDTO> listCountryInformationForAllUser();
-	
+
 	public String updateCountryInformation(CountryDTO countryDTO);
-	
+
 	public String deleteMultipleAndSingleCountryInformation(CountryDTO countryDTO);
-	
+
 	public String deleteCountryInformation(Long countryId, Long userId);
-	
+
 	public RoleAliasDTO addRoleAliasInformationBasedAdmin(RoleAliasDTO roleAliasDTO);
-	
+
 	public List<RoleAliasDTO> listRoleAliasInformationBasedOrganization(OrganizationInfo organizationInfo);
-	
+
 	public String addRoleAliasInformationBasedOrganization(RoleAliasDTO roleAliasDTO);
-	
+
 	public VesselsTypeDTO addVesselsTypeInformationBasedOrganizationByAdmin(VesselsTypeDTO vesselsTypeDTO);
-	
+
 	public List<VesselsTypeDTO> listVesselsTypeInformationBasedOrganization(OrganizationInfo organizationInfo);
-	
+
 	public String addVesselsTypeInformationValidation(VesselsTypeDTO vesselsTypeDTO);
 
 	public String addCountryPortInformationValidation(PortDTO portDTO);
@@ -74,7 +74,7 @@ public interface CommonConfigurationService {
 	public String updateDocumentHolderInformation(DocumentHolderDTO documentHolderDTO);
 
 	public String deleteDocumentHolderInformation(Long userId, Long documentHolderId);
-	
+
 	public String saveUserReportAnIssueInformation(UserReportAnIssueDTO userReportAnIssueDTO);
 
 	public String addExpiryDocumentCertifcateTypeBasedSuperAdmin(ExpiryCertificateTypeDTO expiryCertificateTypeDTO);

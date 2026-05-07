@@ -33,26 +33,26 @@ public class DocumentHolderInfo {
 
     @Column(name = "organization_id")
     private Long organizationId;
-    
+
     @Column (name = "type")
     private String type;
-    
+
     @Column (name = "updatedDate")
     private Date updatedDate;
-    
+
     @Column (name = "vesselId")
     private Long vesselId;
-    
+
     @Column (name = "parentId")
     private Long parantId;
-    
+
     @OneToMany(mappedBy = "documentHolderInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<ExpiryDocumentInfo> expiryDocumentInfos;
 
     public DocumentHolderInfo(){
-    	
+
     }
-    
+
 	public DocumentHolderInfo(Long id, String documentHolderName,
 			String documentHolderDescription, String documentHolderType, String type,Date updatedDate) {
 		super();
@@ -63,7 +63,7 @@ public class DocumentHolderInfo {
 		this.type = type;
 		this.updatedDate = updatedDate;
 	}
-    
-    
+
+
 
 }

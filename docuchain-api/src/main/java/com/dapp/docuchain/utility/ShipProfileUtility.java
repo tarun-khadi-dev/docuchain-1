@@ -81,6 +81,11 @@ public class ShipProfileUtility {
 		shipProfileDTO.setShipOwner(shipProfileInfo.getShipOwner());
 		shipProfileDTO.setShipTypes(shipProfileInfo.getShipType());
 		shipProfileDTO.setStateName(shipProfileInfo.getStateName());
+				//ship measaurment
+		shipProfileDTO.setDwt(shipProfileInfo.getDwt());
+		shipProfileDTO.setBreadth(shipProfileInfo.getBreadth());
+		shipProfileDTO.setWeight(shipProfileInfo.getWeight());
+		shipProfileDTO.setLength(shipProfileInfo.getLength());
 		shipProfileDTO.setStatus(shipProfileInfo.getStatus());
 		/*
 		 * if (shipProfileInfo.getCommercialMaster() != null) {
@@ -142,7 +147,7 @@ public class ShipProfileUtility {
 		if (!(shipProfileDTO.getImo() != null && StringUtils.isNotBlank(shipProfileDTO.getImo().toString()))) {
 			return "IMO number is missing";
 		}
-		
+
 		if(shipProfileDTO.getShipMasterId() != null){
 			if(shipProfileDTO.getId() != null){
 				ShipProfileInfo shipProfileInfo = shipProfileRepository.findOne(shipProfileDTO.getId());
@@ -172,9 +177,9 @@ public class ShipProfileUtility {
 				}
 			}
 		}
-		
-		
-		
+
+
+
 		/*if (!(shipProfileDTO.getShipMasterId() != null
 				&& StringUtils.isNotBlank(shipProfileDTO.getShipMasterId().toString()))) {
 			return "Ship master detail is missing";
@@ -261,6 +266,11 @@ public class ShipProfileUtility {
 			shipProfileDTO.setShipTypes(shipProfileInfo.getShipType());
 			shipProfileDTO.setId(shipProfileInfo.getId());
 			shipProfileDTO.setPortName(shipProfileInfo.getStateName());
+			// ship mesaurment
+			shipProfileDTO.setDwt(shipProfileInfo.getDwt());
+			shipProfileDTO.setBreadth(shipProfileInfo.getBreadth());
+			shipProfileDTO.setWeight(shipProfileInfo.getWeight());
+			shipProfileDTO.setLength(shipProfileInfo.getLength());
 			// code for get expiryDocument detail gor current ship
 			int activeCount = 0;
 			int renewelCount = 0;
@@ -288,10 +298,10 @@ public class ShipProfileUtility {
 			}
 			LocalDate currentDate = LocalDate.now();
 			LocalDate renewalDate = currentDate.plusDays(30);
-			
+
 			LOGGER.info("Current Date --->"+currentDate);
 			LOGGER.info("Renewal Date --->"+renewalDate);
-			
+
 			//Date currentDate = new Date();
 			List<ExpiryDocumentInfo> activeExpiryList = expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateAfter(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 					env.getProperty("active"), java.sql.Date.valueOf(renewalDate));
@@ -302,22 +312,22 @@ public class ShipProfileUtility {
 			else{
 				activeCount = activeExpiryList.size();
 			}
-			
+
 			LOGGER.info("active items for ship "+shipProfileInfo.getShipName()+" with count"+activeCount);
-			
+
 			List<ExpiryDocumentInfo> expiredExpiryList = expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateBefore(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 					env.getProperty("active"), java.sql.Date.valueOf(currentDate));
 			expiryedCount = expiredExpiryList.size();
 			LOGGER.info("expired items for ship "+shipProfileInfo.getShipName()+" with count"+expiryedCount);
-			
+
 			List<ExpiryDocumentInfo> renewalExpiryList =  expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateBetween(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 					env.getProperty("active"), java.sql.Date.valueOf(currentDate), java.sql.Date.valueOf(renewalDate));
 			renewelCount = renewalExpiryList.size();
 			LOGGER.info("renewal items for ship "+shipProfileInfo.getShipName()+" with count"+renewelCount);
-			
+
 			List<ExpiryDocumentInfo> pendingExpiryList = expirDocumentRepository.findByShipProfileInfoAndDocumentStatusAndStatus(shipProfileInfo,env.getProperty("document.status.pending"),env.getProperty("active"));
 			pendingCount = pendingExpiryList.size();
-			
+
 			 Set<DocumentHolderInfo> documentHolderInfos2  = documentHolderRepository.findByVesselId(shipProfileInfo.getId());
 			 newTotalcount += documentHolderInfos2.size();
 			/*if (expiryDocumentInfos != null && expiryDocumentInfos.size() > 0) {
@@ -372,13 +382,13 @@ public class ShipProfileUtility {
 		int newTotalcount = 0;
 		if(shipProfileInfos!=null) {
 			vesselsCount = shipProfileInfos.size();
-		}		
+		}
 		List<UserProfileInfo> userProfileInfos = userProfileRepository.findByOrganizationInfo(userProfileInfo.getOrganizationInfo());
 		if(shipProfileInfos !=null && shipProfileInfos.size()>0) {
 			for (ShipProfileInfo shipProfileInfo : shipProfileInfos) {
 				if (roleName.equals(Role.ShipMaster))
 					shipProfileDTO.setShipName(shipProfileInfo.getShipName());
-	
+
 				List<DocumentHolderInfo> documentHolderInfos = documentHolderRepository.findDistinctDocumentHolderInfoByExpiryDocumentInfos_ShipProfileInfo(shipProfileInfo);
 				// code for get expiryDocument detail gor current ship
 				//List<ExpiryDocumentInfo> expiryDocumentInfos = expirDocumentRepository.findByShipProfileInfo(shipProfileInfo);
@@ -398,7 +408,7 @@ public class ShipProfileUtility {
 					count = documentHolderInfos.size();
 					missingCount += documentHolderInfoList.size() - count;
 				}
-	
+
 				/*if (expiryDocumentInfos != null && expiryDocumentInfos.size() > 0) {
 					for (ExpiryDocumentInfo expiryDocumentInfo : expiryDocumentInfos) {
 						LOGGER.info("expiryDocumentName" + expiryDocumentInfo.getDocumentName());
@@ -420,10 +430,10 @@ public class ShipProfileUtility {
 				}*/
 				LocalDate currentDate = LocalDate.now();
 				LocalDate renewalDate = currentDate.plusDays(30);
-				
+
 				LOGGER.info("Current Date --->"+currentDate);
 				LOGGER.info("Renewal Date --->"+renewalDate);
-				
+
 				//Date currentDate = new Date();
 				List<ExpiryDocumentInfo> activeExpiryList = expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateAfter(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 						env.getProperty("active"), java.sql.Date.valueOf(renewalDate));
@@ -434,20 +444,20 @@ public class ShipProfileUtility {
 				else
 				activeCount += activeExpiryList.size();
 				LOGGER.info("active items for ship "+shipProfileInfo.getShipName()+" with count"+activeCount);
-				
+
 				List<ExpiryDocumentInfo> expiredExpiryList = expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateBefore(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 						env.getProperty("active"), java.sql.Date.valueOf(currentDate));
 				expiryedCount += expiredExpiryList.size();
 				LOGGER.info("expired items for ship "+shipProfileInfo.getShipName()+" with count"+expiryedCount);
-				
+
 				List<ExpiryDocumentInfo> renewalExpiryList =  expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateBetween(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 						env.getProperty("active"), java.sql.Date.valueOf(currentDate), java.sql.Date.valueOf(renewalDate));
 				renewelCount += renewalExpiryList.size();
 				LOGGER.info("renewal items for ship "+shipProfileInfo.getShipName()+" with count"+renewelCount);
-				
+
 				List<ExpiryDocumentInfo> pendingExpiryList = expirDocumentRepository.findByShipProfileInfoAndDocumentStatusAndStatus(shipProfileInfo,env.getProperty("document.status.pending"),env.getProperty("active"));
 				pendingCount += pendingExpiryList.size();
-				
+
 			}
 		}
 
@@ -495,10 +505,10 @@ public class ShipProfileUtility {
 		missingCount += documentHolderInfos2.size();
 		LocalDate currentDate = LocalDate.now();
 		LocalDate renewalDate = currentDate.plusDays(30);
-		
+
 		LOGGER.info("Current Date --->"+currentDate);
 		LOGGER.info("Renewal Date --->"+renewalDate);
-		
+
 		//Date currentDate = new Date();
 		List<ExpiryDocumentInfo> activeExpiryList = expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateAfter(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 				env.getProperty("active"), java.sql.Date.valueOf(renewalDate));
@@ -509,17 +519,17 @@ public class ShipProfileUtility {
 		else
 		activeCount += activeExpiryList.size();
 		LOGGER.info("active items for ship "+shipProfileInfo.getShipName()+" with count"+activeCount);
-		
+
 		List<ExpiryDocumentInfo> expiredExpiryList = expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateBefore(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 				env.getProperty("active"), java.sql.Date.valueOf(currentDate));
 		expiryedCount += expiredExpiryList.size();
 		LOGGER.info("expired items for ship "+shipProfileInfo.getShipName()+" with count"+expiryedCount);
-		
+
 		List<ExpiryDocumentInfo> renewalExpiryList =  expirDocumentRepository.findByShipProfileInfoAndCurrentVersionAndDocumentStatusAndArchiveStatusAndStatusAndExpiryDateBetween(shipProfileInfo, 1, env.getProperty("document.status.approve"), 0,
 				env.getProperty("active"), java.sql.Date.valueOf(currentDate), java.sql.Date.valueOf(renewalDate));
 		renewelCount += renewalExpiryList.size();
 		LOGGER.info("renewal items for ship "+shipProfileInfo.getShipName()+" with count"+renewelCount);
-		
+
 		List<ExpiryDocumentInfo> pendingExpiryList = expirDocumentRepository.findByShipProfileInfoAndDocumentStatusAndStatus(shipProfileInfo,env.getProperty("document.status.pending"),env.getProperty("active"));
 		pendingCount += pendingExpiryList.size();
 		shipProfileDTO.setActiveCount(activeCount);
@@ -530,6 +540,11 @@ public class ShipProfileUtility {
 		int total =  missingCount - (activeCount + renewelCount + expiryedCount) ;
 		shipProfileDTO.setMissingCount(total);
 		shipProfileDTO.setVesselsName(shipProfileInfo.getShipName());
+				// ship measurement
+		shipProfileDTO.setDwt(shipProfileInfo.getDwt());
+		shipProfileDTO.setWeight(shipProfileInfo.getWeight());
+		shipProfileDTO.setLength(shipProfileInfo.getLength());
+		shipProfileDTO.setBreadth(shipProfileInfo.getBreadth());
 		return shipProfileDTO;
 	}
 

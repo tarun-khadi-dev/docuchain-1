@@ -25,10 +25,47 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+
+
+// import org.springframework.http.HttpEntity;
+// import org.springframework.http.HttpHeaders;
+// import org.springframework.http.HttpStatus;
+// import org.springframework.http.MediaType;
+// import org.springframework.http.ResponseEntity;
+// import org.springframework.util.LinkedMultiValueMap;
+// import org.springframework.util.MultiValueMap;
+// import org.springframework.web.client.RestTemplate;
+// import org.json.JSONArray;
+// import org.springframework.core.io.ByteArrayResource;
+
+
+import org.apache.pdfbox.rendering.ImageType;
+
+import java.awt.image.BufferedImage;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
+
+
+
+import java.io.File;
+import java.io.IOException;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+
+
+
 @Service
 public class ExpiryDocumentServiceImpl implements ExpiryDocumentService{
 
 private static final Logger LOG = LoggerFactory.getLogger(ExpiryDocumentServiceImpl.class);
+
+@Autowired
+private ExpiryDocumentDraftRepository expiryDocumentDraftRepository;
 
 	@Autowired
 	private Environment env;
@@ -72,124 +109,572 @@ private static final Logger LOG = LoggerFactory.getLogger(ExpiryDocumentServiceI
 	@Autowired
 	EmailService emailService;
 
+@Autowired
+ExpiryDocumentDraftRepository draftRepository;
+
+// @Override
+// public String saveDraftDetails(ExpiryDocumentDTO expiryDocumentDTO, MultipartFile scanFile) {
+//     String fileExtn = Files.getFileExtension(scanFile.getOriginalFilename());
+//     try {
+//         JSONObject myResponse = null;
+//         String fileName = Files.getNameWithoutExtension(scanFile.getOriginalFilename()).replaceAll("[-+.^:, ]", "");
+
+//         UserProfileInfo userProfileInfo = null;
+//         Long saveInBlockchain = null;
+
+//         if (expiryDocumentDTO.getUploadedUserId() != null) {
+//             userProfileInfo = userProfileRepository.findOne(expiryDocumentDTO.getUploadedUserId());
+//             if (userProfileInfo != null && userProfileInfo.getOrganizationInfo() != null) {
+//                 SaveInBlockhainInfo saveInBlockhainInfo = userProfileInfo.getOrganizationInfo().getSaveInBlockhainInfo();
+//                 if (saveInBlockhainInfo != null) {
+//                     saveInBlockchain = saveInBlockhainInfo.getIsActive();
+//                 }
+//             }
+//         }
+
+//         // 1. Upload the file (Same as usual)
+//         String fileResponse = fileService.uploadFile(scanFile, saveInBlockchain);
+
+//         if (!fileResponse.equalsIgnoreCase(env.getProperty("failure"))) {
+//             myResponse = new JSONObject(fileResponse);
+
+//             DocumentDataInfo documentDataInfo = expiryDocumentUtility.convertJSONObjectToDocumentDataInfo(myResponse, fileExtn);
+//             documentDataInfo = documentDataRepository.save(documentDataInfo);
+
+//             if (documentDataInfo.getId() != null) {
+//                 ShipProfileInfo shipProfileInfo = shipProfileRepository.findById(expiryDocumentDTO.getShipProfileId());
+//                 DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(expiryDocumentDTO.getDocumentHolderId());
+
+//                 // 2. Create and Map the NEW Draft Entity
+//                 ExpiryDocumentDraftInfo draftInfo = new ExpiryDocumentDraftInfo();
+//                 draftInfo.setDocumentName(fileName);
+//                 draftInfo.setIssuingAuthority(expiryDocumentDTO.getIssuingAuthority());
+//                 draftInfo.setCertificateNumber(expiryDocumentDTO.getCertificateNumber());
+//                 draftInfo.setPlaceOfIssue(expiryDocumentDTO.getPlaceOfIssue());
+//                 draftInfo.setIssueDate(expiryDocumentDTO.getIssueDate());
+//                 draftInfo.setExpiryDate(expiryDocumentDTO.getExpiryDate());
+//                 draftInfo.setLastAnnual(expiryDocumentDTO.getLastAnnual());
+//                 draftInfo.setNextAnnual(expiryDocumentDTO.getNextAnnual());
+//                 draftInfo.setRemarks(expiryDocumentDTO.getRemarks());
+
+//                 draftInfo.setDocumentDataInfo(documentDataInfo);
+//                 draftInfo.setShipProfileInfo(shipProfileInfo);
+//                 draftInfo.setDocumentHolderInfo(documentHolderInfo);
+//                 draftInfo.setUploadedBy(userProfileInfo);
+
+//                 // 3. Save to the separate Draft table
+//                 draftRepository.save(draftInfo);
+
+//                 return env.getProperty("success");
+//             }
+//         }
+//     } catch (Exception e) {
+//         LOG.error("Error in ExpiryDocumentServiceImpl while saveDraftDetails ", e);
+//         return env.getProperty("document.upload.failed");
+//     }
+//     return env.getProperty("document.upload.failed");
+// }
+@Override
+public String saveDraftDetails(ExpiryDocumentDTO expiryDocumentDTO, MultipartFile scanFile) {
+    try {
+        String fileExtn = "";
+        String fileName = "";
+        if (scanFile != null && !scanFile.isEmpty()) {
+            fileExtn = Files.getFileExtension(scanFile.getOriginalFilename());
+            fileName = Files.getNameWithoutExtension(scanFile.getOriginalFilename()).replaceAll("[-+.^:, ]", "");
+        }
+
+        UserProfileInfo userProfileInfo = null;
+        Long saveInBlockchain = null;
+
+        if (expiryDocumentDTO.getUploadedUserId() != null) {
+            userProfileInfo = userProfileRepository.findOne(expiryDocumentDTO.getUploadedUserId());
+            if (userProfileInfo != null && userProfileInfo.getOrganizationInfo() != null) {
+                SaveInBlockhainInfo saveInBlockhainInfo = userProfileInfo.getOrganizationInfo().getSaveInBlockhainInfo();
+                if (saveInBlockhainInfo != null) {
+                    saveInBlockchain = saveInBlockhainInfo.getIsActive();
+                }
+            }
+        }
+
+        DocumentDataInfo documentDataInfo = null;
+
+        // 1. Upload new file OR reuse existing
+        if (scanFile != null && !scanFile.isEmpty()) {
+            String fileResponse = fileService.uploadFile(scanFile, saveInBlockchain);
+            if (!fileResponse.equalsIgnoreCase(env.getProperty("failure"))) {
+                JSONObject myResponse = new JSONObject(fileResponse);
+                documentDataInfo = expiryDocumentUtility.convertJSONObjectToDocumentDataInfo(myResponse, fileExtn);
+                documentDataInfo = documentDataRepository.save(documentDataInfo);
+            }
+        } else if (expiryDocumentDTO.getDocumentDataId() != null) {
+            documentDataInfo = documentDataRepository.findOne(expiryDocumentDTO.getDocumentDataId());
+            if (documentDataInfo != null) {
+                fileName = documentDataInfo.getDocumentName();
+            }
+        }
+
+        if (documentDataInfo != null && documentDataInfo.getId() != null) {
+            ShipProfileInfo shipProfileInfo = shipProfileRepository.findById(expiryDocumentDTO.getShipProfileId());
+            DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(expiryDocumentDTO.getDocumentHolderId());
+
+            // 2. Fetch existing draft to UPDATE, preventing duplicates
+            ExpiryDocumentDraftInfo draftInfo = null;
+            if (expiryDocumentDTO.getDraftId() != null) {
+                draftInfo = draftRepository.findOne(expiryDocumentDTO.getDraftId());
+            }
+            if (draftInfo == null) {
+                List<ExpiryDocumentDraftInfo> existingDrafts = draftRepository.findByDocumentHolderInfoAndShipProfileInfo(documentHolderInfo, shipProfileInfo);
+                if (existingDrafts != null && !existingDrafts.isEmpty()) {
+                    draftInfo = existingDrafts.get(0); // Use the existing one!
+                }
+            }
+            // If no existing draft, create a new one
+            if (draftInfo == null) {
+                draftInfo = new ExpiryDocumentDraftInfo();
+            }
+
+            draftInfo.setDocumentName(fileName);
+            draftInfo.setIssuingAuthority(expiryDocumentDTO.getIssuingAuthority());
+            draftInfo.setCertificateNumber(expiryDocumentDTO.getCertificateNumber());
+            draftInfo.setPlaceOfIssue(expiryDocumentDTO.getPlaceOfIssue());
+            draftInfo.setIssueDate(expiryDocumentDTO.getIssueDate());
+            draftInfo.setExpiryDate(expiryDocumentDTO.getExpiryDate());
+            draftInfo.setLastAnnual(expiryDocumentDTO.getLastAnnual());
+            draftInfo.setNextAnnual(expiryDocumentDTO.getNextAnnual());
+            draftInfo.setRemarks(expiryDocumentDTO.getRemarks());
+
+            draftInfo.setDocumentDataInfo(documentDataInfo);
+            draftInfo.setShipProfileInfo(shipProfileInfo);
+            draftInfo.setDocumentHolderInfo(documentHolderInfo);
+            draftInfo.setUploadedBy(userProfileInfo);
+            draftInfo.setModifiedDate(new Date());
+
+            draftRepository.save(draftInfo);
+
+            return env.getProperty("success");
+        }
+    } catch (Exception e) {
+        LOG.error("Error in ExpiryDocumentServiceImpl while saveDraftDetails ", e);
+        return env.getProperty("document.upload.failed");
+    }
+    return env.getProperty("document.upload.failed");
+}
+// @Override
+// public String saveDocumentDetails(ExpiryDocumentDTO expiryDocumentDTO, MultipartFile scanFile) {
+//     String fileExtn = Files.getFileExtension(scanFile.getOriginalFilename());
+//     try {
+//         JSONObject myResponse = null;
+//         System.out.println("File Extension: " + fileExtn);
+//         String fileName = Files.getNameWithoutExtension(scanFile.getOriginalFilename()).replaceAll("[-+.^:, ]", "");
+//         expiryDocumentDTO.setDocumentName(fileName);
+
+//         UserProfileInfo userProfileInfo = null;
+//         Long saveInBlockchain = null;
+
+//         if (expiryDocumentDTO.getUploadedUserId() != null) {
+//             userProfileInfo = userProfileRepository.findOne(expiryDocumentDTO.getUploadedUserId());
+//             if (userProfileInfo != null && userProfileInfo.getOrganizationInfo() != null) {
+//                 SaveInBlockhainInfo saveInBlockhainInfo = userProfileInfo.getOrganizationInfo().getSaveInBlockhainInfo();
+//                 if (saveInBlockhainInfo != null) {
+//                     saveInBlockchain = saveInBlockhainInfo.getIsActive();
+//                 }
+//             }
+//         }
+
+//         String fileResponse = fileService.uploadFile(scanFile, saveInBlockchain);
+
+//         if (!fileResponse.equalsIgnoreCase(env.getProperty("failure"))) {
+//             LOG.info("File Response: " + fileResponse);
+//             myResponse = new JSONObject(fileResponse);
+
+//             if (myResponse != null) {
+//                 DocumentDataInfo documentDataInfo = expiryDocumentUtility.convertJSONObjectToDocumentDataInfo(myResponse, fileExtn);
+//                 documentDataInfo = documentDataRepository.save(documentDataInfo);
+
+//                 if (documentDataInfo.getId() != null) {
+//                     ExpiryDocumentInfo expiryDocumentInfo = expiryDocumentUtility.convertExpiryDocumentDTOToObject(expiryDocumentDTO, documentDataInfo);
+//                     ShipProfileInfo shipProfileInfo = shipProfileRepository.findById(expiryDocumentDTO.getShipProfileId());
+//                     DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(expiryDocumentDTO.getDocumentHolderId());
+
+//                     if (userProfileInfo != null) {
+//                         expiryDocumentInfo.setUploadedBy(userProfileInfo);
+//                     }
+//                     if (shipProfileInfo != null && documentHolderInfo != null) {
+//                         expiryDocumentInfo.setShipProfileInfo(shipProfileInfo);
+//                         expiryDocumentInfo.setDocumentHolderInfo(documentHolderInfo);
+//                     }
+
+//                     DualApprovalInfo dualApprovalInfo = dualApprovalRepository.findByOrganizationInfo(shipProfileInfo.getShipOrganizationInfo());
+//                     if (dualApprovalInfo != null) {
+//                         if (dualApprovalInfo.getFlag() == 1) {
+//                             List<ExpiryDocumentInfo> expiryDocument = expiryDocumentRepository.findByDocumentHolderInfoAndShipProfileInfoAndCurrentVersion(documentHolderInfo, shipProfileInfo, 1);
+//                             for (ExpiryDocumentInfo expDocument : expiryDocument) {
+//                                 expDocument.setCurrentVersion(0);
+//                                 expiryDocumentRepository.saveAndFlush(expDocument);
+//                             }
+//                             expiryDocumentInfo.setCurrentVersion(1);
+//                             expiryDocumentInfo.setDocumentStatus(env.getProperty("document.status.approve"));
+//                         }
+//                     }
+
+//                     expiryDocumentInfo = expiryDocumentRepository.saveAndFlush(expiryDocumentInfo);
+
+//                     if (expiryDocumentInfo != null) {
+//                         commonMethodsUtility.maintainHistory(expiryDocumentInfo.getId(), expiryDocumentInfo.getDocumentName(), "ExpiryDocument", env.getProperty("history.created"), expiryDocumentDTO.getLoginId());
+//                     }
+
+//                     notificationUtility.notifyDocumentUpload(userProfileInfo.getId(), expiryDocumentInfo);
+
+//                     if (expiryDocumentInfo.getId() != null) {
+//                         List<ExpiryDocumentInfo> expiryDocumentInfoList = expiryDocumentRepository.findByDocumentHolderInfoAndShipProfileInfoAndDocumentStatus(documentHolderInfo, shipProfileInfo, env.getProperty("document.status.pending"));
+//                         for (ExpiryDocumentInfo expiryDocumentInfoObj : expiryDocumentInfoList) {
+//                             if (!expiryDocumentInfoObj.equals(expiryDocumentInfo)) {
+//                                 if (expiryDocumentInfoObj.getDocumentStatus().equalsIgnoreCase(env.getProperty("document.status.pending"))) {
+//                                     expiryDocumentInfoObj.setStatus(env.getProperty("inactive"));
+//                                     expiryDocumentInfoObj = expiryDocumentRepository.save(expiryDocumentInfoObj);
+//                                 }
+//                             }
+//                         }
+//                         return env.getProperty("success");
+//                     }
+//                 }
+//             }
+//         }
+//     } catch (JSONException e) {
+//         e.printStackTrace();
+//         LOG.error("Error in ExpiryDocumentServiceImpl while saveDcoumentData ", e);
+//         return env.getProperty("document.upload.failed");
+//     }
+//     return env.getProperty("document.upload.failed");
+// }
+
+
+// @Override
+// public String saveDocumentDetails(ExpiryDocumentDTO expiryDocumentDTO, MultipartFile scanFile) {
+//     try {
+//         JSONObject myResponse = null;
+//         UserProfileInfo userProfileInfo = null;
+//         Long saveInBlockchain = null;
+//         DocumentDataInfo documentDataInfo = null;
+
+//         if (expiryDocumentDTO.getUploadedUserId() != null) {
+//             userProfileInfo = userProfileRepository.findOne(expiryDocumentDTO.getUploadedUserId());
+//             if (userProfileInfo != null && userProfileInfo.getOrganizationInfo() != null) {
+//                 SaveInBlockhainInfo saveInBlockhainInfo = userProfileInfo.getOrganizationInfo().getSaveInBlockhainInfo();
+//                 if (saveInBlockhainInfo != null) {
+//                     saveInBlockchain = saveInBlockhainInfo.getIsActive();
+//                 }
+//             }
+//         }
+
+//         // 1. Handle File: Upload new OR use existing from Draft
+//         if (scanFile != null && !scanFile.isEmpty()) {
+//             String fileExtn = Files.getFileExtension(scanFile.getOriginalFilename());
+//             System.out.println("File Extension: " + fileExtn);
+//             String fileName = Files.getNameWithoutExtension(scanFile.getOriginalFilename()).replaceAll("[-+.^:, ]", "");
+//             expiryDocumentDTO.setDocumentName(fileName);
+
+//             String fileResponse = fileService.uploadFile(scanFile, saveInBlockchain);
+
+//             if (!fileResponse.equalsIgnoreCase(env.getProperty("failure"))) {
+//                 LOG.info("File Response: " + fileResponse);
+//                 myResponse = new JSONObject(fileResponse);
+//                 if (myResponse != null) {
+//                     documentDataInfo = expiryDocumentUtility.convertJSONObjectToDocumentDataInfo(myResponse, fileExtn);
+//                     documentDataInfo = documentDataRepository.save(documentDataInfo);
+//                 }
+//             }
+//         } else if (expiryDocumentDTO.getDocumentDataId() != null) {
+//             // Reusing the file already uploaded during the Draft phase
+//             documentDataInfo = documentDataRepository.findOne(expiryDocumentDTO.getDocumentDataId());
+//         }
+
+//         // 2. Save to Main Table
+//         if (documentDataInfo != null && documentDataInfo.getId() != null) {
+//             ExpiryDocumentInfo expiryDocumentInfo = expiryDocumentUtility.convertExpiryDocumentDTOToObject(expiryDocumentDTO, documentDataInfo);
+//             ShipProfileInfo shipProfileInfo = shipProfileRepository.findById(expiryDocumentDTO.getShipProfileId());
+//             DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(expiryDocumentDTO.getDocumentHolderId());
+
+//             if (userProfileInfo != null) {
+//                 expiryDocumentInfo.setUploadedBy(userProfileInfo);
+//             }
+//             if (shipProfileInfo != null && documentHolderInfo != null) {
+//                 expiryDocumentInfo.setShipProfileInfo(shipProfileInfo);
+//                 expiryDocumentInfo.setDocumentHolderInfo(documentHolderInfo);
+//             }
+
+//             DualApprovalInfo dualApprovalInfo = dualApprovalRepository.findByOrganizationInfo(shipProfileInfo.getShipOrganizationInfo());
+//             if (dualApprovalInfo != null) {
+//                 if (dualApprovalInfo.getFlag() == 1) {
+//                     List<ExpiryDocumentInfo> expiryDocument = expiryDocumentRepository.findByDocumentHolderInfoAndShipProfileInfoAndCurrentVersion(documentHolderInfo, shipProfileInfo, 1);
+//                     for (ExpiryDocumentInfo expDocument : expiryDocument) {
+//                         expDocument.setCurrentVersion(0);
+//                         expiryDocumentRepository.saveAndFlush(expDocument);
+//                     }
+//                     expiryDocumentInfo.setCurrentVersion(1);
+//                     expiryDocumentInfo.setDocumentStatus(env.getProperty("document.status.approve"));
+//                 }
+//             }
+
+//             expiryDocumentInfo = expiryDocumentRepository.saveAndFlush(expiryDocumentInfo);
+
+//             // 3. REMOVE DRAFT: Delete the draft record now that it's officially submitted
+//             // if (expiryDocumentDTO.getDraftId() != null) {
+//             //     expiryDocumentDraftRepository.delete(expiryDocumentDTO.getDraftId());
+//             // }
+// 						// 3. REMOVE DRAFT: Unlink the file to protect it, then delete the draft
+//     if (expiryDocumentDTO.getDraftId() != null) {
+//         ExpiryDocumentDraftInfo draftToDelete = expiryDocumentDraftRepository.findOne(expiryDocumentDTO.getDraftId());
+//         if (draftToDelete != null) {
+//             draftToDelete.setDocumentDataInfo(null); // Protect the file data!
+//             expiryDocumentDraftRepository.saveAndFlush(draftToDelete);
+//             expiryDocumentDraftRepository.delete(draftToDelete);
+//         }
+//     }
+
+//             if (expiryDocumentInfo != null) {
+//                 commonMethodsUtility.maintainHistory(expiryDocumentInfo.getId(), expiryDocumentInfo.getDocumentName(), "ExpiryDocument", env.getProperty("history.created"), expiryDocumentDTO.getLoginId());
+//             }
+
+//             notificationUtility.notifyDocumentUpload(userProfileInfo.getId(), expiryDocumentInfo);
+
+//             if (expiryDocumentInfo.getId() != null) {
+//                 List<ExpiryDocumentInfo> expiryDocumentInfoList = expiryDocumentRepository.findByDocumentHolderInfoAndShipProfileInfoAndDocumentStatus(documentHolderInfo, shipProfileInfo, env.getProperty("document.status.pending"));
+//                 for (ExpiryDocumentInfo expiryDocumentInfoObj : expiryDocumentInfoList) {
+//                     if (!expiryDocumentInfoObj.equals(expiryDocumentInfo)) {
+//                         if (expiryDocumentInfoObj.getDocumentStatus().equalsIgnoreCase(env.getProperty("document.status.pending"))) {
+//                             expiryDocumentInfoObj.setStatus(env.getProperty("inactive"));
+//                             expiryDocumentInfoObj = expiryDocumentRepository.save(expiryDocumentInfoObj);
+//                         }
+//                     }
+//                 }
+//                 return env.getProperty("success");
+//             }
+//         }
+//     } catch (JSONException e) {
+//         e.printStackTrace();
+//         LOG.error("Error in ExpiryDocumentServiceImpl while saveDcoumentData ", e);
+//         return env.getProperty("document.upload.failed");
+//     }
+//     return env.getProperty("document.upload.failed");
+// }
+
+@Override
+public String saveDocumentDetails(ExpiryDocumentDTO expiryDocumentDTO, MultipartFile scanFile) {
+    try {
+        JSONObject myResponse = null;
+        UserProfileInfo userProfileInfo = null;
+        Long saveInBlockchain = null;
+        DocumentDataInfo documentDataInfo = null;
+
+        if (expiryDocumentDTO.getUploadedUserId() != null) {
+            userProfileInfo = userProfileRepository.findOne(expiryDocumentDTO.getUploadedUserId());
+            if (userProfileInfo != null && userProfileInfo.getOrganizationInfo() != null) {
+                SaveInBlockhainInfo saveInBlockhainInfo = userProfileInfo.getOrganizationInfo().getSaveInBlockhainInfo();
+                if (saveInBlockhainInfo != null) {
+                    saveInBlockchain = saveInBlockhainInfo.getIsActive();
+                }
+            }
+        }
+
+        // 1. Process NEW File Upload
+        if (scanFile != null && !scanFile.isEmpty() && scanFile.getOriginalFilename() != null && !scanFile.getOriginalFilename().isEmpty()) {
+            String fileExtn = Files.getFileExtension(scanFile.getOriginalFilename());
+            String fileName = Files.getNameWithoutExtension(scanFile.getOriginalFilename()).replaceAll("[-+.^:, ]", "");
+            expiryDocumentDTO.setDocumentName(fileName);
+
+            String fileResponse = fileService.uploadFile(scanFile, saveInBlockchain);
+
+            if (!fileResponse.equalsIgnoreCase(env.getProperty("failure"))) {
+                LOG.info("File Response: " + fileResponse);
+                myResponse = new JSONObject(fileResponse);
+                if (myResponse != null) {
+                    documentDataInfo = expiryDocumentUtility.convertJSONObjectToDocumentDataInfo(myResponse, fileExtn);
+                    documentDataInfo = documentDataRepository.save(documentDataInfo);
+                }
+            }
+        }
+        // 2. OR Resume Draft (Use existing file data)
+        else if (expiryDocumentDTO.getDocumentDataId() != null) {
+            documentDataInfo = documentDataRepository.findOne(expiryDocumentDTO.getDocumentDataId());
+            if (documentDataInfo != null) {
+                // Safely apply the existing filename to the DTO so it isn't null!
+                expiryDocumentDTO.setDocumentName(documentDataInfo.getDocumentName());
+            }
+        }
+
+        // 3. Save the Official Document
+        if (documentDataInfo != null && documentDataInfo.getId() != null) {
+            ExpiryDocumentInfo expiryDocumentInfo = expiryDocumentUtility.convertExpiryDocumentDTOToObject(expiryDocumentDTO, documentDataInfo);
+            ShipProfileInfo shipProfileInfo = shipProfileRepository.findById(expiryDocumentDTO.getShipProfileId());
+            DocumentHolderInfo documentHolderInfo = documentHolderRepository.findOne(expiryDocumentDTO.getDocumentHolderId());
+
+            if (userProfileInfo != null) {
+                expiryDocumentInfo.setUploadedBy(userProfileInfo);
+            }
+            if (shipProfileInfo != null && documentHolderInfo != null) {
+                expiryDocumentInfo.setShipProfileInfo(shipProfileInfo);
+                expiryDocumentInfo.setDocumentHolderInfo(documentHolderInfo);
+            }
+
+            DualApprovalInfo dualApprovalInfo = dualApprovalRepository.findByOrganizationInfo(shipProfileInfo.getShipOrganizationInfo());
+            if (dualApprovalInfo != null) {
+                if (dualApprovalInfo.getFlag() == 1) {
+                    List<ExpiryDocumentInfo> expiryDocument = expiryDocumentRepository.findByDocumentHolderInfoAndShipProfileInfoAndCurrentVersion(documentHolderInfo, shipProfileInfo, 1);
+                    for (ExpiryDocumentInfo expDocument : expiryDocument) {
+                        expDocument.setCurrentVersion(0);
+                        expiryDocumentRepository.saveAndFlush(expDocument);
+                    }
+                    expiryDocumentInfo.setCurrentVersion(1);
+                    expiryDocumentInfo.setDocumentStatus(env.getProperty("document.status.approve"));
+                }
+            }
+
+            expiryDocumentInfo = expiryDocumentRepository.saveAndFlush(expiryDocumentInfo);
+
+            // 4. REMOVE DRAFT: Unlink the file to protect it, then delete the draft
+            if (expiryDocumentDTO.getDraftId() != null) {
+                ExpiryDocumentDraftInfo draftToDelete = expiryDocumentDraftRepository.findOne(expiryDocumentDTO.getDraftId());
+                if (draftToDelete != null) {
+                    draftToDelete.setDocumentDataInfo(null); // Protect the file data!
+                    expiryDocumentDraftRepository.saveAndFlush(draftToDelete);
+                    expiryDocumentDraftRepository.delete(draftToDelete);
+                }
+            }
+
+            if (expiryDocumentInfo != null) {
+                commonMethodsUtility.maintainHistory(expiryDocumentInfo.getId(), expiryDocumentInfo.getDocumentName(), "ExpiryDocument", env.getProperty("history.created"), expiryDocumentDTO.getLoginId());
+            }
+
+            notificationUtility.notifyDocumentUpload(userProfileInfo.getId(), expiryDocumentInfo);
+
+            if (expiryDocumentInfo.getId() != null) {
+                List<ExpiryDocumentInfo> expiryDocumentInfoList = expiryDocumentRepository.findByDocumentHolderInfoAndShipProfileInfoAndDocumentStatus(documentHolderInfo, shipProfileInfo, env.getProperty("document.status.pending"));
+                for (ExpiryDocumentInfo expiryDocumentInfoObj : expiryDocumentInfoList) {
+                    if (!expiryDocumentInfoObj.equals(expiryDocumentInfo)) {
+                        if (expiryDocumentInfoObj.getDocumentStatus().equalsIgnoreCase(env.getProperty("document.status.pending"))) {
+                            expiryDocumentInfoObj.setStatus(env.getProperty("inactive"));
+                            expiryDocumentInfoObj = expiryDocumentRepository.save(expiryDocumentInfoObj);
+                        }
+                    }
+                }
+                return env.getProperty("success");
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        LOG.error("Error in ExpiryDocumentServiceImpl while saveDcoumentData ", e);
+        return env.getProperty("document.upload.failed");
+    }
+    return env.getProperty("document.upload.failed");
+}
+
+@Override
+public ExpiryDocumentDTO downloadFileBasedOnDocumentDataId(Long documentDataId) {
+    DocumentDataInfo documentDataInfo = documentDataRepository.findOne(documentDataId);
+    ExpiryDocumentDTO expiryDocumentDTO = new ExpiryDocumentDTO();
+
+    if (documentDataInfo != null) {
+        String documentName = documentDataInfo.getDocumentName();
+        String documentHashCode = documentDataInfo.getDocumentHashCode();
+
+        String fileResponse = fileService.fileRetriveFromStorej(documentName, documentHashCode);
+        byte[] decodedBytes = Base64.decodeBase64(fileResponse);
+        expiryDocumentDTO.setFileArray(decodedBytes);
+        expiryDocumentDTO.setDocumentName(documentDataInfo.getDocumentName());
+        expiryDocumentDTO.setFileExtension(documentDataInfo.getDocumentFormat());
+        return expiryDocumentDTO;
+    }
+    return null;
+}
+
+	// @Override
+	// public List<ExpiryDocumentDTO> getAllExpiryDocumentAndHolderInfo(Long shipId, Integer archivedStatus) {
+
+	// 	List<ExpiryDocumentDTO> expiryDocumentDTOs=new ArrayList<ExpiryDocumentDTO>();
+	// 	List<ExpiryDocumentDTO> expirAvailableDocument=new ArrayList<ExpiryDocumentDTO>();
+	// 	List<ExpiryDocumentDTO> expiryEmptyDocument=new ArrayList<ExpiryDocumentDTO>();
+
+	// 	expiryDocumentDTOs = expiryDocumentUtility.convertAvailbleDocumentAndEmptyDocument(expirAvailableDocument,expiryEmptyDocument);
+	// 	ShipProfileInfo shipProfileInfo=shipProfileRepository.findById(shipId);
+	// 	//Set<DocumentHolderInfo>customDocumentHolders=shipProfileInfo.getCustomDocumentHolders();
+	// 	Set<DocumentHolderInfo>customDocumentHolders = documentHolderRepository.findByVesselId(shipProfileInfo.getId());
+	// 	System.out.println("size ::::"+customDocumentHolders.size());
+	// 	if(customDocumentHolders!=null && !customDocumentHolders.isEmpty()){
+	// 		for(DocumentHolderInfo customFolderInfo:customDocumentHolders){
+	// 			customFolderInfo = documentHolderRepository.findOne(customFolderInfo.getId());
+	// 			ExpiryDocumentDTO expiryDocumentDTO=expiryDocumentUtility.convertExpiryDocumentInfoToExpiryDocumentDTO(customFolderInfo,shipId,archivedStatus);
+	// 			if(expiryDocumentDTO.getId() != null)
+	// 				expirAvailableDocument.add(expiryDocumentDTO);
+	// 			if(expiryDocumentDTO.getId() == null)
+	// 				expiryEmptyDocument.add(expiryDocumentDTO);
+
+	// 		}
+	// 	}
+	// 	expiryDocumentDTOs.addAll(expirAvailableDocument);
+	// 	expiryDocumentDTOs.addAll(expiryEmptyDocument);
+	// 	return expiryDocumentDTOs;
+	// }
+
+
 	@Override
-	public String saveDocumentDetails(ExpiryDocumentDTO expiryDocumentDTO, MultipartFile scanFile) {
-		String fileExtn=Files.getFileExtension(scanFile.getOriginalFilename());
-		try {
-		JSONObject myResponse=null;
-		System.out.println("File Extension: "+fileExtn);
-			String fileName = Files.getNameWithoutExtension(scanFile.getOriginalFilename()).replaceAll("[-+.^:, ]", "");
-			expiryDocumentDTO.setDocumentName(fileName);
-			UserProfileInfo userProfileInfo = null;
-			Long saveInBlockchain = null;
-			if (expiryDocumentDTO.getUploadedUserId() != null) {
-				userProfileInfo = userProfileRepository.findOne(expiryDocumentDTO.getUploadedUserId());
-				SaveInBlockhainInfo saveInBlockhainInfo = userProfileInfo.getOrganizationInfo().getSaveInBlockhainInfo();
-				if (saveInBlockhainInfo != null){
-					saveInBlockchain = saveInBlockhainInfo.getIsActive();
-				}
-			}
-			String fileResponse=fileService.uploadFile(scanFile, saveInBlockchain);
+  public List<ExpiryDocumentDTO> getAllExpiryDocumentAndHolderInfo(Long shipId, Integer archivedStatus) {
 
-		if(!fileResponse.equalsIgnoreCase(env.getProperty("failure"))){
-			LOG.info("File Response: " + fileResponse);
-			myResponse = new JSONObject(fileResponse);
-			if(myResponse!=null){
-				DocumentDataInfo documentDataInfo=expiryDocumentUtility.convertJSONObjectToDocumentDataInfo(myResponse,fileExtn);
-				documentDataInfo=documentDataRepository.save(documentDataInfo);
-				if(documentDataInfo.getId()!=null){
-					ExpiryDocumentInfo expiryDocumentInfo=expiryDocumentUtility.convertExpiryDocumentDTOToObject(expiryDocumentDTO,documentDataInfo);
-					ShipProfileInfo shipProfileInfo=shipProfileRepository.findById(expiryDocumentDTO.getShipProfileId());
-					DocumentHolderInfo documentHolderInfo=documentHolderRepository.findOne(expiryDocumentDTO.getDocumentHolderId());
-					if(userProfileInfo!=null){
-						expiryDocumentInfo.setUploadedBy(userProfileInfo);
-					}
-					if(shipProfileInfo!=null && documentHolderInfo!=null){
-						expiryDocumentInfo.setShipProfileInfo(shipProfileInfo);
-						expiryDocumentInfo.setDocumentHolderInfo(documentHolderInfo);
-					}
-//					created by Velkumar
-					DualApprovalInfo dualApprovalInfo=dualApprovalRepository.findByOrganizationInfo(shipProfileInfo.getShipOrganizationInfo());
-					if(dualApprovalInfo!=null){
-						if(dualApprovalInfo.getFlag()==1){
-							List<ExpiryDocumentInfo> expiryDocument=expiryDocumentRepository.findByDocumentHolderInfoAndShipProfileInfoAndCurrentVersion(documentHolderInfo, shipProfileInfo, 1);
-							for(ExpiryDocumentInfo expDocument:expiryDocument){
-								expDocument.setCurrentVersion(0);
-								expiryDocumentRepository.saveAndFlush(expDocument);
-							}
-							expiryDocumentInfo.setCurrentVersion(1);
-							expiryDocumentInfo.setDocumentStatus(env.getProperty("document.status.approve"));
-						}
-					}
+    List<ExpiryDocumentDTO> expiryDocumentDTOs=new ArrayList<ExpiryDocumentDTO>();
+    List<ExpiryDocumentDTO> expirAvailableDocument=new ArrayList<ExpiryDocumentDTO>();
+    List<ExpiryDocumentDTO> expiryEmptyDocument=new ArrayList<ExpiryDocumentDTO>();
 
-					expiryDocumentInfo = expiryDocumentRepository.saveAndFlush(expiryDocumentInfo);
-					if(expiryDocumentInfo!=null){
-	                    commonMethodsUtility.maintainHistory(expiryDocumentInfo.getId(),expiryDocumentInfo.getDocumentName(),"ExpiryDocument", env.getProperty("history.created"), expiryDocumentDTO.getLoginId());
-	                    }
-//					if (dualApprovalInfo.getFlag() == 0) {
-						notificationUtility.notifyDocumentUpload(userProfileInfo.getId(), expiryDocumentInfo);
-//					}
-				if(expiryDocumentInfo.getId()!=null){
-						List<ExpiryDocumentInfo> expiryDocumentInfoList=expiryDocumentRepository.findByDocumentHolderInfoAndShipProfileInfoAndDocumentStatus(documentHolderInfo, shipProfileInfo, env.getProperty("document.status.pending"));
-						for(ExpiryDocumentInfo expiryDocumentInfoObj:expiryDocumentInfoList){
-							if(!expiryDocumentInfoObj.equals(expiryDocumentInfo)){
-								if(expiryDocumentInfoObj.getDocumentStatus().equalsIgnoreCase(env.getProperty("document.status.pending"))){
-									expiryDocumentInfoObj.setStatus(env.getProperty("inactive"));;
-									expiryDocumentInfoObj=expiryDocumentRepository.save(expiryDocumentInfoObj);
-								}
-							}
-						}
-//						//boolean documentNotification = notificationUtility.documentUserNotification(expiryDocumentDTO.getUploadedUserId(), expiryDocumentInfo);
-//						if (!documentNotification){
-//							return env.getProperty("failure");
-//						}
-						return env.getProperty("success");
-					}
-				}
-			}
-		}
-		} catch (JSONException e) {
-			e.printStackTrace();
-			LOG.error("Error in ExpiryDocumentServiceImpl while saveDcoumentData ",e);
-			return env.getProperty("document.upload.failed");
-		}
-		return env.getProperty("document.upload.failed");
-	}
+    expiryDocumentDTOs = expiryDocumentUtility.convertAvailbleDocumentAndEmptyDocument(expirAvailableDocument,expiryEmptyDocument);
+    ShipProfileInfo shipProfileInfo=shipProfileRepository.findById(shipId);
+    Set<DocumentHolderInfo> customDocumentHolders = documentHolderRepository.findByVesselId(shipProfileInfo.getId());
+    System.out.println("size ::::"+customDocumentHolders.size());
 
-	@Override
-	public List<ExpiryDocumentDTO> getAllExpiryDocumentAndHolderInfo(Long shipId, Integer archivedStatus) {
+    if(customDocumentHolders!=null && !customDocumentHolders.isEmpty()){
+      for(DocumentHolderInfo customFolderInfo:customDocumentHolders){
+        customFolderInfo = documentHolderRepository.findOne(customFolderInfo.getId());
+        ExpiryDocumentDTO expiryDocumentDTO=expiryDocumentUtility.convertExpiryDocumentInfoToExpiryDocumentDTO(customFolderInfo,shipId,archivedStatus);
 
-		List<ExpiryDocumentDTO> expiryDocumentDTOs=new ArrayList<ExpiryDocumentDTO>();
-		List<ExpiryDocumentDTO> expirAvailableDocument=new ArrayList<ExpiryDocumentDTO>();
-		List<ExpiryDocumentDTO> expiryEmptyDocument=new ArrayList<ExpiryDocumentDTO>();
-//		List<DocumentHolderInfo> documentHolderInfoList=documentHolderRepository.findByDocumentHolderTypeOrderByDocumentHolderName(env.getProperty("document.holder.type"));
-//		for(DocumentHolderInfo documentHolderInfo:documentHolderInfoList ){
-//			ExpiryDocumentDTO expiryDocumentDTO=expiryDocumentUtility.convertExpiryDocumentInfoToExpiryDocumentDTO(documentHolderInfo,shipId,archivedStatus);
-//			if(expiryDocumentDTO.getId() != null)
-//				expirAvailableDocument.add(expiryDocumentDTO);
-//			if(expiryDocumentDTO.getId() == null)
-//				expiryEmptyDocument.add(expiryDocumentDTO);
-//		}
-		expiryDocumentDTOs = expiryDocumentUtility.convertAvailbleDocumentAndEmptyDocument(expirAvailableDocument,expiryEmptyDocument);
-		ShipProfileInfo shipProfileInfo=shipProfileRepository.findById(shipId);
-		//Set<DocumentHolderInfo>customDocumentHolders=shipProfileInfo.getCustomDocumentHolders();
-		Set<DocumentHolderInfo>customDocumentHolders = documentHolderRepository.findByVesselId(shipProfileInfo.getId());
-		System.out.println("size ::::"+customDocumentHolders.size());
-		if(customDocumentHolders!=null && !customDocumentHolders.isEmpty()){
-			for(DocumentHolderInfo customFolderInfo:customDocumentHolders){
-				customFolderInfo = documentHolderRepository.findOne(customFolderInfo.getId());
-				ExpiryDocumentDTO expiryDocumentDTO=expiryDocumentUtility.convertExpiryDocumentInfoToExpiryDocumentDTO(customFolderInfo,shipId,archivedStatus);
-				if(expiryDocumentDTO.getId() != null)
-					expirAvailableDocument.add(expiryDocumentDTO);
-				if(expiryDocumentDTO.getId() == null)
-					expiryEmptyDocument.add(expiryDocumentDTO);
+        if(expiryDocumentDTO.getId() != null) {
+          expirAvailableDocument.add(expiryDocumentDTO);
+        }
 
-			}
-		}
-		expiryDocumentDTOs.addAll(expirAvailableDocument);
-		expiryDocumentDTOs.addAll(expiryEmptyDocument);
-		return expiryDocumentDTOs;
-	}
+        if(expiryDocumentDTO.getId() == null) {
+          // --- CHECK FOR DRAFTS BEFORE ADDING TO EMPTY LIST ---
+          List<ExpiryDocumentDraftInfo> drafts = expiryDocumentDraftRepository.findByDocumentHolderInfoAndShipProfileInfo(customFolderInfo, shipProfileInfo);
+          if (drafts != null && !drafts.isEmpty()) {
+              ExpiryDocumentDraftInfo draft = drafts.get(0);
+              expiryDocumentDTO.setIsDraft(true);
+              expiryDocumentDTO.setDraftId(draft.getId());
+
+              if (draft.getDocumentDataInfo() != null) {
+                  expiryDocumentDTO.setDocumentDataId(draft.getDocumentDataInfo().getId());
+                  // expiryDocumentDTO.setDocumentPreviewUrl(env.getProperty("expiryDocument.preview.url") + draft.getDocumentDataInfo().getId());
+									// Dynamically replace /preview/ with /preview/draft/ so it hits our new controller endpoint
+String draftPreviewUrl = env.getProperty("expiryDocument.preview.url").replace("/preview/", "/preview/draft/") + draft.getDocumentDataInfo().getId();
+expiryDocumentDTO.setDocumentPreviewUrl(draftPreviewUrl);
+              }
+
+              // Map draft fields
+              expiryDocumentDTO.setCertificateNumber(draft.getCertificateNumber());
+              expiryDocumentDTO.setIssuingAuthority(draft.getIssuingAuthority());
+              expiryDocumentDTO.setPlaceOfIssue(draft.getPlaceOfIssue());
+              expiryDocumentDTO.setRemarks(draft.getRemarks());
+
+              java.text.DateFormat df = new java.text.SimpleDateFormat("dd-MM-yyyy");
+              if (draft.getIssueDate() != null) expiryDocumentDTO.setIssueDateString(df.format(draft.getIssueDate()));
+              if (draft.getExpiryDate() != null) expiryDocumentDTO.setExpiryDateString(df.format(draft.getExpiryDate()));
+              if (draft.getLastAnnual() != null) expiryDocumentDTO.setLastAnnualString(df.format(draft.getLastAnnual()));
+              if (draft.getNextAnnual() != null) expiryDocumentDTO.setNextAnnualString(df.format(draft.getNextAnnual()));
+          }
+          expiryEmptyDocument.add(expiryDocumentDTO);
+        }
+      }
+    }
+    expiryDocumentDTOs.addAll(expirAvailableDocument);
+    expiryDocumentDTOs.addAll(expiryEmptyDocument);
+    return expiryDocumentDTOs;
+  }
 
 	@Override
 	public ExpiryDocumentDTO downloadFileBasedOnExpiryId(Long id) {
@@ -483,19 +968,40 @@ private static final Logger LOG = LoggerFactory.getLogger(ExpiryDocumentServiceI
 		return false;
 	}
 
+	// @Override
+	// public boolean isExistLoginId(ExpiryDocumentDTO expiryDocumentDTO) {
+	// 	UserProfileInfo userProfileInfo = userProfileRepository.findById(expiryDocumentDTO.getLoginId());
+	// 	if (userProfileInfo != null) {
+	// 		expiryDocumentDTO.setOrganizationInfo(userProfileInfo.getOrganizationInfo());
+	// 		RoleInfo roleId=userProfileInfo.getRoleId();
+	// 		RoleInfo roleInfo = roleInfoRepository.findById(roleId.getId());
+	// 		if (roleInfo != null && (roleInfo.getRoleName().equals(Role.TechManager)||roleInfo.getRoleName().equals(Role.ShipMaster))) {
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
+
+
 	@Override
-	public boolean isExistLoginId(ExpiryDocumentDTO expiryDocumentDTO) {
-		UserProfileInfo userProfileInfo = userProfileRepository.findById(expiryDocumentDTO.getLoginId());
-		if (userProfileInfo != null) {
-			expiryDocumentDTO.setOrganizationInfo(userProfileInfo.getOrganizationInfo());
-			RoleInfo roleId=userProfileInfo.getRoleId();
-			RoleInfo roleInfo = roleInfoRepository.findById(roleId.getId());
-			if (roleInfo != null && (roleInfo.getRoleName().equals(Role.TechManager)||roleInfo.getRoleName().equals(Role.ShipMaster))) {
-				return true;
-			}
-		}
-		return false;
-	}
+public boolean isExistLoginId(ExpiryDocumentDTO expiryDocumentDTO) {
+    UserProfileInfo userProfileInfo = userProfileRepository.findById(expiryDocumentDTO.getLoginId());
+
+    if (userProfileInfo != null) {
+        expiryDocumentDTO.setOrganizationInfo(userProfileInfo.getOrganizationInfo());
+        RoleInfo roleId = userProfileInfo.getRoleId();
+        RoleInfo roleInfo = roleInfoRepository.findById(roleId.getId());
+
+        // Added CommercialManager to the allowed roles check
+        if (roleInfo != null && (
+                roleInfo.getRoleName().equals(Role.TechManager) ||
+                roleInfo.getRoleName().equals(Role.ShipMaster) ||
+                roleInfo.getRoleName().equals(Role.CommercialManager))) {
+            return true;
+        }
+    }
+    return false;
+}
 
 	@Override
 	public List<ExpiryDocumentDTO> getExpiryDocumentList(ExpiryDocumentDTO expiryDocumentDTO) {
@@ -569,5 +1075,105 @@ private static final Logger LOG = LoggerFactory.getLogger(ExpiryDocumentServiceI
 		notificationUtility.notifyDocumentUpload(expiryDocumentDTO.getUploadedUserId(), expiryDocumentInfo);
 		return expiryDocumentInfo;
 	}
+
+
+// /**
+//  * Helper method to call a Free Cloud OCR API.
+//  * ZERO installation required.
+//  */
+// private String performCloudOCR(MultipartFile file) {
+//     try {
+//         RestTemplate restTemplate = new RestTemplate();
+//         String ocrApiUrl = "https://api.ocr.space/parse/image";
+
+//         // Setup the headers
+//         HttpHeaders headers = new HttpHeaders();
+//         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+//         // "helloworld" is a public test key. You can get a free private key at ocr.space
+//         headers.set("apikey", "helloworld");
+
+//         // Attach the PDF file to the HTTP request
+//         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+//         body.add("file", file.getResource());
+//         body.add("isOverlayRequired", false);
+//         body.add("scale", true);
+//         body.add("isTable", true);
+
+//         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+//         // Send the file to the Cloud
+//         ResponseEntity<String> response = restTemplate.postForEntity(ocrApiUrl, requestEntity, String.class);
+
+//         // Read the JSON response from the Cloud and extract the text
+//         if (response.getStatusCode() == HttpStatus.OK) {
+//             JSONObject jsonResponse = new JSONObject(response.getBody());
+//             JSONArray parsedResults = jsonResponse.getJSONArray("ParsedResults");
+
+//             StringBuilder fullText = new StringBuilder();
+//             for (int i = 0; i < parsedResults.length(); i++) {
+//                 fullText.append(parsedResults.getJSONObject(i).getString("ParsedText")).append("\n");
+//             }
+//             return fullText.toString();
+//         }
+//     } catch (Exception e) {
+//         LOG.error("Cloud OCR Failed: ", e);
+//     }
+//     return ""; // Return empty string if OCR fails
+// }
+/**
+ * Helper method to call a Free Cloud OCR API.
+ * ZERO installation required.
+ */
+
+// private String performCloudOCR(MultipartFile file) {
+//     try {
+//         RestTemplate restTemplate = new RestTemplate();
+//         String ocrApiUrl = "https://api.ocr.space/parse/image";
+
+//         // Setup the headers
+//         HttpHeaders headers = new HttpHeaders();
+//         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+//         // "helloworld" is a public test key. You can get a free private key at ocr.space
+//         headers.set("apikey", "helloworld");
+
+//         // Attach the PDF file to the HTTP request
+//         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+
+//         // ✅ CORRECTED: Fix for Maven compilation error (Replaced file.getResource())
+//         ByteArrayResource fileResource = new ByteArrayResource(file.getBytes()) {
+//             @Override
+//             public String getFilename() {
+//                 return file.getOriginalFilename();
+//             }
+//         };
+//         body.add("file", fileResource);
+
+//         body.add("isOverlayRequired", false);
+//         body.add("scale", true);
+//         body.add("isTable", true);
+
+//         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+//         // Send the file to the Cloud
+//         ResponseEntity<String> response = restTemplate.postForEntity(ocrApiUrl, requestEntity, String.class);
+
+//         // Read the JSON response from the Cloud and extract the text
+//         if (response.getStatusCode() == HttpStatus.OK) {
+//             JSONObject jsonResponse = new JSONObject(response.getBody());
+//             JSONArray parsedResults = jsonResponse.getJSONArray("ParsedResults");
+
+//             StringBuilder fullText = new StringBuilder();
+//             for (int i = 0; i < parsedResults.length(); i++) {
+//                 fullText.append(parsedResults.getJSONObject(i).getString("ParsedText")).append("\n");
+//             }
+//             return fullText.toString();
+//         }
+//     } catch (Exception e) {
+//         LOG.error("Cloud OCR Failed: ", e);
+//     }
+//     return ""; // Return empty string if OCR fails
+// }
 
 }

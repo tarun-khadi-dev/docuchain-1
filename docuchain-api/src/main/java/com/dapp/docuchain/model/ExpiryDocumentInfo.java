@@ -69,10 +69,10 @@ public class ExpiryDocumentInfo {
 
     @Column(name = "remarks")
     private String remarks;
-    
+
     @Column(name = "issuingAuthority")
     private String issuingAuthority;
-    
+
     @CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "create_date")

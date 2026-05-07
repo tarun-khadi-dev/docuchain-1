@@ -36,27 +36,32 @@ import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.Map;
+import java.util.HashMap;
+import com.dapp.docuchain.service.ShipProfileService;
 
 @CrossOrigin
 @RequestMapping(value = "/docuchain/api/common")
 @Api(value = "CommonConfigurationController", description = " Common Configuration Controller API")
 @RestController
 public class CommonConfigurationController {
-	
+
 	private final Logger LOG = LoggerFactory.getLogger(CommonConfigurationController.class);
-	
+
 	@Autowired
 	private Environment env;
-	
+
 	@Autowired
 	private CommonConfigurationService commonConfigurationService;
-	
+
 	@Autowired
 	private UserProfileRepository userProfileRepository;
-	
+
 	@Autowired
 	private CountryInfoRepository countryInfoRepository;
-	
+	@Autowired
+private ShipProfileService shipProfileService;
+
 	@CrossOrigin
 	@ApiOperation(value = "ADD NEW COUNTRY", notes = "Add new Country is super admin profile")
 	@PostMapping(value = "/country/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +84,18 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+	@CrossOrigin
+@GetMapping("/vessel/ports/{organizationId}")
+public ResponseEntity<Map<String, Object>> getPortsCount(@PathVariable Long organizationId) {
+
+    Long count = shipProfileService.getPortCountByOrganization(organizationId);
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("portCount", count);
+
+    return new ResponseEntity<>(response, HttpStatus.OK);
+}
+
 	@CrossOrigin
 	@ApiOperation(value = "LIST COUNTRY", notes = "List Country")
 	@GetMapping(value = "/country/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -97,7 +113,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "UPDATE COUNTRY", notes = "Update Country only permission forsuper admin")
 	@PutMapping(value = "/country/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -119,7 +135,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE MULTIPLE COUNTRY", notes = "Delete Multiple Country only having rights for super admin")
 	@PostMapping(value = "/country/delete",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -131,7 +147,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(deleteResult);
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
-		
+
 		if(deleteResult.equalsIgnoreCase(env.getProperty("success"))){
 			statusResponseDTO.setStatus(env.getProperty("success"));
 			statusResponseDTO.setMessage(env.getProperty("country.delete.success"));
@@ -142,7 +158,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE SINGLE COUNTRY", notes = "Delete Single Country rights having only super admin")
 	@DeleteMapping(value = "/country/delete/{userId}/{countryId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -164,8 +180,8 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
-	
+
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE ALL COUNTRY", notes = "Delete All Country rights having only super admin")
 	@DeleteMapping(value = "/country/delete/all/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -187,7 +203,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "ADD COUNTRY PORT INFORMATION", notes = "Add Country port information is based by admin profile")
 	@PostMapping(value = "/country/port/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -228,7 +244,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "LIST PORT INFORMATION", notes = "List Port informations is based by country profile")
 	@GetMapping(value = "/country/port/list/{countryId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -239,7 +255,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(env.getProperty("user.id.null"));
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
-		
+
 		if(countryInfoRepository.findOne(countryId) == null){
 			statusResponseDTO.setStatus(env.getProperty("failure"));
 			statusResponseDTO.setMessage(env.getProperty("country.not.found"));
@@ -257,7 +273,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "PORT LIST INFORMATION", notes = "All List Port informations with country id and country name information")
 	@GetMapping(value = "/country/port/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -269,7 +285,7 @@ public class CommonConfigurationController {
 		statusResponseDTO.setPortInfos(portDTOs);
 		return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.OK);
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "UPDATE COUNTRY PORT INFORMATION", notes = "Update Country Port information is based by admin profile")
 	@PostMapping(value = "/country/port/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -291,7 +307,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE COUNTRY PORT INFORMATION", notes = "Delete Country Port is based by user organization profile")
 	@PostMapping(value = "/country/port/delete",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -303,7 +319,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(deleteResult);
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
-		
+
 		if(deleteResult.equalsIgnoreCase(env.getProperty("success"))){
 			statusResponseDTO.setStatus(env.getProperty("success"));
 			statusResponseDTO.setMessage(env.getProperty("port.delete.success"));
@@ -314,7 +330,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE ALL COUNTRY PORTS INFORMATION", notes = "Delete All Country Ports is based by user organization profile")
 	@PostMapping(value = "/country/port/delete/all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -338,7 +354,7 @@ public class CommonConfigurationController {
 	}
 
 
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "ADD ROLE ALIAS INFORMATION BASED ON ADMIN", notes = "Add new role alias information is based by admin profile")
 	@PostMapping(value = "/roles/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -362,8 +378,8 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
-	
+
+
 	@CrossOrigin
 	@ApiOperation(value = "LIST ROLE ALIAS NAME BASED ON USER PROFILE", notes = "List Role Alias name is based by user organization profile")
 	@GetMapping(value = "/roles/list/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -374,7 +390,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(env.getProperty("country.user.id.null"));
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
-		
+
 		UserProfileInfo profileInfo = userProfileRepository.findOne(userId);
 		if(profileInfo == null){
 			statusResponseDTO.setStatus(env.getProperty("failure"));
@@ -393,7 +409,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "UPDATE ROLE ALIAS NAME INFORMATION", notes = "Update Role Alias name information is based on Organization profile")
 	@PostMapping(value = "/roles/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -415,8 +431,8 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
-	
+
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE ROLE ALIAS NAME", notes = "Delete Role Alias Name proffile is based by user organization profile")
 	@PostMapping(value = "/roles/delete",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -428,7 +444,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(deleteResult);
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
-		
+
 		if(deleteResult.equalsIgnoreCase(env.getProperty("success"))){
 			statusResponseDTO.setStatus(env.getProperty("success"));
 			statusResponseDTO.setMessage(env.getProperty("role.alias.delete.success"));
@@ -439,7 +455,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE ALL ROLE ALIAS NAME INFORMATION", notes = "Delete All Role Alias Name profile is based by user organization profile")
 	@DeleteMapping(value = "/roles/delete/all/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -461,8 +477,8 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
-	
+
+
 	@CrossOrigin
 	@ApiOperation(value = "ADD VESSELS TYPE INFORMATION", notes = "Add new vessels type information is based by admin profile")
 	@PostMapping(value = "/vessels/type/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -486,8 +502,8 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
-	
+
+
 	@CrossOrigin
 	@ApiOperation(value = "LIST VESSELS TYPE INFORMATION", notes = "List Vessels Type is based by user organization profile")
 	@GetMapping(value = "/vessels/type/list/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -498,7 +514,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(env.getProperty("user.id.null"));
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
-		
+
 		UserProfileInfo profileInfo = userProfileRepository.findOne(userId);
 		if(profileInfo == null){
 			statusResponseDTO.setStatus(env.getProperty("failure"));
@@ -517,7 +533,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "UPDATE VESSELS TYPE INFORMATION", notes = "Update Vessels Type information is based on Organization profile")
 	@PostMapping(value = "/vessels/type/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -539,8 +555,8 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
-	
+
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE VESSELS TYPE", notes = "Delete Vessels Type is based by user organization profile")
 	@PostMapping(value = "/vessels/type/delete",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -552,7 +568,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(deleteResult);
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
-		
+
 		if(deleteResult.equalsIgnoreCase(env.getProperty("success"))){
 			statusResponseDTO.setStatus(env.getProperty("success"));
 			statusResponseDTO.setMessage(env.getProperty("country.delete.success"));
@@ -563,7 +579,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE ALL VESSELS TYPE", notes = "Delete All Vessels Type is based by user organization profile")
 	@DeleteMapping(value = "/vessels/type/delete/all/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -585,7 +601,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "ADD DOCUMENT HOLDER INFORMATION", notes = "Add Document Holder information is based by Super Admin")
 	@PostMapping(value = "/document/holder/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -599,7 +615,7 @@ public class CommonConfigurationController {
 				statusResponseDTO.setMessage(validationResult);
 				return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 			}
-			
+
 			if(validationResult.equalsIgnoreCase(env.getProperty("success"))){
 				statusResponseDTO.setStatus(env.getProperty("success"));
 				statusResponseDTO.setMessage(env.getProperty("document.holder.create.success"));
@@ -616,7 +632,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "LIST DOCUMENT HOLDER INFORMATION", notes = "List Document holder information")
 	@GetMapping(value = "/document/holder/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -627,7 +643,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(env.getProperty("document.holder.list.success"));
 			statusResponseDTO.setDocumentHolderList(commonConfigurationService.listDocumentHolderInformation());
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.OK);
-			
+
 		}catch(Exception e){
 			e.printStackTrace();
 			e.printStackTrace();
@@ -636,7 +652,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "UPDATE DOCUMENT HOLDER INFORMATION", notes = "Update Document Holder information based Super Admin")
 	@PutMapping(value = "/document/holder/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -649,7 +665,7 @@ public class CommonConfigurationController {
 				statusResponseDTO.setMessage(updateDocumentHolder);
 				return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 			}
-			
+
 			if(updateDocumentHolder.equalsIgnoreCase(env.getProperty("success"))){
 				statusResponseDTO.setStatus(env.getProperty("success"));
 				statusResponseDTO.setMessage(env.getProperty("document.holder.update.success"));
@@ -666,7 +682,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE DOCUMENT HOLDER INFO", notes = "Super admin only having the permision to delete Document holder information")
 	@DeleteMapping(value = "/document/holder/delete/{userId}/{documentHolderId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -679,7 +695,7 @@ public class CommonConfigurationController {
 				statusResponseDTO.setMessage(deleteDocumentHolder);
 				return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 			}
-			
+
 			if(deleteDocumentHolder.equalsIgnoreCase(env.getProperty("success"))){
 				statusResponseDTO.setStatus(env.getProperty("success"));
 				statusResponseDTO.setMessage(env.getProperty("document.holder.delete.success"));
@@ -696,7 +712,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "REPORT AN ISSUE", notes = "Organization Admin Only can able to do this report an issue")
 	@PostMapping(value = "/report/an/issue", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -709,7 +725,7 @@ public class CommonConfigurationController {
 				statusResponseDTO.setMessage(saveReportAnIssue);
 				return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 			}
-			
+
 			if(saveReportAnIssue.equalsIgnoreCase(env.getProperty("success"))){
 				statusResponseDTO.setStatus(env.getProperty("success"));
 				statusResponseDTO.setMessage(env.getProperty("report.issue.create.success"));
@@ -726,7 +742,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "ADD Expiry DOCUMENT CertifcateType INFORMATION", notes = "Add Expiry Document Type information is based by Super Admin")
 	@PostMapping(value = "expiry/document/certificateType/add", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -788,7 +804,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "DELETE MULTIPLE COUNTRY", notes = "Delete Multiple Country only having rights for super admin")
 	@PostMapping(value = "expiry/document/certificateType/delete",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -800,7 +816,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(env.getProperty("incorrectDetails"));
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
-		
+
 		if(deleteResult.equalsIgnoreCase(env.getProperty("success"))){
 			statusResponseDTO.setStatus(env.getProperty("success"));
 			statusResponseDTO.setMessage(env.getProperty("expiry.certificate.delete.success"));
@@ -811,7 +827,7 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.PARTIAL_CONTENT);
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "LIST DOCUMENT HOLDER INFORMATION", notes = "List Document holder information")
 	@GetMapping(value = "expiry/document/certificateType/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -827,9 +843,9 @@ public class CommonConfigurationController {
 			statusResponseDTO.setStatus(env.getProperty("failure"));
 			statusResponseDTO.setExpiryCertificateTypeDTOs(certificateTypeDTOs);
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.OK);
-		
+
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation(value = "LIST DOCUMENT HOLDER INFORMATION Organization", notes = "List Document holder information organization")
 	@PostMapping(value = "/document/holder/list/organization", produces = {"application/json"})
@@ -840,7 +856,7 @@ public class CommonConfigurationController {
 			statusResponseDTO.setMessage(env.getProperty("document.holder.list.success"));
 			statusResponseDTO.setDocumentHolderList(commonConfigurationService.listDocumentHolderInformationByOrganization(documentHolderDTO));
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.OK);
-			
+
 		}catch(Exception e){
 			e.printStackTrace();
 			e.printStackTrace();
@@ -849,8 +865,8 @@ public class CommonConfigurationController {
 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	
+
+
 	@CrossOrigin
 	@ApiOperation(value = "Question and Answer INFORMATION", notes = "All List out question and answer informations ")
 	@GetMapping(value = "question/list/all", produces = MediaType.APPLICATION_JSON_VALUE)

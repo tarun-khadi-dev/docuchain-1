@@ -1,0 +1,267 @@
+27740 [main] WARN  o.s.l.odm.core.impl.ObjectMetaData - The Entry class User should be declared final
+27663 [main] WARN  o.s.l.odm.core.impl.ObjectMetaData - The Entry class User should be declared final
+829  [main] INFO  c.d.docuchain.DocuchainApplication - Starting DocuchainApplication on DESKTOP-7SBENUR with PID 18512 (C:\Project\docuchain\docuchain-api\target\classes started by ZTPL0115 in C:\Project\docuchain\docuchain-api)
+832  [main] INFO  c.d.docuchain.DocuchainApplication - No active profile set, falling back to default profiles: default
+1228 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 5.3.6.Final
+4902 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+4904 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet Engine: Apache Tomcat/8.5.27
+5061 [localhost-startStop-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+6576 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+6681 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.0.12.Final}
+6683 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+6686 [main] INFO  org.hibernate.cfg.Environment - HHH000021: Bytecode provider name : javassist
+6749 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+7089 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+8045 [main] INFO  o.h.tool.hbm2ddl.SchemaUpdate - HHH000228: Running hbm2ddl schema update
+24134 [main] INFO  s.d.s.w.p.DocumentationPluginsBootstrapper - Context refreshed
+24181 [main] INFO  s.d.s.w.p.DocumentationPluginsBootstrapper - Found 1 custom documentation plugin(s)
+24216 [main] INFO  s.d.s.w.s.ApiListingReferenceScanner - Scanning for api listing references
+27155 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: getHistoryBasedOnSuperAdminUsingPOST_1
+27386 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: addshipProfileUsingPOST_1
+27567 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: getTaskStatusListUsingGET_1
+27628 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: getTaskStatusListUsingGET_2
+27636 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: getTaskStatusListUsingGET_3
+27700 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: addshipProfileUsingPOST_2
+27954 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: documentScanUsingPOST_1
+28196 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: getPendingRequestUsingGET_1
+28248 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: getTaskStatusListUsingGET_4
+28632 [main] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - Generating unique operation named: updateShipStatusAllUsingPOST_1
+28726 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8070"]
+28747 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8070"]
+28800 [main] INFO  o.a.tomcat.util.net.NioSelectorPool - Using a shared selector for servlet write/read
+28903 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+29212 [main] WARN  o.s.l.odm.core.impl.ObjectMetaData - The Entry class User should be declared final
+29225 [http-nio-8070-exec-9] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring FrameworkServlet 'dispatcherServlet'
+29334 [main] INFO  c.d.docuchain.DocuchainApplication - Started DocuchainApplication in 29.024 seconds (JVM running for 56.535)
+29427 [http-nio-8070-exec-9] INFO  c.d.d.c.ExpiryBasedDocumentController - Scan File is Empty --->01. Antifouling Certificate.pdf
+29440 [http-nio-8070-exec-9] INFO  c.d.d.c.ExpiryBasedDocumentController - File extensionpdf
+29444 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - ??? SCAN API HIT ???
+29477 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - ===== FILE SAVED =====
+29477 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - File Path: C:\Users\ZTPL0115\AppData\Local\Temp\upload_7590560051027808263.pdf
+48013 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - ===== OCR RAW TEXT START =====
+48014 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - v pu
+>
+ert. No, SGP-IAFS-0053-16
+oo ,
+aw INTERNATIONAL ANTI-FOULING SYSTEM
+ts CERTIFICATE
+ey (This certificate shall be supplemented by a Record of Anti-fouling Systems)
+THE HONG KONG SPECIAL ADMINISTRATIVE REGION OF THE PEOPLE'S REPUBLIC
+OF CHINA
+Issued under the International Convention on the Control of Harmful Anti-Fouling Systems on Ships under
+the authority of the Government of THE HONG KONG SPECIAL ADMINISTRATIVE REGION OF THE PEOPLE'S
+REPUBLIC OF CHINA by the Korean Register of Shipping.
+When a Certificate has been previously issued, this Certificate replaces the certificate dated
+Particulars of ship
+{
+Name of Ship Gross Tonnage | IMO Number
+HK-2172
+ALPINE MADELEINE HONG KONG 9380518
+VREC6
+
+(1) An anti-fouling system controlled under Annex 1 has not been applied during or after construction of this
+(2) An anti-fouling system controlled under Annex 1 has been applied on this ship previously, but has been
+
+removed by
+(3) An anti-fouling system controlled under Annex 1 has been applied on this ship previously, but has been
+
+covered with a sealer coat applied by
+(4) An anti-fouling system controlled under Annex 1 was applied on this ship prior to
+
+but must be removed or covered with a sealer coat prior to ot Soiree ane [>]
+1) in accordance with IMO ship identification number scheme adopced by the Organization by resolution.
+2) Date of entry into face of then Control measure.
+3) Date of expiration of any imprementation period specified in article 4(2) or Anex 1.
+AFS 1/4 (2008. 9)
+Cert. No. SGP-IAFS-0053-16
+THIS IS TO CERTIFY THAT:
+1. the ship has been surveyed in accordance with regulation 1 of Annex 4 to the Convention; and
+2. the survey shows that the anti-fouling system on the ship complies with the applicable requirements
+of Annex 1 to the Convention.
+Date of completion of the survey on which this certificate is issued : 10 July 2008
+Issued at. Singapore
+Date of issue 16 December 2016
+KOREAN REGISTER OF SHIPPING
+Ava \\
+a SW I-
+: A
+Surveyor ( Yap Eu Chen )
+AFS 2/4 (2008. 9)
+Cert. No. SGP-IAFS-0053-16
+RECORD OF ANTI-FOULING SYSTEM
+(This Record shall be permanently attached to the International Anti-Fouling System Certificate)
+
+Particulars of ship
+cee eee
+Distinctive number or letters : HK-2172 (VREC6)
+IMO number ‘Gee © }\J§f8 0
+Detail of anti-fouling system(s) applied
+Type(s) of anti-fouling system(s) used : Organotin-free self DOlSHING tye... eeeeccceeessseeessseeeseeeeeeeneees |X |
+
+Organotin=tree AbIAYVE TYPO... ccccnnressoesecnenerwsccnosssossneretens | - |
+
+Organotin-free conventional tyD@....... eee eeneeeeeeseeeserecenenenenes | ~ |
+
+Biocide-free Silicon tyP@ PAIN... eeeeeeeceeeeerseeaneenenes | - |
+Date(s) of application of anti-fouling system(s) : 16 May 2008 ©
+Name(s) of company(ies) and facility(ies)/location(s) where applied : Hyundai Mipo Dockyard Co., Ltd.
+
+NO.3 Dry Dock of Hyundai Mipo Dockyard Co., Ltd.
+Name(s) of anti-fouling system(s) manufacturer(s) : Chokwang Jotun Ltd.
+Name(s) and colour(s) of anti-fouling system(s) : SEAFORCE 90, SEAQUANTUM CLASSIC
+Light Red, Dark Red
+Active ingredient(s) and their Chemical Abstract Services Registry Number(s) (CAS number(s)) :
+Dicopper oxide, Bis(1-hydroxy-1h-pyridine-2-thionato-o,s) copper, Zinc Oxide
+1317-39-1, 14915-37-8, 1314-13-2
+Type(s) of sealer coat, if applicable :
+Name(s) and colour(s) of sealer coat applied, if applicable :
+Date of application of sealer coat :
+THIS IS TO CERTIFY that this Record is correct in all respects.
+Issued at Singapore
+KOREAN REGISTER OF SHIPPING
+Date of issue 16 December 2016 e \ ;
+» >" Surveyor ( Yap Eu Chen )
+
+AFS 3/4 (2013. 01)
+Cert. No. SGP-IAFS-0053-16
+Endorsement of the Records
+THIS IS TO CERTIFY that a survey required in accordance with regulation 1(1)(b) of Annex 4 to the Convention
+found that the ship was in compliance with the Convention
+Details of anti-fouling system(s) applied
+Type(s) of anti-fouling system(s) used Organotin-free self polishing tyDe..........cccccccsccccccceccesssrcccceceserseseseas |X|
+Organotin-free ablative tye... eee cecssseessececeeereneeeuseserecsseneeeeses | - |
+Organotin-free conventional tyD@..............cscsececsssssssseseeeesecnaeeeevesenes | = |
+Biocide-free Silicon tyPe Paint... eeeecccccccsessseeeeeeeeceeesaneeseseeaaens |= |
+Date(s) of application of anti-fouling system(s) 07 July 2013
+Name(s) of company(ies) and facility(ies)/location(s) where applied pDRYDOCK WORLD
+DUBAI, UAE ;
+Name(s) of anti-fouling system(s) manufacturer(s) HEMPEL A/S
+Name(s) and colour(s) of anti-fouling system(s) HEMPEL'S ANTIFOULING GLOBIC 6000
+BROWN & RED
+Active ingredient(s) and their Chemical Abstract Services Registry Number(s) (CAS number(s))
+copper(1) oxide(1317-39-1), copper pyrithione(14915-37-8)
+Type(s) of sealer coat, if applicable
+Name(s) and colour(s) of sealer coat applied, if applicable
+Date of application of sealer coat
+cy
+/¥, i “\ Signed: “ (or rated te afore off ce
+|
+VC] ko} Place: DUBAI, UAE
+tA
+ore
+Date : 07 July 2013
+(Seal or stamp of the authority)
+AFS 4/4 S-1 (2013. 1)
+Cert. No. SGP-IAFS-0053-16
+Endorsement of the Records
+THIS IS TO CERTIFY that a survey required in accordance with regulation 1(1)(b) of Annex 4 to the Convention
+found that the ship was in compliance with the Convention
+Details of anti-fouling system(s) applied
+Type(s) of anti-fouling system(s) used Organotin-free self polishing tyP@........cccccsccsssccesscessssssseteccresvescesees
+Organotin-free ablative tyM@...........ceeessecsccecscsssscecceeesnenssesceseeseeeneees =)
+Organotin-free Conventional tyPe..........cccccsssesssecccnsccssssecssseeceenensers >
+Biocide-free SiliCOM tyPE PAiNt............ccccecsssesseescetersrseseresececseeaenesencs a
+TBT-Free self-polishing type
+Date(s) of application of anti-fouling system(s) 13 July 2018
+Name(s) of company(ies) and facility(ies)/location(s) where applied Zhoushan Xinya Shipyard Co.,Ltd
+Zhoushan, China ‘
+Name(s) of anti-fouling system(s) manufacturer(s) Hempel Manufacturing(Malaysia) Sdn Bhd
+Name(s) and colour(s) of anti-fouling system(s) HEMPEL'S ANTIFOULING GLOBIC 9500M 78954
+Red & Brown ey
+Active ingredient(s) and their Chemical Abstract Services Registry Number(s) (CAS number(s))
+copper(|) oxide, xylene, ethylbenzene, cupric oxide
+1317-39-1 ,1330-20-7, 100-41-4, 1317-38-0
+Type(s) of sealer coat, if applicable
+Name(s) and colour(s) of sealer coat applied, if applicable
+Date of application of sealer coat eens aa
+Signed : a ee
+an Place : Zhouphan, China
+fy ty WA, Date: 15 July 2018
+Loo ig
+(Seal or stampref the authority)
+, a
+AFS 4/4 S-2 (2013. 1) ‘
+
+48017 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - ===== OCR RAW TEXT END =====
+48019 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - ? OCR RETURNED TEXT SUCCESSFULLY
+48021 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [CERT_NO]
+48036 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [Cert. No. : ]
+48037 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [ Class]
+48038 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [RefNo. CLC ]
+48038 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [ )]
+48039 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [Ref.No. CLC ]
+48039 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [)]
+48040 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [Cert. No. ]
+48040 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [
+]
+48043 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - -----------------------------------------
+48044 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - FIELD TYPE: CERT_NO
+48044 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - EXTRACTED VALUE: >SGP-IAFS-0053-16<
+48047 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - -----------------------------------------
+48047 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - >SGP-IAFS-0053-16<
+48048 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - Certificate No = [SGP-IAFS-0053-16]
+48049 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [ISSUE_PLACE]
+48051 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [Issued at]
+48052 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [on]
+48053 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [Issued at ]
+48054 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [ on ]
+48055 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [Issued at. ]
+48056 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [
+]
+48060 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - -----------------------------------------
+48062 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - FIELD TYPE: ISSUE_PLACE
+48063 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - EXTRACTED VALUE: >Singapore<
+48063 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - -----------------------------------------
+48064 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - >Singapore<
+48065 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - Issue Place = [Singapore]
+48065 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [ISSUE_DATE]
+48067 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [on:]
+48069 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [f]
+48071 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [Date of issue ]
+48071 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [
+]
+48074 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - -----------------------------------------
+48074 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - FIELD TYPE: ISSUE_DATE
+48075 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - EXTRACTED VALUE: >16 December 2016<
+48078 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - -----------------------------------------
+48079 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - >16 December 2016<
+48079 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - Issue Date = [16 December 2016]
+48086 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - Successfully parsed: [16 December 2016]
+48086 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [EXPIRY_DATE]
+48089 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [valid until]
+48089 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [subject]
+48089 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [valid until ]
+48091 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [
+]
+48092 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - Expiry Date = []
+48093 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [ISSUING_AUTHORITY]
+48095 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [CHINA by the ]
+48096 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanDelimiterInfo = [.]
+48098 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - -----------------------------------------
+48099 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - FIELD TYPE: ISSUING_AUTHORITY
+48099 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - EXTRACTED VALUE: >Korean Register of Shipping<
+48100 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - -----------------------------------------
+48100 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - >Korean Register of Shipping<
+48100 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - Issuing Authority = [Korean Register of Shipping]
+48101 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [PORT]
+48102 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [DELIVERY_DATE]
+48104 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [KEEL_LAID_DATE]
+48105 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [IMO_NUMBER]
+48108 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [LENGTH_OA]
+48110 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [BREADTH]
+48112 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [GROSS_TONNAGE_SUEZ]
+48114 [http-nio-8070-exec-9] INFO  c.d.d.service.impl.FileServiceImpl - scanFieldType = [DWT_SUMMER]
+4955427 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - listSize::::8
+4955443 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - expiryDocumentName01AntifoulingCertificate
+4955540 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - expiryDocumentName02CertificateOfFitness&Annex(CargoList)
+4955576 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - expiryDocumentName06CertificateOfShipRegistry
+4955585 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - expiryDocumentName07Certificate(s)OfClass
+4955590 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - expiryDocumentName01AntifoulingCertificate
+4955592 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - Exception isjava.lang.NullPointerException
+5254917 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - listSize::::8
+5254927 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - expiryDocumentName01AntifoulingCertificate
+5254957 [pool-2-thread-1] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - SQL Error: 1048, SQLState: 23000
+5254958 [pool-2-thread-1] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - Column 'notified_user_id' cannot be null
+5255037 [pool-2-thread-1] INFO  c.d.d.utility.NotificationUtility - Exception isorg.springframework.dao.DataIntegrityViolationException: could not execute statement; SQL [n/a]; constraint [null]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement

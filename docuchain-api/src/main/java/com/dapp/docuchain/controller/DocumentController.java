@@ -25,6 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import com.dapp.docuchain.dto.VesselDocumentDTO;
+import com.dapp.docuchain.service.FileService;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping(value = "/docuchain/api/document")
@@ -46,9 +54,28 @@ public class DocumentController {
 
 	@Autowired
 	private NotificationService notificationService;
-	
+
 	@Autowired
 	private UserUtils userUtils;
+	@Autowired
+
+private FileService fileService;
+
+// Add this new endpoint
+@PostMapping(value = "/scanVesselDocument")
+public ResponseEntity<VesselDocumentDTO> scanVesselDocument(@RequestParam("file") MultipartFile file) {
+    try {
+        VesselDocumentDTO vesselDocumentDTO = fileService.scanVesselImageFile(file);
+        if (vesselDocumentDTO != null) {
+            return new ResponseEntity<>(vesselDocumentDTO, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
 	private static final Logger LOG = LoggerFactory.getLogger(DocumentController.class);
 
@@ -161,40 +188,73 @@ public class DocumentController {
 
 	}
 
-	@CrossOrigin
-	@RequestMapping(value = "/notification/count", method = RequestMethod.POST, consumes = {
-			"application/json" }, produces = { "application/json" })
-	@ApiOperation(value = "document notification", notes = "get document notification")
-	public @ResponseBody ResponseEntity<String> getNotificationCount(
-			@ApiParam(value = "Notification Count", required = true) @RequestBody ExpiryDocumentDTO expiryDocumentDTO,
-			HttpServletRequest request, HttpServletResponse response) {
-		LOG.info("inside create Document notification controller");
-		LOG.info("userId is::::" + expiryDocumentDTO.getUserId());
-		StatusResponseDTO statusResponseDTO = new StatusResponseDTO();
-		List<UserDTO> userDTOs = new ArrayList<>();
-		try {
-			UserProfileInfo userProfileInfo = userProfileRepository.findById(expiryDocumentDTO.getUserId());
-			if (userProfileInfo != null) {
-				LOG.info("get document notification by user" + userProfileInfo.getUserName());
-			}
-			// userDTOs = documentService.getNotification();
-			userDTOs = notificationService.getNotificatonCount(expiryDocumentDTO.getUserId());
-			if (userDTOs != null && userDTOs.size() > 0) {
-				statusResponseDTO.setStatus(env.getProperty("success"));
-				statusResponseDTO.setUserList(userDTOs);
-				return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.OK);
-			}
-			statusResponseDTO.setStatus(env.getProperty("failure"));
-			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
+	// @CrossOrigin
+	// @RequestMapping(value = "/notification/count", method = RequestMethod.POST, consumes = {
+	// 		"application/json" }, produces = { "application/json" })
+	// @ApiOperation(value = "document notification", notes = "get document notification")
+	// public @ResponseBody ResponseEntity<String> getNotificationCount(
+	// 		@ApiParam(value = "Notification Count", required = true) @RequestBody ExpiryDocumentDTO expiryDocumentDTO,
+	// 		HttpServletRequest request, HttpServletResponse response) {
+	// 	LOG.info("inside create Document notification controller");
+	// 	LOG.info("userId is::::" + expiryDocumentDTO.getUserId());
+	// 	StatusResponseDTO statusResponseDTO = new StatusResponseDTO();
+	// 	List<UserDTO> userDTOs = new ArrayList<>();
+	// 	try {
+	// 		UserProfileInfo userProfileInfo = userProfileRepository.findById(expiryDocumentDTO.getUserId());
+	// 		if (userProfileInfo != null) {
+	// 			LOG.info("get document notification by user" + userProfileInfo.getUserName());
+	// 		}
+	// 		// userDTOs = documentService.getNotification();
+	// 		userDTOs = notificationService.getNotificatonCount(expiryDocumentDTO.getUserId());
+	// 		if (userDTOs != null && userDTOs.size() > 0) {
+	// 			statusResponseDTO.setStatus(env.getProperty("success"));
+	// 			statusResponseDTO.setUserList(userDTOs);
+	// 			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.OK);
+	// 		}
+	// 		statusResponseDTO.setStatus(env.getProperty("failure"));
+	// 		return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			statusResponseDTO.setStatus(env.getProperty("failure"));
-			statusResponseDTO.setMessage(env.getProperty("server.problem"));
-			return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	// 	} catch (Exception e) {
+	// 		e.printStackTrace();
+	// 		statusResponseDTO.setStatus(env.getProperty("failure"));
+	// 		statusResponseDTO.setMessage(env.getProperty("server.problem"));
+	// 		return new ResponseEntity<String>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
+	// 	}
 
-	}
+	// }
+
+@RequestMapping(value = "/notification/count", method = RequestMethod.POST,
+        consumes = "application/json", produces = "application/json")
+public ResponseEntity<String> getNotificationCount(
+        @RequestBody ExpiryDocumentDTO expiryDocumentDTO) {
+
+    StatusResponseDTO statusResponseDTO = new StatusResponseDTO();
+
+    try {
+
+        Long userId = expiryDocumentDTO.getUserId();
+
+        if (userId == null) {
+            statusResponseDTO.setStatus("failure");
+            statusResponseDTO.setMessage("UserId is required");
+            return new ResponseEntity<>(new Gson().toJson(statusResponseDTO), HttpStatus.BAD_REQUEST);
+        }
+
+        List<UserDTO> userDTOs =
+                notificationService.getNotificatonCount(userId);
+
+        statusResponseDTO.setStatus("success");
+        statusResponseDTO.setUserList(userDTOs != null ? userDTOs : new ArrayList<>());
+
+        return new ResponseEntity<>(new Gson().toJson(statusResponseDTO), HttpStatus.OK);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        statusResponseDTO.setStatus("failure");
+        statusResponseDTO.setMessage("Server problem");
+        return new ResponseEntity<>(new Gson().toJson(statusResponseDTO), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
 	@CrossOrigin
 	@RequestMapping(value = "/notification/viewed", method = RequestMethod.POST, consumes = {
@@ -229,7 +289,7 @@ public class DocumentController {
 		}
 
 	}
-	
+
 	 @CrossOrigin
 	    @RequestMapping(value = "/notification/delete", method = RequestMethod.POST, consumes = {
 		"application/json" }, produces = { "application/json" })
@@ -313,6 +373,6 @@ public class DocumentController {
 			}
 
 		}
-	 
+
 
 }
