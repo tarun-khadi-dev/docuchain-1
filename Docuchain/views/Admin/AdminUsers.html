@@ -1,0 +1,661 @@
+<section id="container">
+  <div class="app-content">
+    <div class="docubodyTitle">
+      <ul id="breadcrumb">
+        <li>
+          <a href="javascript:void(0);" class="icon icon-beaker">Users</a>
+        </li>
+      </ul>
+      <div class="bttnGroup">
+        <button
+          type="button"
+          class="addNew"
+          id="addUserlimits"
+          data-toggle="modal"
+          data-target="#addNewUser"
+          data-backdrop="static"
+          ng-click="checkUserlimit()"
+        >
+          <img src="image/add-user-button.png " /> Add New User
+        </button>
+      </div>
+    </div>
+
+    <div class="docuContent">
+      <div class="vesslesDocumentsTable">
+        <div class="row" style="margin-bottom: 5px">
+          <div class="col-lg-6 col-md-6">
+            <div class="datatableEntry">
+              <label
+                >Show
+                <input
+                  type="text"
+                  ng-model="itemsPerPage"
+                  style="width: 40px; height: 30px"
+                />
+                of
+                <span>{{adminUserList.length}}</span>
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <div class="docuchainSearchbox">
+              <div class="searchInput">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  ng-model="search"
+                  style="height: 30px"
+                />
+                <button type="button" class="searchIcon">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 col-xs-12">
+            <div class="vesselsTables">
+              <div
+                class="VesselTableData userDatalist table-responsive"
+                style="overflow-x: hidden"
+              >
+                <table
+                  class="table custom-modern-table"
+                  style="table-layout: fixed; width: 100%; margin-bottom: 0"
+                >
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 5%">
+                        <div class="clearcheckbox">
+                          <label class="control control--checkbox">
+                            <input
+                              type="checkbox"
+                              ng-model="checkall"
+                              ng-click="checkUncheckAll(adminUserList)"
+                            />
+                            <div class="control__indicator"></div>
+                          </label>
+                        </div>
+                      </th>
+                      <th
+                        ng-click="orderByField='userName'; reverseSort = !reverseSort"
+                        style="width: 14%"
+                      >
+                        <div class="th-content">
+                          User Name <i class="fa fa-sort"></i>
+                        </div>
+                      </th>
+                      <th
+                        ng-click="orderByField='mail'; reverseSort = !reverseSort"
+                        style="width: 22%"
+                      >
+                        <div class="th-content">
+                          Email Address <i class="fa fa-sort"></i>
+                        </div>
+                      </th>
+                      <th
+                        ng-click="orderByField='role'; reverseSort = !reverseSort"
+                        style="width: 16%"
+                      >
+                        <div class="th-content">
+                          Role <i class="fa fa-sort"></i>
+                        </div>
+                      </th>
+                      <th
+                        class="text-center"
+                        ng-click="orderByField='shipName'; reverseSort = !reverseSort"
+                        style="width: 20%"
+                      >
+                        <div class="th-content justify-center">
+                          Vessel Name
+                          <i class="fa fa-sort" style="margin-left: 6px"></i>
+                        </div>
+                      </th>
+                      <th class="text-center" style="width: 8%">
+                        <div class="th-content justify-center">Status</div>
+                      </th>
+                      <th class="text-center resizewidth" style="width: 15%">
+                        <div class="th-content justify-center">Action</div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      ng-show="adminUserList.length != 0"
+                      dir-paginate="user in fData=(adminUserList|orderBy:'userName'|filter:search) | itemsPerPage:itemsPerPage|orderBy:orderByField:reverseSort"
+                      current-page="currentPage"
+                    >
+                      <td class="text-center">
+                        <div class="clearcheckbox">
+                          <label class="control control--checkbox">
+                            <input
+                              id="selectAll"
+                              type="checkbox"
+                              value="{{ user.id }}"
+                              ng-model="user.checked"
+                              ng-change="updateCheckall()"
+                            />
+                            <div class="control__indicator"></div>
+                          </label>
+                        </div>
+                      </td>
+                      <td
+                        class="font-weight-medium"
+                        style="word-break: break-word"
+                      >
+                        {{user.userName}}
+                      </td>
+                      <td style="word-break: break-word">{{user.mail}}</td>
+                      <td style="word-break: break-word">{{user.role}}</td>
+
+                      <td>
+                        <div
+                          class="modern-chip-group justify-center"
+                          style="flex-wrap: wrap"
+                        >
+                          <div
+                            class="modern-chip"
+                            ng-repeat="ship in user.shipProfileInfos | limitTo : 2"
+                          >
+                            <span class="chip-text">{{ship.shipName}}</span>
+                            <button
+                              type="button"
+                              ng-click="confirmRemoveUser('ship', user.role, user.userId, ship.id)"
+                              class="chip-remove"
+                              title="Remove"
+                            >
+                              <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            class="modern-chip-more"
+                            ng-if="user.shipProfileInfos.length > 2"
+                            data-toggle="modal"
+                            data-target="#shipList"
+                            ng-click="moreShipClick(user.role, user.userId)"
+                            data-backdrop="static"
+                          >
+                            +{{user.shipProfileInfos.length-2}} Vessels
+                          </button>
+                        </div>
+                      </td>
+
+                      <td class="text-center">
+                        <input
+                          type="checkbox"
+                          class="modern-toggle"
+                          ng-click="toggleChange(user)"
+                          ng-model="checkStatus"
+                          ng-checked="{{user.status}}"
+                        />
+                      </td>
+
+                      <!-- <td class="text-center" style="white-space: nowrap">
+                        <button
+                          type="button"
+                          class="modern-action-btn btn-view"
+                          data-toggle="modal"
+                          data-target="#viewUserinfo"
+                          data-backdrop="static"
+                          ng-click="viewUser(user.userId)"
+                          title="View"
+                        >
+                          <i class="fa fa-eye"></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="modern-action-btn btn-edit"
+                          data-toggle="modal"
+                          data-target="#ediUserinfo"
+                          data-backdrop="static"
+                          ng-click="editUser(user.userId)"
+                          title="Edit"
+                        >
+                          <i class="fa fa-pencil"></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="modern-action-btn btn-view"
+                          style="background-color: #e0f2fe; color: #0369a1"
+                          data-toggle="modal"
+                          data-target="#addNewUser"
+                          data-backdrop="static"
+                          ng-click="cloneUser(user)"
+                          title="Clone User"
+                        >
+                          <i class="fa fa-clone"></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="modern-action-btn btn-delete"
+                          ng-click="confirmDeleteUser(user.userId)"
+                          title="Delete"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td> -->
+                      <td
+                        class="text-center"
+                        style="
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          gap: 6px;
+                        "
+                      >
+                        <button
+                          type="button"
+                          class="modern-action-btn btn-view"
+                          data-toggle="modal"
+                          data-target="#viewUserinfo"
+                          data-backdrop="static"
+                          ng-click="viewUser(user.userId)"
+                          title="View"
+                        >
+                          <i class="fa fa-eye"></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="modern-action-btn btn-edit"
+                          data-toggle="modal"
+                          data-target="#ediUserinfo"
+                          data-backdrop="static"
+                          ng-click="editUser(user.userId)"
+                          title="Edit"
+                        >
+                          <i class="fa fa-pencil"></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="modern-action-btn btn-view"
+                          style="background-color: #e0f2fe; color: #0369a1"
+                          data-toggle="modal"
+                          data-target="#addNewUser"
+                          data-backdrop="static"
+                          ng-click="cloneUser(user)"
+                          title="Clone User"
+                        >
+                          <i class="fa fa-clone"></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="modern-action-btn btn-delete"
+                          ng-click="confirmDeleteUser(user.userId)"
+                          title="Delete"
+                        >
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <tr ng-show="fData.length == 0">
+                      <td colspan="7" class="text-center p-4">
+                        No Records Found
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="pagination-footer">
+                <div
+                  class="footer-actions-left"
+                  ng-show="adminUserList.length > 0"
+                >
+                  <div class="mass-action-toolbar">
+                    <button
+                      type="button"
+                      ng-click="activateAllUser()"
+                      class="mass-action-btn active-all"
+                    >
+                      <i class="fa fa-toggle-on"></i> Active All
+                    </button>
+                    <button
+                      type="button"
+                      ng-click="deActivateAllUser()"
+                      class="mass-action-btn inactive-all"
+                    >
+                      <i class="fa fa-toggle-off"></i> Inactive All
+                    </button>
+                    <button
+                      type="button"
+                      ng-click="deleteAllUser()"
+                      class="mass-action-btn delete-all"
+                    >
+                      <i class="fa fa-trash"></i> Delete All
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  class="pagination-controls"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    margin-left: auto;
+                  "
+                >
+                  <div class="pagination-info text-muted">
+                    Showing {{adminUserList.length > 0 ? (itemsPerPage *
+                    (currentPage - 1) + 1) : 0}} to {{itemsPerPage * currentPage
+                    > adminUserList.length ? adminUserList.length : itemsPerPage
+                    * currentPage}} of {{adminUserList.length}} entries
+                  </div>
+                  <dir-pagination-controls
+                    direction-links="true"
+                    boundary-links="true"
+                    ng-show="adminUserList.length > 0"
+                  ></dir-pagination-controls>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preloader" ng-show="loader">
+        <div id="cssload-loader">
+          <div class="cssload-dot"></div>
+          <div class="cssload-dot"></div>
+          <div class="cssload-dot"></div>
+          <div class="cssload-dot"></div>
+          <div class="cssload-dot"></div>
+          <div class="cssload-dot"></div>
+          <div class="cssload-dot"></div>
+          <div class="cssload-dot"></div>
+        </div>
+      </div>
+    </div>
+
+<div class="subscriptionPopup">
+  <div class="addNewUserSect">
+    <div class="modal fade" id="ediUserinfo" role="dialog">
+      <div class="modal-dialog" style="max-width: 700px;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit User Information</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form name="editNewUserSelectForm">
+              <input type="text" ng-model="user.id" hidden />
+
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group text-center">
+                    <div class="useruploadImage" style="margin-bottom: 10px;">
+                      <img ng-show="thumbnail.dataUrledit == undefined" src="image/avatarimg.jpg" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);" />
+                      <img ng-show="thumbnail.dataUrledit != undefined" ng-src="{{ thumbnail.dataUrledit }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand-primary);" />
+                    </div>
+                    <input type="file" name="file" file-input="files" ng-model="newFile" onchange="angular.element(this).scope().uploadFileedit(this.files)" style="font-size: 12px; margin: 0 auto; display: block;" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>First Name <span>*</span></label>
+                  <input type="text" custom-focus class="text-box form-control" placeholder="First Name" ng-model="user.firstNameEdit" required />
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Last Name <span>*</span></label>
+                  <input type="text" custom-focus class="text-box form-control" placeholder="Last Name" ng-model="user.lastNameEdit" required />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Email Address <span>*</span></label>
+                  <input type="text" custom-focus class="text-box form-control" placeholder="Email Address" ng-model="user.mailEdit" required />
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Username </label>
+                  <input type="text" class="text-box form-control" ng-model="user.userNameEdit" readonly />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>User Role</label>
+                  <input type="text" class="text-box form-control" ng-model="user.selectedCategoryEdit" readonly />
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Vessel Name</label>
+                  <ui-select ng-model="user.selectedUsersEdit" theme="bootstrap">
+                    <ui-select-match placeholder="Select Vessel">{{$select.selected.shipName}}</ui-select-match>
+                    <ui-select-choices repeat="user in users | filter: $select.search | orderBy:'shipName'">
+                      <div ng-bind-html="user.shipName | highlight: $select.search"></div>
+                      <small>IMO: {{user.imo}}</small>
+                    </ui-select-choices>
+                  </ui-select>
+                </div>
+              </div>
+            </form>
+
+            <div class="modal-footer1 bttnGroup" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 0 0 0; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 15px;">
+              <button type="button" class="btn-modern clear-btn" data-dismiss="modal">
+                <span class="btn-text">CANCEL</span>
+              </button>
+              <button type="submit" class="btn-modern submit-btn" ng-disabled="editNewUserSelectForm.$invalid" ng-click="addUser(user)">
+                <span class="btn-text">SUBMIT</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="subscriptionPopup">
+  <div class="addNewUserSect">
+    <div class="modal fade" id="addNewUser" role="dialog">
+      <div class="modal-dialog" style="max-width: 700px;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">{{popuptitle}}</h4>
+            <button type="button" class="close" data-dismiss="modal" ng-click="close()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form name="addNewUserSelectForm">
+              <input type="text" ng-model="user.id" hidden />
+
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group text-center">
+                    <div class="useruploadImage" style="margin-bottom: 10px;">
+                      <img ng-show="thumbnail.dataUrl == undefined" src="image/avatarimg.jpg" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);" />
+                      <img ng-show="thumbnail.dataUrl != undefined" ng-src="{{ thumbnail.dataUrl }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand-primary);" />
+                    </div>
+                    <input type="file" name="file" file-input="files" ng-model="newFile" onchange="angular.element(this).scope().uploadFile(this.files)" style="font-size: 12px; margin: 0 auto; display: block;" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>First Name <span>*</span></label>
+                  <input type="text" custom-focus class="text-box form-control" placeholder="First Name" ng-model="user.firstName" required />
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Last Name <span>*</span></label>
+                  <input type="text" custom-focus class="text-box form-control" placeholder="Last Name" ng-model="user.lastName" required />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Email Address <span>*</span></label>
+                  <input type="text" custom-focus class="text-box form-control" placeholder="Email Address" ng-model="user.mail" required />
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Username <span>*</span></label>
+                  <input type="text" custom-focus class="text-box form-control" placeholder="Username" ng-model="user.userName" required />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group" style="position: relative; margin-bottom: 25px;">
+                  <label>Password <span>*</span></label>
+                  <input type="password" custom-focus class="text-box form-control" name="password" placeholder="Password" ng-model="user.password" required ng-pattern="/^(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/" ng-change="hideCloneWarning()" />
+                  <span class="error-msg" ng-show="addNewUserSelectForm.password.$error.pattern && addNewUserSelectForm.password.$touched" style="color: var(--danger-color); font-size: 10px; position: absolute; bottom: -18px; left: 15px;">Must contain uppercase, number, and special character.</span>
+                  <span ng-show="showClonePasswordWarning" style="color: #ff9800; font-size: 10px; position: absolute; bottom: -18px; left: 15px;"><i class="fa fa-exclamation-triangle"></i> Temporary password set for cloned user.</span>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Confirm Password <span>*</span></label>
+                  <input type="password" custom-focus class="text-box form-control" placeholder="Confirm Password" ng-model="user.confirmPassword" required />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>User Role <span>*</span></label>
+                  <select ng-model="user.selectedCategory" class="text-box form-control drop-focus" ng-options="role.roleAliasName for role in roleList" required ng-disabled="roleLocked">
+                    <option value="">Select User Role</option>
+                  </select>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Vessel Name</label>
+                  <ui-select ng-model="user.selectedUsers" theme="bootstrap">
+                    <ui-select-match placeholder="Select Vessel">{{$select.selected.shipName}}</ui-select-match>
+                    <ui-select-choices repeat="user in users | filter: $select.search | orderBy:'shipName'">
+                      <div ng-bind-html="user.shipName | highlight: $select.search"></div>
+                      <small>IMO: {{user.imo}}</small>
+                    </ui-select-choices>
+                  </ui-select>
+                </div>
+              </div>
+            </form>
+
+            <div class="modal-footer1 bttnGroup" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 0 0 0; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 15px;">
+              <button type="button" class="btn-modern clear-btn" ng-click="popupClear()">
+                <span class="btn-text">CLEAR</span>
+              </button>
+              <button type="submit" class="btn-modern submit-btn" ng-show="addPopupsubmit" ng-disabled="addNewUserSelectForm.$invalid" ng-click="addUser(user)">
+                <span class="btn-text">SUBMIT</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="subscriptionPopup">
+  <div class="addNewUserSect">
+    <div class="modal fade" id="viewUserinfo" role="dialog">
+      <div class="modal-dialog" style="max-width: 700px;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">View User Information</h4>
+            <button type="button" class="close" data-dismiss="modal" ng-click="popupClearView()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group text-center">
+                    <img ng-show="thumbnail.dataUrl == undefined" src="image/avatarimg.jpg" style="width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--border-color); object-fit: cover;" />
+                    <img ng-show="thumbnail.dataUrl != undefined" ng-src="{{ thumbnail.dataUrl }}" style="width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--brand-primary); object-fit: cover;" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>First Name</label>
+                  <input type="text" class="text-box form-control" ng-model="user.firstNameView" readonly />
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Last Name</label>
+                  <input type="text" class="text-box form-control" ng-model="user.lastNameView" readonly />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Email Address</label>
+                  <input type="text" class="text-box form-control" ng-model="user.mailView" readonly />
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Username</label>
+                  <input type="text" class="text-box form-control" ng-model="user.userNameView" readonly />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>User Role</label>
+                  <input type="text" class="text-box form-control" ng-model="user.selectedCategoryView" readonly />
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label>Vessel Name</label>
+                  <ui-select ng-model="user.selectedUsersView" theme="bootstrap" ng-disabled="true">
+                    <ui-select-match placeholder="No Vessel Assigned">{{$select.selected.shipName}}</ui-select-match>
+                    <ui-select-choices repeat="user in users">
+                      <div>{{user.shipName}}</div>
+                    </ui-select-choices>
+                  </ui-select>
+                </div>
+              </div>
+            </form>
+
+            <div class="modal-footer1 bttnGroup" style="display: flex; justify-content: flex-end; padding: 20px 0 0 0; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 15px;">
+              <button type="button" class="btn-modern clear-btn" data-dismiss="modal">
+                <span class="btn-text">CLOSE</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="commercialUsers">
+      <div class="modal fade" id="shipList" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">View More Vessels</h4>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="commerciallistbody">
+                <ul>
+                  <li ng-repeat="user in users">
+                    <a href="javascript:void(0);">{{user.shipName}}</a>
+                    <button
+                      type="button"
+                      ng-click="confirmRemoveUser('ship', roleNameForUser, userIdForRemove, user.id, true)"
+                      class="Listclose"
+                    >
+                      <i class="fa fa-times-circle" aria-hidden="true"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <toaster-container
+    toaster-options="{'position-class': 'toast-custom-right', 'close-button': true, 'time-out': 5000}"
+  ></toaster-container>
+</section>

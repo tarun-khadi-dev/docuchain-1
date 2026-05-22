@@ -1,0 +1,101 @@
+<div class="docu-login-wrapper" ng-app="dapp" ng-controller="LoginController">
+  <div class="docu-login-overlay"></div>
+
+  <div class="split-main-container">
+    <div class="left-half">
+      <img
+        src="image/Sealedger-Dark.png"
+        alt="Group Nautical"
+        class="gn-side-logo"
+      />
+    </div>
+
+    <div class="right-half">
+      <div class="glass-login-card">
+        <div class="card-header-content">
+          <img
+            src="image/DocuChain-Light.png"
+            alt="DocuChain Logo"
+            class="card-inner-logo"
+          />
+          <!-- <h2>DOCUMENT MANAGEMENT SYSTEM</h2> -->
+
+          <p>Sign In to start your session</p>
+        </div>
+
+        <div class="card-body-content">
+          <form ng-submit="loginAdmin(login)" name="loginForm">
+            <div class="glass-input-group">
+              <input
+                type="text"
+                name="userName"
+                class="form-control"
+                ng-model="login.userName"
+                placeholder="Username"
+                required
+              />
+              <i class="fa fa-user"></i>
+            </div>
+
+            <div class="glass-input-group">
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                ng-model="login.password"
+                placeholder="Password"
+                required
+              />
+              <i class="fa fa-lock"></i>
+            </div>
+            <div class="action-row">
+              <label class="remember-me">
+                <input
+                  type="checkbox"
+                  id="box-remember"
+                  ng-model="login.rememberMe"
+                />
+                <span class="checkmark-box"></span>
+                <span>Remember Me</span>
+              </label>
+
+              <a ui-sref="dapp.forgotpassword" class="forgot-link"
+                >Forgot Password ?</a
+              >
+            </div>
+
+            <button
+              type="submit"
+              class="btn-modern-signin"
+              id="login"
+              ng-disabled="!login.userName || !login.password || isDisabled"
+            >
+              SIGN IN
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="preloader" ng-show="loader">
+    <div id="cssload-loader">
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+      <div class="cssload-dot"></div>
+    </div>
+  </div>
+  <!--
+  <toaster-container
+    toaster-options="{'time-out': 5000 ,'animation-class': 'toast-top-center'}"
+  ></toaster-container> -->
+  <toaster-container
+    toaster-options="{'position-class': 'toast-custom-right', 'close-button': false, 'time-out': 2000, 'progress-bar': false}"
+  >
+  </toaster-container>
+</div>

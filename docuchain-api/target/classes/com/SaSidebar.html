@@ -1,0 +1,220 @@
+<!-- <aside
+  class="app-sidebar"
+  ng-app="dapp"
+  ng-controller="superAdminDashboardController"
+>
+  <div class="sidebar-logo-container">
+    <a href="javascript:void(0);" ui-sref="dapp.saDashboard">
+      <img
+        src="image/Sealedger-Dark.png"
+        alt="Sealedger Logo"
+        class="sidebar-main-logo"
+      />
+    </a>
+  </div>
+
+  <ul class="app-menu">
+
+    <li ui-sref-active="active" ng-click="liDashboardClick()">
+      <a
+        class="app-menu__item"
+        href="javascript:void(0);"
+        ui-sref="dapp.saDashboard"
+      >
+        <div class="imgclrs clr187e03">
+          <img src="image/dashboardIcon.png" alt="dashboardIcon" />
+        </div>
+        <span class="app-menu__label">Dashboard</span>
+      </a>
+    </li>
+
+    <li
+      class="treeview"
+      ng-class="{'is-expanded': subMenuActive}"
+      ng-click="deactiveConfigMenu()"
+    >
+      <a
+        class="app-menu__item"
+        data-toggle="treeview"
+        href="javascript:void(0);"
+        ng-click="expandSubMenu()"
+      >
+        <div class="imgclrs clr972323">
+          <img src="image/organizationIcon.png" alt="dashboardIcon" />
+        </div>
+        <span class="app-menu__label">Manage Organization</span>
+        <i class="treeview-indicator fa fa-angle-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saCompanyProfile">
+            <i class="icon fa fa-building"></i>Company Profile</a
+          >
+        </li>
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saManageSubscription">
+            <i class="fa fa-user" aria-hidden="true"></i>Manage Subscription
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <li
+      class="treeview"
+      ng-class="{'is-expanded': subConfigMenuActive}"
+      ng-click="deactivesubMenuActive()"
+    >
+      <a
+        class="app-menu__item"
+        data-toggle="treeview"
+        href="javascript:void(0);"
+        ng-click="expandConfigSubMenu()"
+      >
+        <div class="imgclrs clr004283">
+          <img src="image/settingIcon.png" alt="dashboardIcon" />
+        </div>
+        <span class="app-menu__label">System Configuration</span>
+        <i class="treeview-indicator fa fa-angle-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saPlaceHolder">
+            <i class="fa fa-user" aria-hidden="true"></i>Placeholder</a
+          >
+        </li>
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.certificateType">
+            <i class="fa fa-user" aria-hidden="true"></i>CertificateType</a
+          >
+        </li>
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saConfigCountry">
+            <i class="icon fa fa-building"></i>Country</a
+          >
+        </li>
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saConfigState">
+            <i class="icon fa fa-building"></i>Port</a
+          >
+        </li>
+      </ul>
+    </li>
+
+    <li ui-sref-active="active" ng-click="liAduitTrailClick()">
+      <a class="app-menu__item" ui-sref="dapp.saAauditLog">
+        <div class="imgclrs clr060d19">
+          <img src="image/auditlogIcon.png" alt="dashboardIcon" />
+        </div>
+        <span class="app-menu__label">Audit Trail</span>
+      </a>
+    </li>
+  </ul>
+</aside> -->
+<aside
+  class="app-sidebar"
+  ng-app="dapp"
+  ng-controller="superAdminDashboardController"
+>
+  <div class="sidebar-logo-container">
+    <a href="javascript:void(0);" ui-sref="dapp.saDashboard">
+      <img
+        src="image/Sealedger- dark.png"
+        alt="Sealedger Logo"
+        class="sidebar-main-logo"
+      />
+    </a>
+  </div>
+
+  <ul class="app-menu">
+    <!-- <div class="sidebar-menu-header">
+      <span>MAIN MENU</span>
+      <i class="fa fa-chevron-down"></i>
+    </div> -->
+
+    <li ui-sref-active="active" ng-click="liDashboardClick()">
+      <a
+        class="app-menu__item"
+        href="javascript:void(0);"
+        ui-sref="dapp.saDashboard"
+      >
+        <i class="fa fa-home menu-icon"></i>
+        <span class="app-menu__label">Dashboard</span>
+      </a>
+    </li>
+
+    <li
+      class="treeview"
+      ng-class="{'is-expanded': subMenuActive}"
+      ng-click="deactiveConfigMenu()"
+    >
+      <a
+        class="app-menu__item"
+        data-toggle="treeview"
+        href="javascript:void(0);"
+        ng-click="expandSubMenu()"
+      >
+        <i class="fa fa-sitemap menu-icon"></i>
+        <span class="app-menu__label">Manage Organization</span>
+        <i class="treeview-indicator fa fa-angle-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saCompanyProfile">
+            <i class="icon fa fa-building"></i>Company Profile
+          </a>
+        </li>
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saManageSubscription">
+            <i class="fa fa-user" aria-hidden="true"></i>Manage Subscription
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <li
+      class="treeview"
+      ng-class="{'is-expanded': subConfigMenuActive}"
+      ng-click="deactivesubMenuActive()"
+    >
+      <a
+        class="app-menu__item"
+        data-toggle="treeview"
+        href="javascript:void(0);"
+        ng-click="expandConfigSubMenu()"
+      >
+        <i class="fa fa-cog menu-icon"></i>
+        <span class="app-menu__label">System Configuration</span>
+        <i class="treeview-indicator fa fa-angle-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saPlaceHolder">
+            <i class="fa fa-cube" aria-hidden="true"></i>Placeholder
+          </a>
+        </li>
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.certificateType">
+            <i class="fa fa-certificate" aria-hidden="true"></i>Certificate Type
+          </a>
+        </li>
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saConfigCountry">
+            <i class="icon fa fa-globe"></i>Country
+          </a>
+        </li>
+        <li ui-sref-active="active">
+          <a class="treeview-item" ui-sref="dapp.saConfigState">
+            <i class="icon fa fa-anchor"></i>Port
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <li ui-sref-active="active" ng-click="liAduitTrailClick()">
+      <a class="app-menu__item" ui-sref="dapp.saAauditLog">
+        <i class="fa fa-history menu-icon"></i>
+        <span class="app-menu__label">Audit Trail</span>
+      </a>
+    </li>
+  </ul>
+</aside>

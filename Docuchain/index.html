@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" ng-app="dapp">
+  <head>
+    <title>  Docuchain</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="Docuchain" />
+    <meta name="keywords" content="Docuchain" />
+    <meta name="author" content="Docuchain" />
+    <link href="image/DocuChain.png" rel="icon" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/responsive.css" rel="stylesheet" />
+    <link href="css/reset.css" rel="stylesheet" />
+    <link href="css/flags.css" rel="stylesheet" />
+    <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="css/font-awesome.css" rel="stylesheet" />
+    <link href="css/animate.css" rel="stylesheet" />
+    <link href="css/select.css" rel="stylesheet" />
+    <link href="css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="bower_components/AngularJS-Toaster/toaster.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto"
+      rel="stylesheet"
+    />
+    <!-- <link
+      href="//rawgit.com/indrimuska/angular-moment-picker/master/dist/angular-moment-picker.css"
+      rel="stylesheet"
+    /> -->
+    <link rel="stylesheet" href="css/angular-moment-picker.css" />
+
+    <link
+      rel="stylesheet"
+      href="bower_components/angular-tooltips/dist/angular-tooltips.css"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/angular-moment-picker/0.10.2/angular-moment-picker.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-select/0.19.8/select.min.css"
+    />
+  </head>
+
+  <body
+    class="app sidebar-mini rtl"
+    ng-class="{'sidenav-toggled': sidebarActive}"
+  >
+    <div ui-view="header"></div>
+    <div ui-view="sidebar"></div>
+    <div ui-view="content"></div>
+    <div ui-view="footer"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="js/moment.min.js" type="text/javascript"></script>
+
+    <!--ckedior-->
+    <script src="scripts/libs/ckeditor/ckeditor.js"></script>
+    <!-- <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script> -->
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/textAngular/1.5.16/textAngular.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/textAngular/1.5.16/textAngular-rangy.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/textAngular/1.5.16/textAngular.min.js"></script>
+    -->
+
+    <!-- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> -->
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script> -->
+
+    <script
+      src="bower_components/angular-ui-router/release/angular-ui-router.js"
+      defer
+    ></script>
+
+    <!-- <script>document.write('<base href="' + document.location + '" />');</script> -->
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/popper.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.js" type="text/javascript"></script>
+    <script src="js/main.js" type="text/javascript"></script>
+    <!-- <script src="js/toaster.js"></script> -->
+    <!-- <script type="text/javascript" src="bower_components/angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js"></script> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-select/0.19.8/select.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-select/0.19.8/select.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.0/select2.min.js"></script>
+    <script src="bower_components/AngularJS-Toaster/toaster.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script> -->
+    <!-- <script src="https://rawgit.com/angular-ui/angular-google-maps/2.0.X/dist/angular-google-maps.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBjcHuoOCylpQDqFQ8CYQCiHplntytgVw"
+      type="text/javascript"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-google-maps/2.4.1/angular-google-maps.min.js"></script>
+    <script src="js/ngdatepicker.js"></script>
+    <script src="js/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.3.0/angular-moment.min.js"></script>
+
+    <!-- Moment Picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment-picker/0.10.2/angular-moment-picker.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.js"></script>
+    <script src="bower_components/angularjs-datepicker/dist/angular-datepicker.min.js"></script>
+    <script src="bower_components/angular-tooltips/dist/angular-tooltips.js"></script>
+    <script src="bower_components/ng-idle/angular-idle.js"></script>
+    <script src="bower_components/angular-idle-service/dist/angular-idle-service.js"></script>
+
+    <script src="scripts/index.js"></script>
+
+    <!-- Register popup service AFTER module exists -->
+    <script src="js/delete-popup.js"></script>
+
+    <script src="scripts/Controller/Common/LoginController.js"></script>
+    <script src="scripts/HomeController.js"></script>
+    <script src="scripts/Service/FunctionalityService.js"></script>
+
+    <!-- Admin Modules Starts -->
+    <script src="scripts/Controller/Admin/AdminHeaderController.js"></script>
+    <script src="scripts/Controller/Admin/AdminDashboardController.js"></script>
+    <script src="scripts/Controller/Admin/AdminVesselsController.js"></script>
+    <script src="scripts/Controller/Admin/AdminUsersController.js"></script>
+    <script src="scripts/Controller/Admin/AdminVesselsAddinfoController.js"></script>
+    <script src="scripts//Controller/Admin//AdminTasksController.js"></script>
+    <script src="scripts/Controller/Admin/AdminUserExtensionController.js"></script>
+    <script src="scripts/Controller/Admin/AdminVesselsEditinfoController.js"></script>
+    <script src="scripts/Controller/Admin/AdminVesselsViewInfoController.js"></script>
+    <script src="scripts/Controller/Admin/AdminSuperAauditLogController.js"></script>
+    <script src="scripts/Controller/Admin/AdminsuperAconfCountryController.js"></script>
+    <script src="scripts/Controller/Admin/AdminsuperAconfStateController.js"></script>
+    <script src="scripts/Controller/Admin/AdminReportIssueContrroller.js"></script>
+    <script src="scripts/Controller/Admin/AdminAddPlaceHolderController.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <!-- Admin Modules End -->
+
+    <!-- User Modules Starts -->
+    <script src="scripts/Controller/Users/UserDashboardController.js"></script>
+    <script src="scripts/Controller/Users/UserHeaderController.js"></script>
+    <script src="scripts/Controller/Users/UserVesselDcoumentController.js"></script>
+    <script src="scripts/Controller/Users/UserVesselDocumentEBDController.js"></script>
+    <script src="scripts/Controller/Users/UserDocumentApprovalController.js"></script>
+    <script src="scripts/Controller/Users/UserUserExtensionController.js"></script>
+    <script src="scripts/Controller/Users/UserMyWorkSpceController.js"></script>
+    <script src="scripts/Controller/Users/UserMyWorkspaceListController.js"></script>
+    <script src="scripts/Controller/Users/UserTasksController.js"></script>
+    <script src="scripts/Controller/Users/UserMyWorkSpaceExpiryDocumentController.js"></script>
+
+    <!--swal-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- User Modules End -->
+
+    <!-- SuperAdmin start -->
+    <script src="scripts/Controller/SuperAdmin/SaHeaderController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SaManageSubscriptionController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SaCompanyProfileController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SaConfigCountryController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SaConfigPlaceHolderController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SaConfigStateController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SaCompanyProfileCreateController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/saSubscrptionManageAdminController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SaAauditLogController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SuperAdminDashboardController.js"></script>
+    <script src="scripts/Controller/SuperAdmin/SaDashboardController.js"></script>
+
+    <!-- SuperAdmin end -->
+
+    <!-- Common Modules Starts -->
+    <script src="scripts/Controller/Common/DashBoardController.js"></script>
+    <script src="scripts/Controller/Common/SessionExpiredController.js"></script>
+    <script src="bower_components\angularUtils-pagination\dirPagination.js"></script>
+    <!-- Common Modules End -->
+  </body>
+</html>

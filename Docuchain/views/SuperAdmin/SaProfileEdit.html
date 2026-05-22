@@ -1,0 +1,559 @@
+<!-- <div class="app-content">
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a ng-click="userDetails()" style="cursor: pointer">
+          <span class="icon icon-beaker"> </span> Profile Details
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="docuContent solid-profile-cards">
+    <div class="row">
+      <div class="col-lg-12 col-xs-12">
+        <div class="profile-wrapper-card">
+          <ul class="profile-custom-tabs" role="tablist">
+            <li role="presentation" ng-class="{ 'active': editShow }">
+              <a ng-click="editProfile()">Edit Profile</a>
+            </li>
+            <li role="presentation" ng-class="{ 'active': resetShow }">
+              <a ng-click="resetPassword()">Reset Password</a>
+            </li>
+          </ul>
+
+          <div class="tab-content tabs">
+            <div
+              role="tabpanel"
+              ng-show="editShow"
+              class="tab-pane fade in active"
+            >
+              <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+                  <label
+                    style="
+                      display: block;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: #888;
+                      text-transform: uppercase;
+                      margin-bottom: 12px;
+                    "
+                  >
+                    Logo Preview
+                  </label>
+                  <div
+                    style="
+                      width: 155px;
+                      height: 128px;
+                      background: #f8f9fa;
+                      border: 2px dashed #ccd1d9;
+                      border-radius: 8px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      overflow: hidden;
+                      position: relative;
+                      padding: 10px;
+                      box-sizing: border-box;
+                      margin-bottom: 15px;
+                    "
+                  >
+                    <img
+                      ng-show="thumbnail.dataUrl && thumbnail.dataUrl !== 'undefined'"
+                      ng-src="{{thumbnail.dataUrl}}"
+                      style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                        display: block;
+                      "
+                    />
+                    <img
+                      ng-show="(!thumbnail.dataUrl || thumbnail.dataUrl === 'undefined') && sessionObject.profilePicture"
+                      ng-src="{{sessionObject.profilePicture}}"
+                      style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                        display: block;
+                      "
+                    />
+                    <img
+                      ng-show="(!thumbnail.dataUrl || thumbnail.dataUrl === 'undefined') && !sessionObject.profilePicture"
+                      src="image/avatarimg.jpg"
+                      style="
+                        max-width: 100px;
+                        max-height: 100px;
+                        opacity: 0.3;
+                        object-fit: contain;
+                      "
+                    />
+                  </div>
+                  <div style="width: 100%; max-width: 250px">
+                    <label
+                      style="
+                        display: block;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #888;
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      Select New File
+                    </label>
+                    <input
+                      type="file"
+                      class="mobt form-control"
+                      style="
+                        width: 100%;
+                        padding: 6px;
+                        border: 1px solid #d1d5db;
+                        border-radius: 8px;
+                        background: #fff;
+                        font-size: 13px;
+                        height: auto;
+                      "
+                      onchange="
+                        angular.element(this).scope().uploadFiledp(this.files)
+                      "
+                      name="file"
+                      file-input="files"
+                      ng-model="sessionObject.profilePictures"
+                      accept="image/*"
+                    />
+                    <span
+                      style="
+                        color: #ef4444;
+                        display: block;
+                        margin-top: 5px;
+                        font-size: 11px;
+                      "
+                      id="sizeOffile"
+                      class="ptag1"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="col-lg-9 col-md-8 col-sm-12 col-xs-12">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>First Name: <span>*</span></label>
+                        <input
+                          type="text"
+                          ng-model="sessionObject.firstName"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>Last Name: <span>*</span></label>
+                        <input
+                          type="text"
+                          ng-model="sessionObject.lastName"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>User Name: <span>*</span></label>
+                        <input
+                          type="text"
+                          readonly
+                          ng-model="sessionObject.userName"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>Email Address: <span>*</span></label>
+                        <input
+                          type="text"
+                          readonly
+                          ng-model="sessionObject.mail"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>Role: <span>*</span></label>
+                        <input
+                          type="text"
+                          readonly
+                          ng-model="sessionObject.role"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12 text-right" style="margin-top: 15px">
+                      <button
+                        type="button"
+                        class="btn-modern-update"
+                        ng-click="editProfileSubmit(sessionObject)"
+                      >
+                        UPDATE
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              role="tabpanel"
+              ng-show="resetShow"
+              class="tab-pane fade in active"
+            >
+              <form name="pswdForm">
+                <div class="row">
+                  <div
+                    class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"
+                    style="padding-top: 20px"
+                  >
+                    <div class="reset-pwd-row">
+                      <div class="reset-pwd-label">
+                        <label>Old Password: <span>*</span></label>
+                      </div>
+                      <div class="reset-pwd-input">
+                        <input
+                          type="password"
+                          ng-model="profileData.currentPassword"
+                          placeholder="Enter current password"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="reset-pwd-row align-top-if-error">
+                      <div class="reset-pwd-label">
+                        <label>New Password: <span>*</span></label>
+                      </div>
+                      <div class="reset-pwd-input">
+                        <input
+                          type="password"
+                          ng-model="profileData.password"
+                          name="password"
+                          placeholder="Enter new password"
+                          ng-pattern="/^(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/"
+                          required
+                        />
+                        <span
+                          class="error-text"
+                          ng-show="pswdForm.password.$error.pattern && pswdForm.password.$touched"
+                        >
+                          Must contain one lower & uppercase letter, non-alpha
+                          character (a number and a symbol), and be 8 to 20
+                          characters.
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="reset-pwd-row">
+                      <div class="reset-pwd-label">
+                        <label>Confirm Password: <span>*</span></label>
+                      </div>
+                      <div class="reset-pwd-input">
+                        <input
+                          type="password"
+                          ng-model="profileData.confirmPassword"
+                          placeholder="Confirm new password"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 30px">
+                      <div class="col-lg-12 text-center">
+                        <button
+                          type="button"
+                          class="btn-modern-back"
+                          ng-click="editCancel()"
+                        >
+                          Back
+                        </button>
+                        <button
+                          type="button"
+                          ng-disabled="pswdForm.$invalid"
+                          class="btn-modern-update"
+                          ng-click="resetPasswordSubmit(profileData)"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div class="app-content">
+  <div class="docubodyTitle">
+    <ul id="breadcrumb">
+      <li>
+        <a ng-click="userDetails()" style="cursor: pointer">
+          <span class="icon icon-beaker"> </span> Profile Details
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="docuContent solid-profile-cards">
+    <div class="row">
+      <div class="col-lg-12 col-xs-12">
+        <div class="profile-wrapper-card">
+          <ul class="profile-custom-tabs" role="tablist">
+            <li role="presentation" ng-class="{ 'active': editShow }">
+              <a ng-click="editProfile()">Edit Profile</a>
+            </li>
+            <li role="presentation" ng-class="{ 'active': resetShow }">
+              <a ng-click="resetPassword()">Reset Password</a>
+            </li>
+          </ul>
+
+          <div class="tab-content tabs">
+            <div
+              role="tabpanel"
+              ng-show="editShow"
+              class="tab-pane fade in active"
+            >
+              <div class="row">
+                <div
+                  class="col-lg-3 col-md-4 col-sm-12 col-xs-12 profile-image-column"
+                >
+                  <div class="profile-image-wrapper">
+                    <img
+                      ng-show="thumbnail.dataUrl && thumbnail.dataUrl !== 'undefined'"
+                      ng-src="{{thumbnail.dataUrl}}"
+                      class="profile-preview-img"
+                    />
+
+                    <img
+                      ng-show="(!thumbnail.dataUrl || thumbnail.dataUrl === 'undefined') && sessionObject.profilePicture"
+                      ng-src="{{sessionObject.profilePicture}}"
+                      class="profile-preview-img"
+                    />
+
+                    <img
+                      ng-show="(!thumbnail.dataUrl || thumbnail.dataUrl === 'undefined') && !sessionObject.profilePicture"
+                      src="image/avatarimg.jpg"
+                      class="profile-preview-img"
+                      style="opacity: 0.3"
+                    />
+
+                    <label class="btn-profile-edit" for="profileLogoUpload">
+                      <span
+                        class="icon icon-camera"
+                        style="margin-right: 4px"
+                      ></span>
+                      Change Logo
+                    </label>
+
+                    <input
+                      type="file"
+                      id="profileLogoUpload"
+                      style="display: none"
+                      onchange="
+                        angular.element(this).scope().uploadFiledp(this.files)
+                      "
+                      name="file"
+                      file-input="files"
+                      ng-model="sessionObject.profilePictures"
+                      accept="image/*"
+                    />
+
+                    <span
+                      id="sizeOffile"
+                      class="ptag1"
+                      style="
+                        color: #ef4444;
+                        display: block;
+                        margin-top: 5px;
+                        font-size: 11px;
+                      "
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="col-lg-9 col-md-8 col-sm-12 col-xs-12">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>First Name: <span>*</span></label>
+                        <input
+                          type="text"
+                          ng-model="sessionObject.firstName"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>Last Name: <span>*</span></label>
+                        <input
+                          type="text"
+                          ng-model="sessionObject.lastName"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>User Name: <span>*</span></label>
+                        <input
+                          type="text"
+                          readonly
+                          ng-model="sessionObject.userName"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>Email Address: <span>*</span></label>
+                        <input
+                          type="text"
+                          readonly
+                          ng-model="sessionObject.mail"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-sm-6 col-xs-12">
+                      <div class="profile-form-group">
+                        <label>Role: <span>*</span></label>
+                        <input
+                          type="text"
+                          readonly
+                          ng-model="sessionObject.role"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12 text-right" style="margin-top: 15px">
+                      <button
+                        type="button"
+                        class="btn-modern-update"
+                        ng-click="editProfileSubmit(sessionObject)"
+                      >
+                        UPDATE
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              role="tabpanel"
+              ng-show="resetShow"
+              class="tab-pane fade in active"
+            >
+              <form name="pswdForm">
+                <div class="row">
+                  <div
+                    class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"
+                    style="padding-top: 20px"
+                  >
+                    <div class="reset-pwd-row">
+                      <div class="reset-pwd-label">
+                        <label>Old Password: <span>*</span></label>
+                      </div>
+                      <div class="reset-pwd-input">
+                        <input
+                          type="password"
+                          ng-model="profileData.currentPassword"
+                          placeholder="Enter current password"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="reset-pwd-row align-top-if-error">
+                      <div class="reset-pwd-label">
+                        <label>New Password: <span>*</span></label>
+                      </div>
+                      <div class="reset-pwd-input">
+                        <input
+                          type="password"
+                          ng-model="profileData.password"
+                          name="password"
+                          placeholder="Enter new password"
+                          ng-pattern="/^(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/"
+                          required
+                        />
+                        <span
+                          class="error-text"
+                          style="
+                            color: #ef4444;
+                            font-size: 12px;
+                            display: block;
+                            margin-top: 5px;
+                          "
+                          ng-show="pswdForm.password.$error.pattern && pswdForm.password.$touched"
+                        >
+                          Must contain one lower & uppercase letter, non-alpha
+                          character (a number and a symbol), and be 8 to 20
+                          characters.
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="reset-pwd-row">
+                      <div class="reset-pwd-label">
+                        <label>Confirm Password: <span>*</span></label>
+                      </div>
+                      <div class="reset-pwd-input">
+                        <input
+                          type="password"
+                          ng-model="profileData.confirmPassword"
+                          placeholder="Confirm new password"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 30px">
+                      <div class="col-lg-12 text-center">
+                        <button
+                          type="button"
+                          class="btn-modern-back"
+                          ng-click="editCancel()"
+                        >
+                          Back
+                        </button>
+                        <button
+                          type="button"
+                          ng-disabled="pswdForm.$invalid"
+                          class="btn-modern-update"
+                          ng-click="resetPasswordSubmit(profileData)"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

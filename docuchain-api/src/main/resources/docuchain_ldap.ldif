@@ -1,0 +1,177 @@
+version: 1
+
+dn: cn=tushard,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: tushard
+sn: tushard
+businessCategory: DataOperator
+mail: tushar123@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=tech123,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: tech123
+sn: tech123
+businessCategory: TechManager
+mail: tech123@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=admin1,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: admin1
+sn: admin1
+businessCategory: Admin
+mail: test123@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=data,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: data
+sn: data
+businessCategory: DataOperator
+mail: dataopt9687@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=ttt1221,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: ttt1221
+sn: ttt1221
+businessCategory: DataOperator
+mail: ttt1111@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=test,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: test
+sn: test
+businessCategory: ShipMaster
+mail: testd@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=ashisdaga,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: ashisdaga
+sn: ashisdaga
+businessCategory: Admin
+mail: ashisdaga@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=abhayp,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: abhayp
+sn: abhayp
+businessCategory: TechManager
+mail: ashish.parmar@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=tarunk,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: tarunk
+sn: tarunk
+businessCategory: ShipMaster
+mail: ashish.parmar@zithas.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: ou=users,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: dc=example,dc=com
+objectclass: domain
+objectclass: top
+dc: example
+
+dn: cn=admin,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: admin
+sn: admin
+businessCategory: DataOperator
+mail: sdadsad@gmail.cm
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=mitspl,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: mitspl
+sn: mitspl
+businessCategory: DataOperator
+mail: mitspl@modular-infotech.com.sg
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=first,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: first
+sn: first
+businessCategory: DataOperator
+mail: name@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=jayu,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: jayu
+sn: jayu
+businessCategory: CommercialManager
+mail: jay@gmail.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=superadmin,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: superadmin
+sn: superadmin
+businessCategory: SuperAdmin
+mail: tarun.khadi@ambrellaconsulting.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
+dn: cn=ashishp,ou=users,dc=example,dc=com
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: ashishp
+sn: ashishp
+businessCategory: Admin
+mail: abhay.padavi@ambrellaconsulting.com
+userPassword:: e1NIQX1vcHhYeG9sTjdtNkNVVkVOV01Cd2VPNC9TYjg9
+
